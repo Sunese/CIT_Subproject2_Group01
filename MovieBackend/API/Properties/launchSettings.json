@@ -22,7 +22,7 @@
     "https": {
       "commandName": "Project",
       "launchBrowser": true,
-      "launchUrl": "weatherforecast",
+      "launchUrl": "https://localhost:7293",
       "applicationUrl": "https://localhost:7293;http://localhost:5208",
       "environmentVariables": {
         "ASPNETCORE_ENVIRONMENT": "Development"
