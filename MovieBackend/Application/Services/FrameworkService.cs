@@ -1,6 +1,7 @@
 ﻿using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Context;
@@ -14,21 +15,29 @@ public class FrameworkService : IFrameworkService
 {
     private readonly ImdbContext _imdbContext;
     private readonly IMapper _mapper;
-    public FrameworkService(ImdbContext imdbContext, IMapper mapper)
+    public FrameworkService(
+        ImdbContext imdbContext, 
+        IMapper mapper)
     {
         _imdbContext = imdbContext;
         _mapper = mapper;
     }
 
-    public bool AddUser(UserDTO user)
+    public bool CreateUser(UserDTO user)
     {
-        _imdbContext.Users.Add(_mapper.Map<UserDTO, User>(user));
+        var newUser = _mapper.Map<UserDTO, User>(user);
+        _imdbContext.Users.Add(newUser);
         return _imdbContext.SaveChanges() == 1;
     }
 
     public bool UserExists(string username, out UserDTO userDTO)
     {
         var user = _imdbContext.Users.FirstOrDefault(u => u.UserName == username);
+        if (user is null)
+        {
+            userDTO = null;
+            return false;
+        }
         // Detach the user from the context to avoid tracking
         _imdbContext.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
         userDTO = _mapper.Map<User, UserDTO>(user);

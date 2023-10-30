@@ -1,5 +1,7 @@
 ﻿using Application.Context;
 using Application.Services;
+using Microsoft.AspNetCore.Authentication.JwtBearer;
+using API.Security;
 
 var builder = WebApplication.CreateBuilder(args);
 
@@ -9,6 +11,15 @@ builder.Configuration.AddJsonFile("config.json", false);
 
 builder.Services.Configure<ImdbContextOptions>(
     builder.Configuration.GetSection(ImdbContextOptions.ImdbContext));
+builder.Services.Configure<JwtAuthOptions>(
+    builder.Configuration.GetSection(JwtAuthOptions.JwtAuth));
+
+builder.Services.AddSingleton<IHashingService, HashingService>();
+builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
+
+builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
+builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
+    .AddJwtBearer();
 
 builder.Services.AddControllers();
 
@@ -23,6 +34,7 @@ var app = builder.Build();
 
 app.UseHttpsRedirection();
 
+app.UseAuthentication();
 app.UseAuthorization();
 
 app.MapControllers();
