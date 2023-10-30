@@ -10,9 +10,9 @@ namespace Application.Services;
 
 public interface IFrameworkService
 {
-    IList<UserDTO>? GetUsers();
-    UserDTO? GetUser(string username);
     bool UserExists(string username, out UserDTO user);
-    bool CreateUser(UserDTO user);
-    bool DeleteUser(UserDTO user);
+    void CreateUser(UserDTO user);
+    void DeleteUser(string username);
+    void UpdatePassword(string username, string newPassword);
+    void UpdateEmail(string username, string newEmail);
 }
