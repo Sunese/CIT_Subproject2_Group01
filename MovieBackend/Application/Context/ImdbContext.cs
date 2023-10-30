@@ -8,6 +8,7 @@ public class ImdbContext : DbContext
 {
     private readonly string _connectionString;
     public DbSet<Title> Titles { get; set; }
+    public DbSet<User> Users { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -44,5 +45,14 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Title>().Property(t => t.EndYear)
             .HasColumnName("endyear")
             .HasConversion<YearConverter>();
+
+        modelBuilder.Entity<User>().ToTable("users");
+        modelBuilder.Entity<User>().HasKey(u => u.UserName);
+        modelBuilder.Entity<User>().Property(u => u.UserName)
+            .HasColumnName("username");
+        modelBuilder.Entity<User>().Property(u => u.Password)
+            .HasColumnName("password");
+        modelBuilder.Entity<User>().Property(u => u.Email)
+            .HasColumnName("email");
     }
 }
