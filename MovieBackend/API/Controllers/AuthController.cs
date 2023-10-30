@@ -16,16 +16,13 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class AuthController : ControllerBase
 {
-    private readonly ILogger<UserController> _logger;
     private readonly IFrameworkService _frameworkService;
     private readonly IJwtProvider _jwtProvider;
 
     public AuthController(
-        ILogger<UserController> logger, 
         IFrameworkService frameworkService,
         IJwtProvider jwtProvider)
     {
-        _logger = logger;
         _frameworkService = frameworkService;
         _jwtProvider = jwtProvider;
     }
