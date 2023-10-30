@@ -11,7 +11,7 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController : ControllerBase
+public class UserController : FrameworkBaseController
 {
     private readonly IFrameworkService _frameworkService;
     private readonly IHashingService _hashingService;
@@ -109,30 +109,5 @@ public class UserController : ControllerBase
         }
         _frameworkService.UpdateEmail(username, model.NewEmail);
         return Ok();
-    }
-
-    private bool IsAuthorizedToUpdate(string username)
-    {
-        if (HttpContext.User.Identity is null)
-        {
-            return false;
-        }
-        var authorizedUsername = HttpContext.User.Identity.Name;
-        var isAdmin = HttpContext.User.IsInRole("Admin");
-
-        if (isAdmin) // always allow admins to make update
-        {
-            return true;
-        }
-        else if (authorizedUsername.IsNullOrEmpty())
-        {
-            return false;
-        }
-        else if (authorizedUsername.ToLower() != username.ToLower())
-        {
-            return false;
-        }
-
-        return true;
     }
 }
