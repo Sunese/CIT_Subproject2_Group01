@@ -8,6 +8,7 @@ using Application.Context;
 using Application.Models;
 using AutoMapper;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
@@ -23,43 +24,42 @@ public class FrameworkService : IFrameworkService
         _mapper = mapper;
     }
 
-    public bool CreateUser(UserDTO user)
+    public void CreateUser(UserDTO user)
     {
         var newUser = _mapper.Map<UserDTO, User>(user);
-        _imdbContext.Users.Add(newUser);
-        return _imdbContext.SaveChanges() == 1;
+        FormattableString query = $"call adduser({newUser.UserName}, {newUser.Password}, {newUser.Salt}, {newUser.Email}, {newUser.Role})";
+        _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 
     public bool UserExists(string username, out UserDTO userDTO)
     {
-        var user = _imdbContext.Users.FirstOrDefault(u => u.UserName == username);
+        var user = _imdbContext.Users.Find(username);
         if (user is null)
         {
             userDTO = null;
             return false;
         }
         // Detach the user from the context to avoid tracking
-        _imdbContext.Entry(user).State = Microsoft.EntityFrameworkCore.EntityState.Detached;
+        _imdbContext.Entry(user).State = EntityState.Detached;
         userDTO = _mapper.Map<User, UserDTO>(user);
         return user is not null;
     }
 
-    public bool DeleteUser(UserDTO userDTO)
+    public void DeleteUser(string username)
     {
-        var user = _mapper.Map<UserDTO, User>(userDTO);
-        _imdbContext.Users.Remove(user);
-        return _imdbContext.SaveChanges() == 1;
+        FormattableString query = $"call deleteuser({username})";
+        _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 
-    public UserDTO? GetUser(string username)
+    public void UpdatePassword(string username, string newPassword)
     {
-        var user = _imdbContext.Users.FirstOrDefault(u => u.UserName == username);
-        return user is null ? null : _mapper.Map<User, UserDTO>(user);
+        FormattableString query = $"call updateuserpassword({username}, {newPassword})";
+        _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 
-    public IList<UserDTO> GetUsers()
+    public void UpdateEmail(string username, string newEmail)
     {
-        var users = _imdbContext.Users.ToList();
-        return _mapper.Map<List<User>, List<UserDTO>>(users);
+        FormattableString query = $"call updateuseremail({username}, {newEmail})";
+        _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 }
