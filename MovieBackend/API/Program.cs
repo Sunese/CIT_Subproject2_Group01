@@ -25,7 +25,7 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
 builder.Services.AddScoped<IImdbService, ImdbService>();
-builder.Services.AddScoped<IFrameworkService, FrameworkService>();
+builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
