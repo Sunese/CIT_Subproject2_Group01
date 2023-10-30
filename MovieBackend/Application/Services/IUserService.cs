@@ -8,7 +8,7 @@ using Domain.Models;
 
 namespace Application.Services;
 
-public interface IFrameworkService
+public interface IUserService
 {
     bool UserExists(string username, out UserDTO user);
     void CreateUser(UserDTO user);

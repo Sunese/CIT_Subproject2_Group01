@@ -13,12 +13,12 @@ namespace API.Controllers;
 [Route("[controller]")]
 public class UserController : FrameworkBaseController
 {
-    private readonly IFrameworkService _frameworkService;
+    private readonly IUserService _frameworkService;
     private readonly IHashingService _hashingService;
     private readonly IJwtProvider _jwtProvider;
 
     public UserController(
-        IFrameworkService frameworkService,
+        IUserService frameworkService,
         IHashingService hashingService,
         IJwtProvider jwtProvider)
     {
