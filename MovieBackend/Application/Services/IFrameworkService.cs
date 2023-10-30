@@ -13,6 +13,6 @@ public interface IFrameworkService
     IList<UserDTO>? GetUsers();
     UserDTO? GetUser(string username);
     bool UserExists(string username, out UserDTO user);
-    bool AddUser(UserDTO user);
+    bool CreateUser(UserDTO user);
     bool DeleteUser(UserDTO user);
 }

@@ -54,5 +54,9 @@ public class ImdbContext : DbContext
             .HasColumnName("password");
         modelBuilder.Entity<User>().Property(u => u.Email)
             .HasColumnName("email");
+        modelBuilder.Entity<User>().Property(u => u.Salt)
+            .HasColumnName("salt");
+        modelBuilder.Entity<User>().Property(u => u.Role)
+            .HasColumnName("role");
     }
 }
