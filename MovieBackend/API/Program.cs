@@ -1,4 +1,4 @@
-﻿using Application.Context;
+using Application.Context;
 using Application.Services;
 
 var builder = WebApplication.CreateBuilder(args);
@@ -12,7 +12,7 @@ builder.Services.Configure<ImdbContextOptions>(
 
 builder.Services.AddControllers();
 
-builder.Services.AddSingleton<ImdbContext>();
+builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
 builder.Services.AddScoped<IImdbService, ImdbService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
