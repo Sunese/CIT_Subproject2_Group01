@@ -1,10 +1,11 @@
 ﻿using System;
+using System.ComponentModel.DataAnnotations;
 namespace Domain.Models;
 
 public class TitleBookmark
 {
-	public TitleBookmark()
-	{
-	}
+	public string Username { get; set; }
+	public string TitleId { get; set; }
+	public DateTime Timestamp { get; set; }
+	public string Notes { get; set; } = string.Empty; // Default to empty string
 }
-

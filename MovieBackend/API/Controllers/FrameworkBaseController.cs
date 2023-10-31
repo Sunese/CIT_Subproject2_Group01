@@ -11,28 +11,28 @@ namespace API.Controllers;
 
 public class FrameworkBaseController : ControllerBase
 {
-    protected bool IsAuthorizedToUpdate(string username)
+    protected bool OwnsResource(string username)
     {
         if (HttpContext.User.Identity is null)
         {
             return false;
         }
-        var authorizedUsername = HttpContext.User.Identity.Name;
-        var isAdmin = HttpContext.User.IsInRole("Admin");
-
-        if (isAdmin) // always allow admins to make update
-        {
-            return true;
-        }
-        else if (authorizedUsername.IsNullOrEmpty())
+        else if (HttpContext.User.Identity.Name.IsNullOrEmpty())
         {
             return false;
         }
-        else if (authorizedUsername.ToLower() != username.ToLower())
+
+        var authenticatedUsername = HttpContext.User.Identity.Name.ToLower();
+        if (authenticatedUsername.ToLower() != username.ToLower())
         {
             return false;
         }
 
         return true;
+    }
+
+    protected bool IsAdmin()
+    {
+        return HttpContext.User.IsInRole("Admin");
     }
 }

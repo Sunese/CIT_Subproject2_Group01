@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("")] // routes are defined in the methods, they depend on the username
 public class BookmarkController : FrameworkBaseController
 {
     private readonly IUserService _userService;
@@ -24,6 +24,96 @@ public class BookmarkController : FrameworkBaseController
         _bookmarkService = bookmarkService;
     }
 
+    [HttpGet("{username}/titlebookmark")]
+    [Authorize]
+    public IActionResult GetTitleBookmarks(string username)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        var bookmarks = _bookmarkService.GetTitleBookmarks(username);
+        return Ok(bookmarks);
+    }
+
+    [HttpPost("{username}/titlebookmark")]
+    [Authorize]
+    public IActionResult CreateTitleBookmark(
+        string username, 
+        [FromBody] TitleBookmarkDTO model)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        _bookmarkService.CreateTitleBookmark(username, model);
+        return Ok(); // TODO: return HTTP 201 Created with Location header
+                     // to where the new resource can be found,
+                     // i.e. a GET method that is not implemented yet
+                     // NOTE: maybe not location header? maybe just return
+                     // an object with a URI property?
+    }
+
+    [HttpPut("{username}/titlebookmark")]
+    [Authorize]
+    public IActionResult UpdateTitleBookmarkNote(
+        string username,
+        [FromBody] TitleBookmarkDTO model)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        _bookmarkService.UpdateTitleBookmarkNote(username, model);
+        return Ok();
+    }
+
+    [HttpDelete("{username}/titlebookmark")]
+    [Authorize]
+    public IActionResult DeleteTitleBookmark(
+        string username,
+        [FromBody] TitleBookmarkDTO model)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        _bookmarkService.DeleteTitleBookmark(username, model);
+        return Ok();
+    }
+
+    [HttpGet("{username}/namebookmark")]
+    [Authorize]
+    public IActionResult GetNameBookmarks(string username)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        var bookmarks = _bookmarkService.GetNameBookmarks(username);
+        return Ok(bookmarks);
+    }
+
     [HttpPost("{username}/namebookmark")]
     [Authorize]
     public IActionResult CreateNameBookmark(
@@ -34,7 +124,7 @@ public class BookmarkController : FrameworkBaseController
         {
             return BadRequest("User does not exist");
         }
-        if (!IsAuthorizedToUpdate(username))
+        if (!OwnsResource(username))
         {
             return Unauthorized();
         }
@@ -45,4 +135,40 @@ public class BookmarkController : FrameworkBaseController
                      // NOTE: maybe not location header? maybe just return
                      // an object with a URI property?
     }
-} 
+
+    [HttpPut("{username}/namebookmark")]
+    [Authorize]
+    public IActionResult UpdateNameBookmarkNote(
+        string username,
+        [FromBody] NameBookmarkDTO model)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        _bookmarkService.UpdateNameBookmarkNote(username, model);
+        return Ok();
+    }
+
+    [HttpDelete("{username}/namebookmark")]
+    [Authorize]
+    public IActionResult DeleteNameBookmark(
+        string username,
+        [FromBody] NameBookmarkDTO model)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        _bookmarkService.DeleteNameBookmark(username, model);
+        return Ok();
+    }
+}
