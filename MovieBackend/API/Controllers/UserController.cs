@@ -69,7 +69,7 @@ public class UserController : FrameworkBaseController
         {
             return BadRequest("User does not exist");
         }
-        if (!IsAuthorizedToUpdate(username))
+        if (!OwnsResource(username))
         {
             return Unauthorized();
         }
@@ -87,7 +87,7 @@ public class UserController : FrameworkBaseController
         {
             return BadRequest("User does not exist");
         }
-        if (!IsAuthorizedToUpdate(username))
+        if (!OwnsResource(username))
         {
             return Unauthorized();
         }
@@ -103,7 +103,7 @@ public class UserController : FrameworkBaseController
         {
             return BadRequest("User does not exist");
         }
-        if (!IsAuthorizedToUpdate(username))
+        if (!OwnsResource(username))
         {
             return Unauthorized();
         }
