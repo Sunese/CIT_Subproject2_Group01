@@ -62,12 +62,14 @@ public class BookmarkController : FrameworkBaseController
                      // an object with a URI property?
     }
 
-    [HttpPut("{username}/titlebookmark")]
+    [HttpPatch("{username}/titlebookmark/{titleId}")]
     [Authorize]
     public IActionResult UpdateTitleBookmarkNote(
         string username,
+        string titleId,
         [FromBody] TitleBookmarkDTO model)
     {
+        model.TitleId = titleId;
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -136,12 +138,14 @@ public class BookmarkController : FrameworkBaseController
                      // an object with a URI property?
     }
 
-    [HttpPut("{username}/namebookmark")]
+    [HttpPatch("{username}/namebookmark/{nameId}")]
     [Authorize]
     public IActionResult UpdateNameBookmarkNote(
         string username,
+        string nameId,
         [FromBody] NameBookmarkDTO model)
     {
+        model.NameId = nameId;
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
