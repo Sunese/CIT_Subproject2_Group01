@@ -19,10 +19,10 @@ public class TitleController : ControllerBase
     }
 
     [HttpGet]
-    public IList<TitleDTO> Get(int startyear = 1, int startmonth = 1, int startday = 1, int endyear = 9999, int endmonth = 12, int endday = 31, int count = 10)
+    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999, int endMonth = 12, int endDay = 31, int count = 10)
     {
-        DateTime startDate = new DateTime(startyear, startmonth, startday);
-        DateTime endDate = new DateTime(endyear, endmonth, endday);
+        DateTime startDate = new(startYear, startMonth, startDay);
+        DateTime endDate = new(endYear, endMonth, endDay);
         return _titleService.Get(startDate, endDate, count);
     }
 
@@ -34,7 +34,7 @@ public class TitleController : ControllerBase
 
     // Title/GetFeature
     [HttpGet(nameof(GetFeature))]
-    public IList<TitleDTO> GetFeature(int year = 00, int month = 00, int count = 10)
+    public IList<TitleDTO> GetFeature(int year = 0, int month = 0, int count = 10)
     {
         return _titleService.GetFeature(year, month, count);
     }
@@ -43,7 +43,7 @@ public class TitleController : ControllerBase
     [HttpGet(nameof(GetPopular))]
     public IList<TitleDTO> GetPopular(int year = 1, int month = 1, int day = 1, int count = 10)
     {
-        DateTime datetime = new DateTime(year, month, day);
+        DateTime datetime = new(year, month, day);
         return _titleService.GetPopular(datetime, count);
     }
 }

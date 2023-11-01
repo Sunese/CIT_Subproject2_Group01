@@ -20,11 +20,11 @@ public class TitleService : ITitleService
         _mapper = mapper;
     }
 
-    public IList<TitleDTO> Get(DateTime startdatetime, DateTime enddatetime, int num, bool isAdult = false)
+    public IList<TitleDTO> Get(DateTime startDateTime, DateTime endDateTime, int num, bool isAdult = false)
     {
         var titles = new List<Title>();
-        // default input of start- and enddatetime
-        if (startdatetime.Year == 1 && enddatetime.Year == 9999)
+        // default input of start- and endDateTime
+        if (startDateTime.Year == 1 && endDateTime.Year == 9999)
         {
             titles = _imdbContext.Titles
                 .Where(t => t.IsAdult == isAdult)
@@ -36,8 +36,8 @@ public class TitleService : ITitleService
             .Where(t => 
                 t.IsAdult == isAdult &&
                 t.Released.HasValue &&
-                t.Released.Value.Date >= startdatetime.Date &&
-                t.Released.Value.Date <= enddatetime.Date)
+                t.Released.Value.Date >= startDateTime.Date &&
+                t.Released.Value.Date <= endDateTime.Date)
             .Take(num)
             .ToList();
         return _mapper.Map<IList<TitleDTO>>(titles);
@@ -53,21 +53,24 @@ public class TitleService : ITitleService
     public IList<TitleDTO> GetFeature(int year, int month, int num, bool isAdult = false)
     {
         var titles = new List<Title>();
-        // need refactor
-        if (year > 1 && month == 1)
+        
+        if (year > 0 && month == 0)
         {
-            titles = _imdbContext.Titles
+            titles = _imdbContext.Titles    
+                .AsEnumerable()             // TODO: forces client side evaluation
                 .Where(t =>
-                        t.Released.HasValue &&
-                        t.Released.Value.Year == year)
+                    t.IsAdult == isAdult &&
+                    t.Released.HasValue &&
+                    t.Released.Value.Year == year)
                 .Take(num)
                 .ToList();
 
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
-        if (year > 1 && month > 1)
+        if (year > 0 && month > 0)
         {
             titles = _imdbContext.Titles
+                .AsEnumerable()            // TODO: forces client side evaluation
                 .Where(t => 
                         t.Released.HasValue &&
                         t.Released.Value.Year == year &&
@@ -81,7 +84,7 @@ public class TitleService : ITitleService
         return _mapper.Map<IList<TitleDTO>>(titles);
     }
 
-    // will get popular movies with a period of time based on year or month.
+    // will get popular movies with a period of time based on year or month, requires ratings to work
     public IList<TitleDTO> GetPopular(DateTime datetime,  int num, bool isAdult = false)
     {
         throw new NotImplementedException();
