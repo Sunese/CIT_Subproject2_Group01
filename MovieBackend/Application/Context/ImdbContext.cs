@@ -62,8 +62,12 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Title>().Property(t => t.EndYear)
             .HasColumnName("endyear")
             .HasConversion<YearConverter>();
+        modelBuilder.Entity<Title>()
+            .HasMany(t => t.Genres)
+            .WithMany()
+            .UsingEntity<TitleGenre>();
 
-        modelBuilder.Entity<User>()
+    modelBuilder.Entity<User>()
             .ToTable("users");
         modelBuilder.Entity<User>()
             .HasKey(u => u.UserName);
@@ -116,5 +120,24 @@ public class ImdbContext : DbContext
             .HasColumnName("notes");
         modelBuilder.Entity<NameBookmark>()
             .HasKey(nb => new { nb.Username, nb.NameId });
+
+        modelBuilder.Entity<Genre>()
+            .ToTable("genre");
+        modelBuilder.Entity<Genre>()
+            .HasKey(g => g.GenreName);
+        modelBuilder.Entity<Genre>()
+            .Property(g => g.GenreName)
+            .HasColumnName("genrename");
+
+        modelBuilder.Entity<TitleGenre>()
+            .ToTable("titlegenre");
+        modelBuilder.Entity<TitleGenre>()
+            .HasKey(tg => new { tg.TitleId, tg.GenreName });
+        modelBuilder.Entity<TitleGenre>()
+            .Property(tg => tg.TitleId)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<TitleGenre>()
+            .Property(tg => tg.GenreName)
+            .HasColumnName("genrename");
     }
 }

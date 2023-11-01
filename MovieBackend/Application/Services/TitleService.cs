@@ -7,6 +7,7 @@ using Application.Context;
 using Application.Models;
 using AutoMapper;
 using Domain.Models;
+using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
@@ -27,12 +28,14 @@ public class TitleService : ITitleService
         if (startDateTime.Year == 1 && endDateTime.Year == 9999)
         {
             titles = _imdbContext.Titles
+                .Include(t => t.Genres)
                 .Where(t => t.IsAdult == isAdult)
                 .Take(num)
                 .ToList();
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
         titles = _imdbContext.Titles
+            .Include(t => t.Genres)
             .Where(t => 
                 t.IsAdult == isAdult &&
                 t.Released.HasValue &&

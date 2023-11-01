@@ -1,4 +1,6 @@
-﻿namespace Application.Models;
+﻿using Domain.Models;
+
+namespace Application.Models;
 
 public class TitleDTO
 {
@@ -13,4 +15,5 @@ public class TitleDTO
     public string? Plot { get; set; }
     public int? StartYear { get; set; }
     public int? EndYear { get; set;}
+    public List<Genre> Genres { get; set; }
 }

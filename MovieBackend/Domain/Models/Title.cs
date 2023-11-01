@@ -14,4 +14,5 @@ public class Title
     public string? Plot { get; set; }
 	public int? StartYear { get; set; }
 	public int? EndYear { get; set; }
+	public List<Genre> Genres { get; set; }
 }
