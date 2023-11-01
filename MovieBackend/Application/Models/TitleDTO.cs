@@ -7,7 +7,7 @@ public class TitleDTO
     public string OriginalTitle { get; set; }
     public string TitleType { get; set; }
     public bool IsAdult { get; set; }
-    public DateTime? Released { get; set; }
+    public DateOnly? Released { get; set; }
     public int? RuntimeMinutes { get; set; }
     public string? Poster { get; set; }
     public string? Plot { get; set; }

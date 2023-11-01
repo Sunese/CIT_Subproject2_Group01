@@ -10,8 +10,8 @@ namespace Application.Services;
 
 public interface ITitleService
 {
-    IList<TitleDTO> Get(DateTime startdatetime, DateTime enddatetime, int num, bool isAdult = false);
+    IList<TitleDTO> Get(DateOnly startdatetime, DateOnly enddatetime, int num, bool isAdult = false);
     TitleDTO GetTitle(string id, bool isAdult = false);
     IList<TitleDTO> GetFeature(int year, int month, int num, bool isAdult = false);
-    IList<TitleDTO> GetPopular(DateTime datetime, int num, bool isAdult = false);
+    IList<TitleDTO> GetPopular(DateOnly datetime, int num, bool isAdult = false);
 }

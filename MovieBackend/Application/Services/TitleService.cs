@@ -20,7 +20,7 @@ public class TitleService : ITitleService
         _mapper = mapper;
     }
 
-    public IList<TitleDTO> Get(DateTime startDateTime, DateTime endDateTime, int num, bool isAdult = false)
+    public IList<TitleDTO> Get(DateOnly startDateTime, DateOnly endDateTime, int num, bool isAdult = false)
     {
         var titles = new List<Title>();
         // default input of start- and endDateTime
@@ -33,12 +33,11 @@ public class TitleService : ITitleService
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
         titles = _imdbContext.Titles
-            .AsEnumerable()                 // TODO: forces client side evaluation
             .Where(t => 
                 t.IsAdult == isAdult &&
                 t.Released.HasValue &&
-                t.Released.Value.Date >= startDateTime.Date &&
-                t.Released.Value.Date <= endDateTime.Date)
+                t.Released.Value.Year >= startDateTime.Year &&
+                t.Released.Value.Year <= endDateTime.Year)
             .Take(num)
             .ToList();
         return _mapper.Map<IList<TitleDTO>>(titles);
@@ -57,8 +56,7 @@ public class TitleService : ITitleService
         
         if (year > 0 && month == 0)
         {
-            titles = _imdbContext.Titles    
-                .AsEnumerable()             // TODO: forces client side evaluation
+            titles = _imdbContext.Titles
                 .Where(t =>
                     t.IsAdult == isAdult &&
                     t.Released.HasValue &&
@@ -71,7 +69,6 @@ public class TitleService : ITitleService
         if (year > 0 && month > 0)
         {
             titles = _imdbContext.Titles
-                .AsEnumerable()            // TODO: forces client side evaluation
                 .Where(t => 
                         t.Released.HasValue &&
                         t.Released.Value.Year == year &&
@@ -86,7 +83,7 @@ public class TitleService : ITitleService
     }
 
     // will get popular movies with a period of time based on year or month, requires ratings to work
-    public IList<TitleDTO> GetPopular(DateTime datetime, int num, bool isAdult = false)
+    public IList<TitleDTO> GetPopular(DateOnly datetime, int num, bool isAdult = false)
     {
         throw new NotImplementedException();
     }

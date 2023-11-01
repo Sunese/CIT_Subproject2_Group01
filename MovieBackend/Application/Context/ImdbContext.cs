@@ -48,9 +48,7 @@ public class ImdbContext : DbContext
             .HasColumnName("isadult");
         modelBuilder.Entity<Title>()
             .Property(t => t.Released)
-            .HasColumnName("released")
-            .HasConversion(x => x.ToString(),   // TODO: Add check format
-                x => DateTime.Parse(x));        // TODO: Add check format
+            .HasColumnName("released");
         modelBuilder.Entity<Title>()
             .Property(t => t.RuntimeMinutes)
             .HasColumnName("runtimeminutes");
