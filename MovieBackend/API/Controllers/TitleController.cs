@@ -19,11 +19,11 @@ public class TitleController : ControllerBase
     }
 
     [HttpGet]
-    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999, int endMonth = 12, int endDay = 31, int count = 10)
+    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999, int endMonth = 12, int endDay = 31, int num = 10)
     {
         DateTime startDate = new(startYear, startMonth, startDay);
         DateTime endDate = new(endYear, endMonth, endDay);
-        return _titleService.Get(startDate, endDate, count);
+        return _titleService.Get(startDate, endDate, num);
     }
 
     [HttpGet("{id}")]

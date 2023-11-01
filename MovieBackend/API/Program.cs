@@ -24,7 +24,7 @@ builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
 builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
-builder.Services.AddScoped<IImdbService, ImdbService>();
+builder.Services.AddScoped<ITitleService, TitleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());

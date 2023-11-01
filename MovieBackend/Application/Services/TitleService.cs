@@ -33,6 +33,7 @@ public class TitleService : ITitleService
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
         titles = _imdbContext.Titles
+            .AsEnumerable()                 // TODO: forces client side evaluation
             .Where(t => 
                 t.IsAdult == isAdult &&
                 t.Released.HasValue &&
@@ -85,7 +86,7 @@ public class TitleService : ITitleService
     }
 
     // will get popular movies with a period of time based on year or month, requires ratings to work
-    public IList<TitleDTO> GetPopular(DateTime datetime,  int num, bool isAdult = false)
+    public IList<TitleDTO> GetPopular(DateTime datetime, int num, bool isAdult = false)
     {
         throw new NotImplementedException();
     }
