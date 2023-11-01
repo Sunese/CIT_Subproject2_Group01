@@ -1,1 +1,14 @@
 global using Xunit;
+global using Application.Services;
+global using AutoMapper;
+global using Application.UnitTests.Data;
+global using System;
+global using System.Collections.Generic;
+global using System.Linq;
+global using System.Text;
+global using System.Threading.Tasks;
+global using Application.Profiles;
+global using Domain.Models;
+global using Microsoft.EntityFrameworkCore;
+global using Moq;
+global using Application.Context;
