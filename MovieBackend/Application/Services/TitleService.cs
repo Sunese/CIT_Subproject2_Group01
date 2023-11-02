@@ -91,5 +91,42 @@ public class TitleService : ITitleService
         throw new NotImplementedException();
     }
 
+    public TitleRatingDTO? GetRating(string id)
+    {
+        var title = _imdbContext.TitleRatings.Find(id);
+        return _mapper.Map<TitleRatingDTO>(title);
+    }
 
+    public IList<TitleDTO> GetRatings(bool orderByHighestRating, int num, int? days)
+    {
+        IList<Title> titles;
+        var today = DateOnly.FromDateTime(DateTime.Now);
+        var limit = DateOnly.MinValue;
+        if (days.HasValue)
+        {
+            limit = today.AddDays(-days.Value);
+        }
+        if (orderByHighestRating)
+        {
+                titles = _imdbContext.Titles
+                    .Include(t => t.TitleRating)
+                    .Where(t => t.TitleRating != null)
+                    .Where(t => t.Released >= limit)
+                    .Where(t => t.Released <= today)
+                    .OrderByDescending(t => t.TitleRating.AverageRating)
+                    .Take(num)
+                    .ToList();
+        }
+        else
+        {
+            titles = _imdbContext.Titles
+                    .Include(t => t.TitleRating)
+                    .Where(t => t.TitleRating != null)
+                    .Where(t => t.Released >= limit)
+                    .Where(t => t.Released <= today)
+                    .Take(num)
+                    .ToList();
+        }
+        return _mapper.Map<IList<TitleDTO>>(titles);
+    }
 }

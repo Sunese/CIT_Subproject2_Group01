@@ -14,4 +14,6 @@ public interface ITitleService
     TitleDTO GetTitle(string id, bool isAdult = false);
     IList<TitleDTO> GetFeature(int year, int month, int num, bool isAdult = false);
     IList<TitleDTO> GetPopular(DateOnly datetime, int num, bool isAdult = false);
+    TitleRatingDTO? GetRating(string id);
+    IList<TitleDTO> GetRatings(bool orderByHighestRating, int num, int? days);
 }

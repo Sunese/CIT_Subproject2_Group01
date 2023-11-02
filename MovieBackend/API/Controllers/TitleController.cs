@@ -46,4 +46,22 @@ public class TitleController : ControllerBase
         DateOnly datetime = new(year, month, day);
         return _titleService.GetPopular(datetime, count);
     }
+
+    // Title/{id}/rating
+    [HttpGet("{id}/rating")]
+    public TitleRatingDTO? GetRating(string id)
+    {
+        return _titleService.GetRating(id);
+    }
+
+    // title/rating?OrderByHighestRating=true&count=10&days=30
+    // where OrderBy can be AverageRating or NumVotes
+    // count is the number of titles to return
+    // all query parameters are optional
+    [HttpGet("rating")]
+    public IActionResult GetRatings(bool orderByHighestRating = true, int count = 10, int? days = null)
+    {
+        var titles = _titleService.GetRatings(orderByHighestRating, count, days);
+        return Ok(new { count = titles.Count, titles });
+    }
 }

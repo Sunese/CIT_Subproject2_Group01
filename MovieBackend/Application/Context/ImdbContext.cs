@@ -11,6 +11,7 @@ public class ImdbContext : DbContext
     public DbSet<User> Users { get; set; }
     public DbSet<TitleBookmark> TitleBookmarks { get; set; }
     public DbSet<NameBookmark> NameBookmarks { get; set; }
+    public DbSet<TitleRating> TitleRatings { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -63,9 +64,16 @@ public class ImdbContext : DbContext
             .HasColumnName("endyear")
             .HasConversion<YearConverter>();
         modelBuilder.Entity<Title>()
+            // Many-to-many relationship between Title and Genre
+            // using TitleGenre as the join table
+            // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many#unidirectional-many-to-many
             .HasMany(t => t.Genres)
             .WithMany()
             .UsingEntity<TitleGenre>();
+        modelBuilder.Entity<Title>()
+            .HasOne(t => t.TitleRating)
+            .WithMany()
+            .HasForeignKey(t => t.TitleID);
 
     modelBuilder.Entity<User>()
             .ToTable("users");
@@ -139,5 +147,20 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<TitleGenre>()
             .Property(tg => tg.GenreName)
             .HasColumnName("genrename");
+
+        // TitleRating
+        modelBuilder.Entity<TitleRating>()
+            .ToTable("titlerating");
+        modelBuilder.Entity<TitleRating>()
+            .HasKey(tr => tr.TitleID);
+        modelBuilder.Entity<TitleRating>()
+            .Property(tr => tr.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<TitleRating>()
+            .Property(tr => tr.AverageRating)
+            .HasColumnName("averagerating");
+        modelBuilder.Entity<TitleRating>()
+            .Property(tr => tr.NumVotes)
+            .HasColumnName("numvotes");
     }
 }

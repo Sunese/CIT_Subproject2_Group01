@@ -15,4 +15,5 @@ public class Title
 	public int? StartYear { get; set; }
 	public int? EndYear { get; set; }
 	public List<Genre> Genres { get; set; }
+	public TitleRating TitleRating { get; set; }
 }
