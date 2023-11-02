@@ -1,7 +1,12 @@
+using Domain.Models;
+
 namespace Application.Models;
     
 public class NameBookmarkDTO
 {
-	public string NameId { get; set; } = String.Empty;
-    public string Notes { get; set; } = String.Empty;
+    public string Username { get; set; }
+    public string NameId { get; set; }
+    public DateTime Timestamp { get; set; }
+    public string Notes { get; set; } = string.Empty; // Default to empty string
+    public Name Name { get; set; }
 }

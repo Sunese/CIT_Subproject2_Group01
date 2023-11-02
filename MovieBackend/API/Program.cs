@@ -27,6 +27,7 @@ builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
 builder.Services.AddScoped<ITitleService, TitleService>();
 builder.Services.AddScoped<IUserService, UserService>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
+builder.Services.AddScoped<IUserRatingService, UserRatingService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();

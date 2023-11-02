@@ -21,7 +21,7 @@ public class TitleService : ITitleService
         _mapper = mapper;
     }
 
-    public IList<TitleDTO> Get(DateOnly startDateTime, DateOnly endDateTime, int num, bool isAdult = false)
+    public IList<TitleDTO> Get(DateOnly startDateTime, DateOnly endDateTime, int count, bool isAdult = false)
     {
         var titles = new List<Title>();
         // default input of start- and endDateTime
@@ -30,7 +30,7 @@ public class TitleService : ITitleService
             titles = _imdbContext.Titles
                 .Include(t => t.Genres)
                 .Where(t => t.IsAdult == isAdult)
-                .Take(num)
+                .Take(count)
                 .ToList();
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
@@ -41,7 +41,7 @@ public class TitleService : ITitleService
                 t.Released.HasValue &&
                 t.Released.Value.Year >= startDateTime.Year &&
                 t.Released.Value.Year <= endDateTime.Year)
-            .Take(num)
+            .Take(count)
             .ToList();
         return _mapper.Map<IList<TitleDTO>>(titles);
     }
@@ -53,7 +53,7 @@ public class TitleService : ITitleService
     }
 
     // will get a number of current month and/or year of featured movies
-    public IList<TitleDTO> GetFeature(int year, int month, int num, bool isAdult = false)
+    public IList<TitleDTO> GetFeature(int year, int month, int count, bool isAdult = false)
     {
         var titles = new List<Title>();
         
@@ -64,7 +64,7 @@ public class TitleService : ITitleService
                     t.IsAdult == isAdult &&
                     t.Released.HasValue &&
                     t.Released.Value.Year == year)
-                .Take(num)
+                .Take(count)
                 .ToList();
 
             return _mapper.Map<IList<TitleDTO>>(titles);
@@ -76,17 +76,17 @@ public class TitleService : ITitleService
                         t.Released.HasValue &&
                         t.Released.Value.Year == year &&
                         t.Released.Value.Month == month)
-                .Take(num)
+                .Take(count)
                 .ToList();
 
             return _mapper.Map<IList<TitleDTO>>(titles);
         }
-        titles = _imdbContext.Titles.Take(num).ToList();
+        titles = _imdbContext.Titles.Take(count).ToList();
         return _mapper.Map<IList<TitleDTO>>(titles);
     }
 
     // will get popular movies with a period of time based on year or month, requires ratings to work
-    public IList<TitleDTO> GetPopular(DateOnly datetime, int num, bool isAdult = false)
+    public IList<TitleDTO> GetPopular(DateOnly datetime, int count, bool isAdult = false)
     {
         throw new NotImplementedException();
     }
@@ -97,7 +97,9 @@ public class TitleService : ITitleService
         return _mapper.Map<TitleRatingDTO>(title);
     }
 
-    public IList<TitleDTO> GetRatings(bool orderByHighestRating, int num, int? days)
+    // Returns N amount of titles ordered by ratings, between input day and today.
+    // If no day is inputted, then it returns all titles and its ratings between year 0 and today.
+    public IList<TitleDTO> GetRatings(bool orderByHighestRating, int count, int? days)
     {
         IList<Title> titles;
         var today = DateOnly.FromDateTime(DateTime.Now);
@@ -114,7 +116,7 @@ public class TitleService : ITitleService
                     .Where(t => t.Released >= limit)
                     .Where(t => t.Released <= today)
                     .OrderByDescending(t => t.TitleRating.AverageRating)
-                    .Take(num)
+                    .Take(count)
                     .ToList();
         }
         else
@@ -124,7 +126,7 @@ public class TitleService : ITitleService
                     .Where(t => t.TitleRating != null)
                     .Where(t => t.Released >= limit)
                     .Where(t => t.Released <= today)
-                    .Take(num)
+                    .Take(count)
                     .ToList();
         }
         return _mapper.Map<IList<TitleDTO>>(titles);

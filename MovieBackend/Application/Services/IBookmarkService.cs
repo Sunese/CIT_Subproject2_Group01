@@ -9,12 +9,12 @@ namespace Application.Services;
 
 public interface IBookmarkService
 {
-    IList<NameBookmarkDTO> GetNameBookmarks(string username);
+    IList<NameBookmarkDTO> GetNameBookmarks(string username, OrderBy orderBy, int count);
     void CreateNameBookmark(string username, NameBookmarkDTO model);
     void UpdateNameBookmarkNote(string username, NameBookmarkDTO model);
     void DeleteNameBookmark(string username, NameBookmarkDTO model);
 
-    IList<TitleBookmarkDTO> GetTitleBookmarks(string username);
+    IList<TitleBookmarkDTO> GetTitleBookmarks(string username, OrderBy orderBy, int count);
     void CreateTitleBookmark(string username, TitleBookmarkDTO model);
     void UpdateTitleBookmarkNote(string username, TitleBookmarkDTO model);
     void DeleteTitleBookmark(string username, TitleBookmarkDTO model);

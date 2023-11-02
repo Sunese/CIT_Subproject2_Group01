@@ -6,9 +6,18 @@ using System.Threading.Tasks;
 using Application.Context;
 using Application.Models;
 using AutoMapper;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
+
+public enum OrderBy
+{
+    Alphabetical,
+    Rating,
+    ReleaseDate,
+    Created
+}
 
 public class BookmarkService : IBookmarkService
 {
@@ -28,11 +37,37 @@ public class BookmarkService : IBookmarkService
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public IList<TitleBookmarkDTO> GetTitleBookmarks(string username)
+    public IList<TitleBookmarkDTO> GetTitleBookmarks(string username, OrderBy orderBy, int count)
     {
-        var bookmarks = _context.TitleBookmarks
-            .Where(b => b.Username == username)
-            .ToList();
+        IList<TitleBookmark> bookmarks = orderBy switch
+        {
+            OrderBy.Alphabetical => _context.TitleBookmarks
+                                .Include(tb => tb.Title)
+                                .Where(tb => tb.Username == username)
+                                .OrderBy(tb => tb.Title.PrimaryTitle)
+                                .Take(count)
+                                .ToList(),
+            OrderBy.Rating => _context.TitleBookmarks
+                                .Include(tb => tb.Title)
+                                .ThenInclude(t => t.TitleRating)
+                                .Where(tb => tb.Username == username)
+                                .OrderByDescending(tb => tb.Title.TitleRating.AverageRating)
+                                .Take(count)
+                                .ToList(),
+            OrderBy.ReleaseDate => _context.TitleBookmarks
+                                .Include(tb => tb.Title)
+                                .Where(tb => tb.Username == username)
+                                .OrderBy(tb => tb.Title.Released)
+                                .Take(count)
+                                .ToList(),
+            OrderBy.Created => _context.TitleBookmarks
+                                .Include(tb => tb.Title)
+                                .Where(tb => tb.Username == username)
+                                .OrderBy(tb => tb.Timestamp)
+                                .Take(count)
+                                .ToList(),
+            _ => throw new NotImplementedException(),
+        };
         return _mapper.Map<IList<TitleBookmarkDTO>>(bookmarks);
     }
 
@@ -54,11 +89,23 @@ public class BookmarkService : IBookmarkService
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public IList<NameBookmarkDTO> GetNameBookmarks(string username)
+    public IList<NameBookmarkDTO> GetNameBookmarks(string username, OrderBy orderBy, int count)
     {
-        var bookmarks = _context.NameBookmarks
-            .Where(b => b.Username == username)
-            .ToList();
+        IList<NameBookmark> bookmarks = orderBy switch
+        {
+            OrderBy.Alphabetical => _context.NameBookmarks
+                .Include(n => n.Name)
+                .Where(nb => nb.Username == username)
+                .OrderBy(nb => nb.Name.PrimaryName)
+                .Take(count)
+                .ToList(),
+            OrderBy.Created => _context.NameBookmarks
+                .Where(tb => tb.Username == username)
+                .OrderBy(tb => tb.Timestamp)
+                .Take(count)
+                .ToList(),
+            _ => throw new NotImplementedException(),
+        };
         return _mapper.Map<IList<NameBookmarkDTO>>(bookmarks);
     }
 

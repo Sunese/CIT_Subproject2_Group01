@@ -8,4 +8,5 @@ public class TitleBookmark
 	public string TitleId { get; set; }
 	public DateTime Timestamp { get; set; }
 	public string Notes { get; set; } = string.Empty; // Default to empty string
+	public Title Title { get; set; }
 }

@@ -12,6 +12,7 @@ public class ImdbContext : DbContext
     public DbSet<TitleBookmark> TitleBookmarks { get; set; }
     public DbSet<NameBookmark> NameBookmarks { get; set; }
     public DbSet<TitleRating> TitleRatings { get; set; }
+    public DbSet<UserRating> UserRatings { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -74,6 +75,7 @@ public class ImdbContext : DbContext
             .HasOne(t => t.TitleRating)
             .WithMany()
             .HasForeignKey(t => t.TitleID);
+
 
     modelBuilder.Entity<User>()
             .ToTable("users");
@@ -162,5 +164,41 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<TitleRating>()
             .Property(tr => tr.NumVotes)
             .HasColumnName("numvotes");
+
+        // Name
+        modelBuilder.Entity<Name>()
+            .ToTable("name");
+        modelBuilder.Entity<Name>()
+            .HasKey(n => n.NameId);
+        modelBuilder.Entity<Name>()
+            .Property(n => n.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<Name>()
+            .Property(n => n.PrimaryName)
+            .HasColumnName("primaryname");
+        modelBuilder.Entity<Name>()
+            .Property(n => n.BirthYear)
+            .HasColumnName("birthyear");
+        modelBuilder.Entity<Name>()
+            .Property(n => n.DeathYear)
+            .HasColumnName("deathyear");
+
+        // UserTitleRating
+        modelBuilder.Entity<UserRating>()
+            .ToTable("userrating");
+        modelBuilder.Entity<UserRating>()
+            .HasKey(ur => new { ur.Username, ur.TitleId });
+        modelBuilder.Entity<UserRating>()
+            .Property(n => n.Username)
+            .HasColumnName("username");
+        modelBuilder.Entity<UserRating>()
+            .Property(n => n.TitleId)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<UserRating>()
+            .Property(n => n.Rating)
+            .HasColumnName("rating");
+        modelBuilder.Entity<UserRating>()
+            .Property(n => n.TimeStamp)
+            .HasColumnName("timestamp");
     }
 }

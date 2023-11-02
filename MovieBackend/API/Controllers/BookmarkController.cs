@@ -26,7 +26,7 @@ public class BookmarkController : FrameworkBaseController
 
     [HttpGet("{username}/titlebookmark")]
     [Authorize]
-    public IActionResult GetTitleBookmarks(string username)
+    public IActionResult GetTitleBookmarks(string username, OrderBy orderBy = OrderBy.Alphabetical, int count = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
@@ -36,7 +36,7 @@ public class BookmarkController : FrameworkBaseController
         {
             return Unauthorized();
         }
-        var bookmarks = _bookmarkService.GetTitleBookmarks(username);
+        var bookmarks = _bookmarkService.GetTitleBookmarks(username, orderBy, count);
         return Ok(bookmarks);
     }
 
@@ -100,7 +100,7 @@ public class BookmarkController : FrameworkBaseController
 
     [HttpGet("{username}/namebookmark")]
     [Authorize]
-    public IActionResult GetNameBookmarks(string username)
+    public IActionResult GetNameBookmarks(string username, OrderBy orderBy = OrderBy.Alphabetical, int count = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
@@ -110,7 +110,7 @@ public class BookmarkController : FrameworkBaseController
         {
             return Unauthorized();
         }
-        var bookmarks = _bookmarkService.GetNameBookmarks(username);
+        var bookmarks = _bookmarkService.GetNameBookmarks(username, orderBy, count);
         return Ok(bookmarks);
     }
 

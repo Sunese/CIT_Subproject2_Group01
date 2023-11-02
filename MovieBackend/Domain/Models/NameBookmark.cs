@@ -7,5 +7,6 @@ public class NameBookmark
 	public string NameId { get; set; }
 	public DateTime Timestamp { get; set; }
 	public string Notes { get; set; } = string.Empty; // Default to empty string
+	public Name Name { get; set; }
 }
 
