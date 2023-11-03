@@ -2,6 +2,7 @@
 using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using API.Security;
+using Microsoft.AspNetCore.Authorization;
 
 // https://www.npgsql.org/doc/types/datetime.html#timestamps-and-timezones
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -23,6 +24,16 @@ builder.Services.AddSingleton<IJwtProvider, JwtProvider>();
 builder.Services.ConfigureOptions<ConfigureJwtBearerOptions>();
 builder.Services.AddAuthentication(JwtBearerDefaults.AuthenticationScheme)
     .AddJwtBearer();
+
+builder.Services.AddScoped<IAuthorizationHandler, UserExistsRequirementHandler>();
+builder.Services.AddAuthorization(options =>
+{
+    options.AddPolicy("UserExists", policy => {
+        policy.RequireAuthenticatedUser();
+        policy.Requirements.Add(new UserExistsRequirement());
+    });
+    options.DefaultPolicy = options.GetPolicy("UserExists");
+});
 
 builder.Services.AddControllers();
 

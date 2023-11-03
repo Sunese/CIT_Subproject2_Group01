@@ -32,10 +32,6 @@ public class SearchController : FrameworkBaseController
     public IActionResult TitleSearch([FromQuery]string query)
     {
         var username = HttpContext.User.Identity.Name;
-        if (!_accountService.UserExists(username, out var foundUser))
-        {
-            return BadRequest("Authenticated user does not exist");
-        }
         return Ok(_searchService.TitleSearch(username, query));
     }
 
@@ -44,10 +40,6 @@ public class SearchController : FrameworkBaseController
     public IActionResult NameSearch([FromQuery]string query)
     {
         var username = HttpContext.User.Identity.Name;
-        if (!_accountService.UserExists(username, out var foundUser))
-        {
-            return BadRequest("Authenticated user does not exist");
-        }
         return Ok(_searchService.NameSearch(username, query));
     }
 
