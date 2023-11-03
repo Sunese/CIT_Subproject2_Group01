@@ -54,12 +54,23 @@ public class SearchService : ISearchService
             Query = query,
             Timestamp = DateTime.Now
         };
+
         _imdbContext.Searches.Add(search);
 
+        var words = query.Split(' ');
+        var sqlQuery = new StringBuilder();
+        sqlQuery.Append("SELECT best_match_query(");
+        foreach (var word in words)
+        {
+            sqlQuery.Append($"'{word}',");   
+        }
+        sqlQuery.Remove(sqlQuery.Length - 1, 1);
+        sqlQuery.Append(");");
+
         var titles = _imdbContext.Titles
-            .Where(t => t.PrimaryTitle.Contains(query))
+            .FromSqlRaw(sqlQuery.ToString())
             .ToList();
-        
+
         _imdbContext.SaveChanges();
         return _mapper.Map<IList<TitleDTO>>(titles);
     }

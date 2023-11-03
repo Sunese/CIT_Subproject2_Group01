@@ -28,15 +28,10 @@ public class SearchController : FrameworkBaseController
     }
 
     [HttpGet("title")]
-    [AllowAnonymous]
+    [Authorize]
     public IActionResult TitleSearch([FromQuery]string query)
     {
-        var username = "Anonymous";
-        if (IsSignedIn())
-        {
-            username = HttpContext.User.Identity.Name;
-        }
-
+        var username = HttpContext.User.Identity.Name.ToLower();
         return Ok(_searchService.TitleSearch(username, query));
     }
 
