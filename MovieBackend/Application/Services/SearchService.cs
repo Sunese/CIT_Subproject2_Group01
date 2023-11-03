@@ -39,14 +39,14 @@ public class SearchService : ISearchService
         _imdbContext.Searches.Add(search);
 
         var names = _imdbContext.Names
-            .Where(n => n.PrimaryName.Contains(query))
+            .Where(n => n.PrimaryName.ToLower().Contains(query.ToLower()))
             .ToList();
 
         _imdbContext.SaveChanges();
         return _mapper.Map<IList<NameDTO>>(names);
     }
 
-    public IList<TitleDTO> TitleSearch(string username, string query)
+    public IList<TitleSearchResultDTO> TitleSearch(string username, string query)
     {
         var search = new Search()
         {
@@ -57,21 +57,26 @@ public class SearchService : ISearchService
 
         _imdbContext.Searches.Add(search);
 
+        // We build the query manually here, because we are not aware
+        // of a way for EF to call a Postgres function with a variadic
+        // parameter.
+        // NOTE: this will cause issues if query contains single quotes
+        // (and possibly other characters that we have not tested for yet)
         var words = query.Split(' ');
         var sqlQuery = new StringBuilder();
-        sqlQuery.Append("SELECT best_match_query(");
+        sqlQuery.Append("SELECT * FROM best_match_query(");
         foreach (var word in words)
         {
-            sqlQuery.Append($"'{word}',");   
+            sqlQuery.Append($"'{word}',");
         }
         sqlQuery.Remove(sqlQuery.Length - 1, 1);
         sqlQuery.Append(");");
 
-        var titles = _imdbContext.Titles
+        var titles = _imdbContext.TitleSearchResults
             .FromSqlRaw(sqlQuery.ToString())
             .ToList();
 
         _imdbContext.SaveChanges();
-        return _mapper.Map<IList<TitleDTO>>(titles);
+        return _mapper.Map<IList<TitleSearchResultDTO>>(titles);
     }
 }

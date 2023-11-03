@@ -15,6 +15,7 @@ public class ImdbContext : DbContext
     public DbSet<NameBookmark> NameBookmarks { get; set; }
     public DbSet<TitleRating> TitleRatings { get; set; }
     public DbSet<UserRating> UserRatings { get; set; }
+    public DbSet<TitleSearchResult> TitleSearchResults { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -217,5 +218,18 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<UserRating>()
             .Property(n => n.TimeStamp)
             .HasColumnName("timestamp");
+
+        // TitleSearchResult
+        modelBuilder.Entity<TitleSearchResult>()
+            .HasNoKey();
+        modelBuilder.Entity<TitleSearchResult>()
+            .Property(tsr => tsr.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<TitleSearchResult>()
+            .Property(tsr => tsr.PrimaryTitle)
+            .HasColumnName("primarytitle");
+        modelBuilder.Entity<TitleSearchResult>()
+            .Property(tsr => tsr.Rank)
+            .HasColumnName("rank");
     }
 }

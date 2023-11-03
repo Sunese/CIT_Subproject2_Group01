@@ -13,16 +13,16 @@ namespace API.Controllers;
 [Route("api/v1/search")]
 public class SearchController : FrameworkBaseController
 {
-    private readonly IAccountService _userService;
+    private readonly IAccountService _accountService;
     private readonly IBookmarkService _bookmarkService;
     private readonly ISearchService _searchService;
 
     public SearchController(
-        IAccountService userService,
+        IAccountService accountService,
         IBookmarkService bookmarkService,
         ISearchService searchService)
     {
-        _userService = userService;
+        _accountService = accountService;
         _bookmarkService = bookmarkService;
         _searchService = searchService;
     }
@@ -31,8 +31,24 @@ public class SearchController : FrameworkBaseController
     [Authorize]
     public IActionResult TitleSearch([FromQuery]string query)
     {
-        var username = HttpContext.User.Identity.Name.ToLower();
+        var username = HttpContext.User.Identity.Name;
+        if (!_accountService.UserExists(username, out var foundUser))
+        {
+            return BadRequest("Authenticated user does not exist");
+        }
         return Ok(_searchService.TitleSearch(username, query));
+    }
+
+    [HttpGet("name")]
+    [Authorize]
+    public IActionResult NameSearch([FromQuery]string query)
+    {
+        var username = HttpContext.User.Identity.Name;
+        if (!_accountService.UserExists(username, out var foundUser))
+        {
+            return BadRequest("Authenticated user does not exist");
+        }
+        return Ok(_searchService.NameSearch(username, query));
     }
 
 
