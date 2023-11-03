@@ -31,6 +31,11 @@ public class FrameworkBaseController : ControllerBase
         return true;
     }
 
+    protected bool IsSignedIn()
+    {
+        return HttpContext.User.Identity.IsAuthenticated;
+    }
+
     protected bool IsAdmin()
     {
         return HttpContext.User.IsInRole("Admin");

@@ -13,11 +13,11 @@ namespace API.Controllers;
 [Route("")] // routes are defined in the methods, they depend on the username
 public class BookmarkController : FrameworkBaseController
 {
-    private readonly IUserService _userService;
+    private readonly IAccountService _userService;
     private readonly IBookmarkService _bookmarkService;
 
     public BookmarkController(
-        IUserService userService,
+        IAccountService userService,
         IBookmarkService bookmarkService)
     {
         _userService = userService;

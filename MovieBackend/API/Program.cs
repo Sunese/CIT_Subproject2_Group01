@@ -3,6 +3,9 @@ using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using API.Security;
 
+// https://www.npgsql.org/doc/types/datetime.html#timestamps-and-timezones
+AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
+
 var builder = WebApplication.CreateBuilder(args);
 
 // Add services to the container.
@@ -25,9 +28,10 @@ builder.Services.AddControllers();
 
 builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
 builder.Services.AddScoped<ITitleService, TitleService>();
-builder.Services.AddScoped<IUserService, UserService>();
+builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IUserRatingService, UserRatingService>();
+builder.Services.AddScoped<ISearchService, SearchService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();

@@ -11,18 +11,18 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("[controller]")]
-public class UserController : FrameworkBaseController
+public class AccountController : FrameworkBaseController
 {
-    private readonly IUserService _frameworkService;
+    private readonly IAccountService _accountService;
     private readonly IHashingService _hashingService;
     private readonly IJwtProvider _jwtProvider;
 
-    public UserController(
-        IUserService frameworkService,
+    public AccountController(
+        IAccountService accountService,
         IHashingService hashingService,
         IJwtProvider jwtProvider)
     {
-        _frameworkService = frameworkService;
+        _accountService = accountService;
         _jwtProvider = jwtProvider;
         _hashingService = hashingService;
     }
@@ -30,7 +30,7 @@ public class UserController : FrameworkBaseController
     [HttpPost("login")]
     public IActionResult Login(UserDTO loginUser)
     {
-        if (!_frameworkService.UserExists(loginUser.UserName, out var storedUser))
+        if (!_accountService.UserExists(loginUser.UserName, out var storedUser))
         {
             return BadRequest("User does not exist");
         }
@@ -45,7 +45,7 @@ public class UserController : FrameworkBaseController
     [HttpPost("register")]
     public IActionResult RegisterUser(UserDTO user)
     {
-        if (_frameworkService.UserExists(user.UserName, out _))
+        if (_accountService.UserExists(user.UserName, out _))
         {
             return BadRequest("User with specified username already exists");
         }
@@ -57,7 +57,7 @@ public class UserController : FrameworkBaseController
         user.Password = hash;
         user.Salt = salt;
 
-        _frameworkService.CreateUser(user);
+        _accountService.CreateUser(user);
         return Ok();
     }
 
@@ -65,7 +65,7 @@ public class UserController : FrameworkBaseController
     [Authorize]
     public IActionResult Delete(string? username)
     {
-        if (!_frameworkService.UserExists(username, out _))
+        if (!_accountService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
         }
@@ -73,7 +73,7 @@ public class UserController : FrameworkBaseController
         {
             return Unauthorized();
         }
-        _frameworkService.DeleteUser(username);
+        _accountService.DeleteUser(username);
         return Ok();
     }
 
@@ -83,7 +83,7 @@ public class UserController : FrameworkBaseController
     // password in the URL and when using HTTPS the body is encrypted
     public IActionResult UpdatePassword(string username, [FromBody] UpdatePasswordDTO model)
     {
-        if (!_frameworkService.UserExists(username, out _))
+        if (!_accountService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
         }
@@ -91,7 +91,7 @@ public class UserController : FrameworkBaseController
         {
             return Unauthorized();
         }
-        _frameworkService.UpdatePassword(username, model.NewPassword);
+        _accountService.UpdatePassword(username, model.NewPassword);
         return Ok();
     }
 
@@ -99,7 +99,7 @@ public class UserController : FrameworkBaseController
     [Authorize]
     public IActionResult UpdateEmail(string username, [FromBody] UpdateEmailDTO model)
     {
-        if (!_frameworkService.UserExists(username, out _))
+        if (!_accountService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
         }
@@ -107,7 +107,7 @@ public class UserController : FrameworkBaseController
         {
             return Unauthorized();
         }
-        _frameworkService.UpdateEmail(username, model.NewEmail);
+        _accountService.UpdateEmail(username, model.NewEmail);
         return Ok();
     }
 }

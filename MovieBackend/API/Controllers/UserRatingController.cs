@@ -9,11 +9,11 @@ namespace API.Controllers;
 [Route("")]
 public class UserRatingController : FrameworkBaseController
 {
-    private readonly IUserService _userService;
+    private readonly IAccountService _userService;
     private readonly IUserRatingService _userRatingService;
 
     public UserRatingController(
-        IUserService userService,
+        IAccountService userService,
         IUserRatingService userRatingService)
     {
         _userService = userService;

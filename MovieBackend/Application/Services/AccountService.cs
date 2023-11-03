@@ -12,11 +12,11 @@ using Microsoft.EntityFrameworkCore;
 
 namespace Application.Services;
 
-public class UserService : IUserService
+public class AccountService : IAccountService
 {
     private readonly ImdbContext _imdbContext;
     private readonly IMapper _mapper;
-    public UserService(
+    public AccountService(
         ImdbContext imdbContext, 
         IMapper mapper)
     {

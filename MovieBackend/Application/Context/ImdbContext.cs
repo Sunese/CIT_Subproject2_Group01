@@ -9,6 +9,8 @@ public class ImdbContext : DbContext
     private readonly string _connectionString;
     public DbSet<Title> Titles { get; set; }
     public DbSet<User> Users { get; set; }
+    public DbSet<Name> Names { get; set; }
+    public DbSet<Search> Searches { get; set; }
     public DbSet<TitleBookmark> TitleBookmarks { get; set; }
     public DbSet<NameBookmark> NameBookmarks { get; set; }
     public DbSet<TitleRating> TitleRatings { get; set; }
@@ -182,6 +184,21 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Name>()
             .Property(n => n.DeathYear)
             .HasColumnName("deathyear");
+
+        // Search
+        modelBuilder.Entity<Search>()
+            .ToTable("search");
+        modelBuilder.Entity<Search>()
+            .HasKey(s => new { s.Username, s.Timestamp });
+        modelBuilder.Entity<Search>()
+            .Property(s => s.Username)
+            .HasColumnName("username");
+        modelBuilder.Entity<Search>()
+            .Property(s => s.Query)
+            .HasColumnName("query");
+        modelBuilder.Entity<Search>()
+            .Property(s => s.Timestamp)
+            .HasColumnName("timestamp");
 
         // UserTitleRating
         modelBuilder.Entity<UserRating>()
