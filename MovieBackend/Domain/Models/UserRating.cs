@@ -1,7 +1,7 @@
 ﻿using System;
 namespace Domain.Models;
 
-public class UserRating
+public class UserTitleRating
 {
 
     public string Username { get; set; }

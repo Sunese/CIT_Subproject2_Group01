@@ -9,5 +9,8 @@ namespace Application.Services;
 
 public interface IUserRatingService
 {
-    IList<UserTitleRatingDTO> GetUserTitleRatings(string username, int num);
+    IList<UserTitleRatingDTO> GetUserTitleRatings(string username);
+    bool CreateUserTitleRating(UserTitleRatingDTO userTitleRatingDTO);
+    bool UserTitleRatingExists(string username, string titleId, out UserTitleRatingDTO? userTitleRating);
+    bool DeleteUserTitleRating(UserTitleRatingDTO userTitleRatingDTO);
 }

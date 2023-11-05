@@ -13,5 +13,5 @@ public class UserTitleRatingDTO
     public string TitleId { get; set; }
     public int Rating { get; set; }
     public DateTime TimeStamp { get; set; }
-    public Title Title { get; set; }
+    public TitleDTO Title { get; set; }
 }

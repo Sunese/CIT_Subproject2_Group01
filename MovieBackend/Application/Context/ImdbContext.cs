@@ -14,7 +14,7 @@ public class ImdbContext : DbContext
     public DbSet<TitleBookmark> TitleBookmarks { get; set; }
     public DbSet<NameBookmark> NameBookmarks { get; set; }
     public DbSet<TitleRating> TitleRatings { get; set; }
-    public DbSet<UserRating> UserRatings { get; set; }
+    public DbSet<UserTitleRating> UserTitleRatings { get; set; }
     public DbSet<TitleSearchResult> TitleSearchResults { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
@@ -77,7 +77,8 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Title>()
             .HasOne(t => t.TitleRating)
             .WithMany()
-            .HasForeignKey(t => t.TitleID);
+            .HasForeignKey(t => t.TitleID)
+            .IsRequired(false);
 
 
     modelBuilder.Entity<User>()
@@ -202,20 +203,20 @@ public class ImdbContext : DbContext
             .HasColumnName("timestamp");
 
         // UserTitleRating
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .ToTable("userrating");
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .HasKey(ur => new { ur.Username, ur.TitleId });
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.Username)
             .HasColumnName("username");
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.TitleId)
             .HasColumnName("titleid");
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.Rating)
             .HasColumnName("rating");
-        modelBuilder.Entity<UserRating>()
+        modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.TimeStamp)
             .HasColumnName("timestamp");
 
