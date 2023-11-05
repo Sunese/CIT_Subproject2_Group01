@@ -27,6 +27,14 @@ public class SearchController : FrameworkBaseController
         _searchService = searchService;
     }
 
+    [HttpGet]
+    [Authorize]
+    public IActionResult Search([FromQuery]string query)
+    {
+        var username = HttpContext.User.Identity.Name;
+        return Ok(_searchService.Search(username, query));
+    }
+
     [HttpGet("title")]
     [Authorize]
     public IActionResult TitleSearch([FromQuery]string query)

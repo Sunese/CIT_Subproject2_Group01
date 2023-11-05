@@ -24,7 +24,24 @@ public class SearchService : ISearchService
         _mapper = mapper;
     }
 
-    public IList<NameDTO> NameSearch(string username, string query)
+    public IList<SearchResultDTO> Search(string username, string query)
+    {
+        // TODO: this will cause search history records to be created
+        // twice for the same search
+        var titles = TitleSearch(username, query);
+        var names = NameSearch(username, query);
+
+        return new List<SearchResultDTO>()
+        {
+            new SearchResultDTO()
+            {
+                Titles = titles,
+                Names = names
+            }
+        };
+    }
+
+    public IList<NameSearchResultDTO> NameSearch(string username, string query)
     {
         // TODO: consider the frontend search functionality might "spam"
         // with search requests, hence a lot of search history records
@@ -43,7 +60,7 @@ public class SearchService : ISearchService
             .ToList();
 
         _imdbContext.SaveChanges();
-        return _mapper.Map<IList<NameDTO>>(names);
+        return _mapper.Map<IList<NameSearchResultDTO>>(names);
     }
 
     public IList<TitleSearchResultDTO> TitleSearch(string username, string query)
@@ -60,7 +77,7 @@ public class SearchService : ISearchService
         // We build the query manually here, because we are not aware
         // of a way for EF to call a Postgres function with a variadic
         // parameter.
-        // NOTE: this will cause issues if query contains single quotes
+        // TODO: this will cause issues if query contains single quotes
         // (and possibly other characters that we have not tested for yet)
         var words = query.Split(' ');
         var sqlQuery = new StringBuilder();

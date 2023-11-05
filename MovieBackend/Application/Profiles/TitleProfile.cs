@@ -14,5 +14,6 @@ public class TitleProfile : Profile
     public TitleProfile()
     {
         CreateMap<Title, TitleDTO>();
+        CreateMap<TitleDTO, Title>();
     }
 }

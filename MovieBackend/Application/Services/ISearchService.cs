@@ -10,6 +10,7 @@ namespace Application.Services;
 
 public interface ISearchService
 {
+    IList<SearchResultDTO> Search(string username, string query);
     IList<TitleSearchResultDTO> TitleSearch(string username, string query);
-    IList<NameDTO> NameSearch(string username, string query);
+    IList<NameSearchResultDTO> NameSearch(string username, string query);
 }

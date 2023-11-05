@@ -21,6 +21,15 @@ public class TitleService : ITitleService
         _mapper = mapper;
     }
 
+    public bool TitleExists(string id, out TitleDTO? titleDTO)
+    {
+        var title = _imdbContext.Titles.Find(id);
+        // remove tracking
+        _imdbContext.Entry(title).State = EntityState.Detached;
+        titleDTO = _mapper.Map<TitleDTO>(title);
+        return title != null;
+    }
+
     public IList<TitleDTO> Get(DateOnly startDateTime, DateOnly endDateTime, int count, bool isAdult = false)
     {
         var titles = new List<Title>();
@@ -48,8 +57,11 @@ public class TitleService : ITitleService
 
     public TitleDTO GetTitle(string id, bool isAdult = false)
     {
-        var title = _imdbContext.Titles.FirstOrDefault(t => t.TitleID == id && t.IsAdult == isAdult);
-        return _mapper.Map<TitleDTO>(title);
+        var title = _imdbContext.Titles
+            .Where(t => t.TitleID == id && t.IsAdult == isAdult)
+            .Include(t => t.Genres)
+            .Include(t => t.TitleRating);
+        return _mapper.Map<TitleDTO>(title.FirstOrDefault());
     }
 
     // will get a number of current month and/or year of featured movies

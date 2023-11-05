@@ -5,8 +5,8 @@ using System.Threading.Tasks;
 
 namespace Application.Models;
 
-public class TitleSearchResultDTO
+public class NameSearchResultDTO
 {
-    public string TitleID { get; set; }
-    public string PrimaryTitle { get; set; }
+    public string NameId { get; set; }
+    public string PrimaryName { get; set; }
 }
