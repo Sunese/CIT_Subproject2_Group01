@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Controllers;
 
 [ApiController]
-[Route("[controller]")]
+[Route("api/v1/account")]
 public class AccountController : FrameworkBaseController
 {
     private readonly IAccountService _accountService;
@@ -77,9 +77,12 @@ public class AccountController : FrameworkBaseController
         return Ok();
     }
 
-    [HttpPatch("{username}/password", Name = nameof(UpdatePassword))]
+    [HttpPatch("{username}/password")]
     [Authorize]
-    // UpdatePasswordDTO model from body because we don't want to expose the 
+    // TODO: the model does not actually adhere to the PATCH standard
+    // i.e. {"op": "replace", "path": "/password", "value": "newPassword"}
+
+    // UpdatePasswordDTO model from body because we don't want to expose the
     // password in the URL and when using HTTPS the body is encrypted
     public IActionResult UpdatePassword(string username, [FromBody] UpdatePasswordDTO model)
     {
@@ -95,7 +98,7 @@ public class AccountController : FrameworkBaseController
         return Ok();
     }
 
-    [HttpPatch("{username}/email", Name = nameof(UpdateEmail))]
+    [HttpPatch("{username}/email")]
     [Authorize]
     public IActionResult UpdateEmail(string username, [FromBody] UpdateEmailDTO model)
     {

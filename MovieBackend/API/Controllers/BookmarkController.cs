@@ -10,7 +10,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Controllers;
 
 [ApiController]
-[Route("")] // routes are defined in the methods, they depend on the username
+[Route("api/v1")] // routes are defined in the methods, they depend on the username
 public class BookmarkController : FrameworkBaseController
 {
     private readonly IAccountService _userService;
