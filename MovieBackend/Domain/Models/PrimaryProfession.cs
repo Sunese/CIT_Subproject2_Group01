@@ -3,8 +3,7 @@ namespace Domain.Models;
 
 public class PrimaryProfession
 {
-	public PrimaryProfession()
-	{
-	}
+	public string NameID { get; set; }
+	public string ProfessionName { get; set; }
 }
 

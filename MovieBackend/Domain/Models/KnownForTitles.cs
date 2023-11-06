@@ -3,8 +3,7 @@ namespace Domain.Models;
 
 public class KnownForTitles
 {
-	public KnownForTitles()
-	{
-	}
+	public string TitleID { get; set; }
+	public string NameID { get; set; }
 }
 

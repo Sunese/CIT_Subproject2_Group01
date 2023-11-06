@@ -191,6 +191,93 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Name>()
             .Property(n => n.DeathYear)
             .HasColumnName("deathyear");
+        modelBuilder.Entity<Name>()
+            .HasMany(n => n.PrimaryProfessions)
+            .WithMany()
+            .UsingEntity<PrimaryProfession>();
+        modelBuilder.Entity<Name>()
+            .HasMany(n => n.KnownForTitles)
+            .WithMany()
+            .UsingEntity<KnownForTitles>();
+        // modelBuilder.Entity<Name>()
+        //     .HasMany(n => n.Principals)
+        //     .WithOne(p => p.Name)
+        //     .HasForeignKey(p => p.NameID)
+        //     .IsRequired(false);
+
+        // Principals
+        modelBuilder.Entity<Principal>()
+            .ToTable("principals");
+        modelBuilder.Entity<Principal>()
+            .HasKey(p => new { p.TitleID, p.Ordering });
+        modelBuilder.Entity<Principal>()
+            .Property(p => p.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Principal>()
+            .Property(p => p.NameID)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<Principal>()
+            .Property(p => p.Ordering)
+            .HasColumnName("ordering");
+        modelBuilder.Entity<Principal>()
+            .Property(p => p.Category)
+            .HasColumnName("category");
+        modelBuilder.Entity<Principal>()
+            .Property(p => p.Job)
+            .HasColumnName("job");
+        modelBuilder.Entity<Principal>()
+            .HasMany(p => p.Characters)
+            .WithOne(c => c.Principal)
+            .HasForeignKey(c => new { c.TitleID, c.Ordering })
+            .IsRequired();
+
+        // Character
+        modelBuilder.Entity<Character>()
+            .ToTable("characters");
+        modelBuilder.Entity<Character>()
+            .HasKey(c => new { c.TitleID, c.CharacterName, c.Ordering });
+        modelBuilder.Entity<Character>()
+            .Property(c => c.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Character>()
+            .Property(c => c.Ordering)
+            .HasColumnName("ordering");
+        modelBuilder.Entity<Character>()
+            .Property(c => c.CharacterName)
+            .HasColumnName("charactername");
+
+        // KnownForTitles
+        modelBuilder.Entity<KnownForTitles>()
+            .ToTable("knownfortitles");
+        modelBuilder.Entity<KnownForTitles>()
+            .HasKey(kft => new { kft.NameID, kft.TitleID });
+        modelBuilder.Entity<KnownForTitles>()
+            .Property(kft => kft.NameID)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<KnownForTitles>()
+            .Property(kft => kft.TitleID)
+            .HasColumnName("titleid");
+
+        // Profession
+        modelBuilder.Entity<Profession>()
+            .ToTable("professions");
+        modelBuilder.Entity<Profession>()
+            .HasKey(p => p.ProfessionName);
+        modelBuilder.Entity<Profession>()
+            .Property(p => p.ProfessionName)
+            .HasColumnName("professionname");
+
+        // PrimaryProfession
+        modelBuilder.Entity<PrimaryProfession>()
+            .ToTable("primaryprofession");
+        modelBuilder.Entity<PrimaryProfession>()
+            .HasKey(pp => new { pp.NameID, pp.ProfessionName });
+        modelBuilder.Entity<PrimaryProfession>()
+            .Property(pp => pp.NameID)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<PrimaryProfession>()
+            .Property(pp => pp.ProfessionName)
+            .HasColumnName("professionname");
 
         // Search
         modelBuilder.Entity<Search>()
