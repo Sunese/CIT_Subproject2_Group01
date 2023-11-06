@@ -82,4 +82,11 @@ public class TitleController : ControllerBase
         return Ok(titleAka);
     }
 
+    [HttpGet("{id}/similarmovies")]
+    public IActionResult GetIaActionResult(string id)
+    {
+        var titleAka = _titleService.GetSimiliarMovies(id);
+        return Ok(titleAka);
+    }
+
 }

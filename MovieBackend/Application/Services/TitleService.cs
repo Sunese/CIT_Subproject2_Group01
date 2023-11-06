@@ -169,4 +169,12 @@ public class TitleService : ITitleService
                 .Include(ty => ty.Types)
                 .ToList());
     }
+
+    public IList<SimiliarMoviesResultDTO> GetSimiliarMovies(string titleId)
+    {
+        return _mapper.Map<IList<SimiliarMoviesResultDTO>>(
+            _imdbContext.SimiliarMoviesResult
+                .FromSqlInterpolated($"SELECT * FROM similar_movies({titleId})"))
+                .ToList();
+    }
 }
