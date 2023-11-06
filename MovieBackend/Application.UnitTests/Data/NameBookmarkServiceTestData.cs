@@ -1,4 +1,10 @@
-﻿using Microsoft.Extensions.Options;
+﻿using Application.Context;
+using Application.Profiles;
+using AutoMapper;
+using Domain.Models;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
+using Moq;
 
 namespace Application.UnitTests.Data;
 
@@ -12,47 +18,37 @@ public class NameBookmarkServiceTestData
         });
         var mapper = mockMapper.CreateMapper();
 
-        var bookmarks = new List<NameBookmark>
-        {
-            new()
-            {
-                Username = "testUser",
-                NameId = "nm0000001",
-                Timestamp = DateTime.Now,
-                Notes = "Test notes"
-            },
-            new()
-            {
-                Username = "testUser",
-                NameId = "nm0000002",
-                Timestamp = DateTime.Now,
-                Notes = "Test notes"
-            }
-        };
-
-        var mockSet = new Mock<DbSet<NameBookmark>>();
-        // https://learn.microsoft.com/en-us/ef/ef6/fundamentals/testing/mocking#testing-query-scenarios
-        mockSet.As<IQueryable<NameBookmark>>()
-            .Setup(m => m.Provider)
-            .Returns(bookmarks.AsQueryable().Provider);
-        mockSet.As<IQueryable<NameBookmark>>()
-            .Setup(m => m.Expression)
-            .Returns(bookmarks.AsQueryable().Expression);
-        mockSet.As<IQueryable<NameBookmark>>()
-            .Setup(m => m.ElementType)
-            .Returns(bookmarks.AsQueryable().ElementType);
-        mockSet.As<IQueryable<NameBookmark>>()
-            .Setup(m => m.GetEnumerator())
-            .Returns(bookmarks.AsQueryable().GetEnumerator());
-
         // Using Options.Create() here is simpler than mocking an IOptions with moq
-        var mockOptions = Options.Create(new ImdbContextOptions {ConnectionString = ""});
-        var mockContext = new Mock<ImdbContext>(mockOptions);
-        mockContext.Setup(x => x.NameBookmarks).Returns(mockSet.Object);
+        // var mockOptions = Options.Create(new ImdbContextOptions {ConnectionString = ""});
+
+        var dbContextOptions = new DbContextOptionsBuilder<ImdbContext>()
+            .UseInMemoryDatabase(databaseName: "ImdbTestDatabase")
+            .Options;
+
+        // Insert seed data into the database using one instance of the context
+        using (var context = new ImdbContext(dbContextOptions))
+        {
+            context.Names.Add(new Name{
+                NameId = "nm0000001",
+                PrimaryName = "TestName1",
+                BirthYear = "2000",
+                DeathYear = "2025"
+            });
+            context.Names.Add(new Name{
+                NameId = "nm0000002",
+                PrimaryName = "TestName2",
+                BirthYear = "2000",
+                DeathYear = "2025"
+            });
+            context.Add(new User { UserName = "testUser", Password = "x", Email = "x", Role = "User", Salt = "x" });
+            context.NameBookmarks.Add(new NameBookmark { Username = "testUser", NameId = "nm0000001", Timestamp = DateTime.Now });
+            context.NameBookmarks.Add(new NameBookmark { Username = "testUser", NameId = "nm0000002", Timestamp = DateTime.Now });
+            context.SaveChanges();
+        }
 
         return new List<object[]>
         {
-            new object[] { mapper, mockContext }
+            new object[] { mapper, dbContextOptions }
         };
     }
 }
