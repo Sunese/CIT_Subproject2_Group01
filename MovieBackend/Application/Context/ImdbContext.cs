@@ -77,7 +77,7 @@ public class ImdbContext : DbContext
             .HasColumnName("endyear")
             .HasConversion<YearConverter>();
         modelBuilder.Entity<Title>()
-            // Many-to-many relationship between Title and Genre
+            // Many-to-many relationship between TitleName and Genre
             // using TitleGenre as the join table
             // https://learn.microsoft.com/en-us/ef/core/modeling/relationships/many-to-many#unidirectional-many-to-many
             .HasMany(t => t.Genres)
@@ -89,8 +89,14 @@ public class ImdbContext : DbContext
             .HasForeignKey(t => t.TitleID)
             .IsRequired(false);
 
+        // check if correct
+        modelBuilder.Entity<Title>()
+            .HasMany(t => t.Akas)
+            .WithOne(a => a.Title)
+            .HasForeignKey(t =>  t.TitleId)
+            .IsRequired();
 
-    modelBuilder.Entity<User>()
+        modelBuilder.Entity<User>()
             .ToTable("users");
         modelBuilder.Entity<User>()
             .HasKey(u => u.UserName);
@@ -303,7 +309,7 @@ public class ImdbContext : DbContext
             .Property(a => a.Ordering)
             .HasColumnName("ordering");
         modelBuilder.Entity<Aka>()
-            .Property(a => a.Title)
+            .Property(a => a.TitleName)
             .HasColumnName("title");
         modelBuilder.Entity<Aka>()
             .Property(a => a.Region)
@@ -315,17 +321,24 @@ public class ImdbContext : DbContext
             .Property(a => a.Language)
             .HasColumnName("language");
         modelBuilder.Entity<Aka>()
-            .Property(a => a.IsOridinalTitle)
+            .Property(a => a.IsOriginalTitle)
             .HasColumnName("isoriginaltitle");
+
+        // check if correct
+        modelBuilder.Entity<Aka>()
+            .HasMany(t => t.Types)
+            .WithMany()
+            .UsingEntity<AkaType>();
+
 
         // AkaType
         modelBuilder.Entity<AkaType>()
             .ToTable("akastypes");
         modelBuilder.Entity<AkaType>()
-            .HasKey(at => new { at.TitleId, at.Ordering });
+            .HasKey(at => new { at.TitleId, at.Ordering, at.TypeName });
         modelBuilder.Entity<AkaType>()
             .Property(at => at.TitleId)
-            .HasColumnName("titleId");
+            .HasColumnName("titleid");
         modelBuilder.Entity<AkaType>()
             .Property(at => at.Ordering)
             .HasColumnName("ordering");

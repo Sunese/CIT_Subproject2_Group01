@@ -52,7 +52,7 @@ public class UserRatingController : FrameworkBaseController
 
         if (!_titleService.TitleExists(titleId, out _))
         {
-            return BadRequest("Title does not exist");
+            return BadRequest("TitleName does not exist");
         }
 
         var userRating = _userRatingService.GetUserTitleRatings(username)
@@ -90,7 +90,7 @@ public class UserRatingController : FrameworkBaseController
 
         if (!_titleService.TitleExists(userRating.TitleId, out _))
         {
-            return BadRequest("Title does not exist");
+            return BadRequest("TitleName does not exist");
         }
 
         var rating = ToUserTitleRatingDTO(username, userRating);
@@ -118,7 +118,7 @@ public class UserRatingController : FrameworkBaseController
 
         if (!_titleService.TitleExists(titleId, out _))
         {
-            return BadRequest("Title does not exist");
+            return BadRequest("TitleName does not exist");
         }
 
         if (!_userRatingService.UserTitleRatingExists(username, titleId, out var foundRating))
