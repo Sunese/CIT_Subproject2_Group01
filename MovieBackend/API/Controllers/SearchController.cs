@@ -51,5 +51,30 @@ public class SearchController : FrameworkBaseController
         return Ok(_searchService.NameSearch(username, query));
     }
 
+    // Find actors by name
+    [HttpGet("actor")]
+    [Authorize]
+    public IActionResult ActorSearch([FromQuery]string query)
+    {
+        var username = HttpContext.User.Identity.Name;
+            return Ok(_searchService.FindActors(username, query)); // Use SP
+    }
 
+    // Find writers by name
+    [HttpGet("writer")]
+    [Authorize]
+    public IActionResult WriterSearch([FromQuery]string query)
+    {
+        var username = HttpContext.User.Identity.Name;
+        return Ok(_searchService.FindWriters(username, query)); // Use SP
+    }
+
+    // Find co-players by name
+    [HttpGet("coplayer")]
+    [Authorize]
+    public IActionResult CoPlayerSearch([FromQuery]string query)
+    {
+        var username = HttpContext.User.Identity.Name;
+        return Ok(_searchService.FindCoPlayers(username, query)); // Use SP
+    }
 }

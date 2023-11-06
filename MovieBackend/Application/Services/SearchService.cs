@@ -96,4 +96,28 @@ public class SearchService : ISearchService
         _imdbContext.SaveChanges();
         return _mapper.Map<IList<TitleSearchResultDTO>>(titles);
     }
+
+    public IList<NameSearchResultDTO> FindActors(string username, string query)
+    {
+        var actors = _imdbContext.NameSearchResults
+            .FromSqlInterpolated($"SELECT * FROM find_actors({query}, {username})")
+            .ToList();
+        return _mapper.Map<IList<NameSearchResultDTO>>(actors);
+    }
+
+    public IList<NameSearchResultDTO> FindWriters(string username, string query)
+    {
+        var writers = _imdbContext.NameSearchResults
+            .FromSqlInterpolated($"SELECT * FROM find_writers({query}, {username})")
+            .ToList();
+        return _mapper.Map<IList<NameSearchResultDTO>>(writers);
+    }
+
+    public IList<CoPlayersDTO> FindCoPlayers(string username, string query)
+    {
+        var coPlayers = _imdbContext.CoPlayers
+            .FromSqlInterpolated($"SELECT * FROM co_players({query}, {username})")
+            .ToList();
+        return _mapper.Map<IList<CoPlayersDTO>>(coPlayers);
+    }
 }

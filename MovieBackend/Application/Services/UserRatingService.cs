@@ -24,24 +24,13 @@ public class UserRatingService : IUserRatingService
 
     public bool CreateUserTitleRating(UserTitleRatingDTO userTitleRatingDTO)
     {
-        var newUserTitleRating = _mapper.Map<UserTitleRating>(userTitleRatingDTO);
-
-        // If already exists, overwrite values
-        var userTitleRating = _imdbContext.UserTitleRatings
-            .FirstOrDefault(ur =>
-                ur.Username == userTitleRatingDTO.Username
-                &&
-                ur.TitleId == userTitleRatingDTO.TitleId);
-        if (userTitleRating != null)
-        {
-            userTitleRating.Rating = newUserTitleRating.Rating;
-            userTitleRating.TimeStamp = newUserTitleRating.TimeStamp;
-            return _imdbContext.SaveChanges() > 0;
-        }
-
-        // If not exists, create
-        _imdbContext.UserTitleRatings.Add(newUserTitleRating);
-        return _imdbContext.SaveChanges() > 0;
+        var userTitleRating = _mapper.Map<UserTitleRating>(userTitleRatingDTO);
+        var rowsAffected = _imdbContext.Database.ExecuteSqlInterpolated(
+            $"CALL rate({userTitleRating.Username}, {userTitleRating.TitleId}, {userTitleRating.Rating})");
+        // TODO: rowsAffected returns -1 even though the rating was created
+        // for now we just return true and rely on an exception being thrown
+        // if something went wrong
+        return true;
     }
 
     public IList<UserTitleRatingDTO> GetUserTitleRatings(string username)

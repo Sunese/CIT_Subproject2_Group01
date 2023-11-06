@@ -2,16 +2,17 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Microsoft.EntityFrameworkCore.Query;
 using AutoMapper;
 using Domain.Models;
 using Application.Models;
 
 namespace Application.Profiles;
 
-public class NameSearchResultProfile : Profile
+public class PopularActorsProfile : Profile
 {
-    public NameSearchResultProfile()
+    public PopularActorsProfile()
     {
-        CreateMap<NameSearchResult, NameSearchResultDTO>();
+        CreateMap<PopularActorsResult, PopularActorsDTO>();
     }
 }

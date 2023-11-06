@@ -143,4 +143,12 @@ public class TitleService : ITitleService
         }
         return _mapper.Map<IList<TitleDTO>>(titles);
     }
+
+    public IList<PopularActorsDTO> GetPopularActors(string titleId)
+    {
+        var actors = _imdbContext.PopularActorsResults
+            .FromSqlInterpolated($"SELECT * FROM popular_actors({titleId})")
+            .ToList();
+        return _mapper.Map<IList<PopularActorsDTO>>(actors);
+    }
 }

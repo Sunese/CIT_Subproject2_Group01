@@ -3,8 +3,7 @@ namespace Domain.Models;
 
 public class NameRating
 {
-	public NameRating()
-	{
-	}
+	public string NameId { get; set; }
+	public int Rating { get; set; }
 }
 

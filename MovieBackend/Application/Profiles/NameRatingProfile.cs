@@ -2,16 +2,16 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Models;
 using AutoMapper;
 using Domain.Models;
-using Application.Models;
 
 namespace Application.Profiles;
 
-public class NameSearchResultProfile : Profile
+public class NameRatingProfile : Profile
 {
-    public NameSearchResultProfile()
+    public NameRatingProfile()
     {
-        CreateMap<NameSearchResult, NameSearchResultDTO>();
+        CreateMap<NameRating, NameRatingDTO>();
     }
 }

@@ -1,4 +1,5 @@
-﻿using Domain.Models;
+﻿using Application.Models;
+using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
 
@@ -16,6 +17,10 @@ public class ImdbContext : DbContext
     public DbSet<TitleRating> TitleRatings { get; set; }
     public DbSet<UserTitleRating> UserTitleRatings { get; set; }
     public DbSet<TitleSearchResult> TitleSearchResults { get; set; }
+    public DbSet<NameSearchResult> NameSearchResults { get; set; }
+    public DbSet<CoPlayers> CoPlayers { get; set; }
+    public DbSet<PopularActorsResult> PopularActorsResults { get; set; }
+    public DbSet<NameRating> NameRatings { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -232,5 +237,54 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<TitleSearchResult>()
             .Property(tsr => tsr.Rank)
             .HasColumnName("rank");
+
+        // NameRating
+        modelBuilder.Entity<NameRating>()
+            .ToTable("namerating");
+        modelBuilder.Entity<NameRating>()
+            .HasKey(nr => nr.NameId);
+        modelBuilder.Entity<NameRating>()
+            .Property(nr => nr.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<NameRating>()
+            .Property(nr => nr.Rating)
+            .HasColumnName("rating");
+
+
+        // Popular Actors result
+        modelBuilder.Entity<PopularActorsResult>()
+            .HasNoKey();
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.PrimaryName)
+            .HasColumnName("primaryname");
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.Rating)
+            .HasColumnName("rating");
+
+        // NameSearchResult
+        modelBuilder.Entity<NameSearchResult>()
+            .HasNoKey();
+        modelBuilder.Entity<NameSearchResult>()
+            .Property(nsr => nsr.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<NameSearchResult>()
+            .Property(nsr => nsr.PrimaryName)
+            .HasColumnName("primaryname");
+
+        // CoPlayers
+        modelBuilder.Entity<CoPlayers>()
+            .HasNoKey();
+        modelBuilder.Entity<CoPlayers>()
+            .Property(cp => cp.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<CoPlayers>()
+            .Property(cp => cp.PrimaryName)
+            .HasColumnName("primaryname");
+        modelBuilder.Entity<CoPlayers>()
+            .Property(cp => cp.Frequency)
+            .HasColumnName("frequency");
     }
 }

@@ -5,7 +5,7 @@ using Microsoft.AspNetCore.Mvc;
 namespace API.Controllers;
 
 [ApiController]
-[Route("api/v1")]
+[Route("api/v1/title")]
 public class TitleController : ControllerBase
 {
 
@@ -63,5 +63,13 @@ public class TitleController : ControllerBase
     {
         var titles = _titleService.GetRatings(orderByHighestRating, count, days);
         return Ok(new { count = titles.Count, titles });
+    }
+
+    // title/{id}/popularActors
+    [HttpGet("{id}/popularActors")]
+    public IActionResult GetPopularActors(string id)
+    { 
+        var actors = _titleService.GetPopularActors(id);
+        return Ok(new { count = actors.Count, actors });
     }
 }
