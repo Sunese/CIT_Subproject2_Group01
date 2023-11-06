@@ -25,6 +25,7 @@ public class ImdbContext : DbContext
     public DbSet<Aka> Aka { get; set; }
     public DbSet<AkaType> AkaType { get; set; }
     public DbSet<Type> Type { get; set; }
+    public DbSet<SimiliarMoviesResult> SimiliarMoviesResult { get; set; }
 
     public ImdbContext(IOptions<ImdbContextOptions> options)
     {
@@ -88,8 +89,6 @@ public class ImdbContext : DbContext
             .WithMany()
             .HasForeignKey(t => t.TitleID)
             .IsRequired(false);
-
-        // check if correct
         modelBuilder.Entity<Title>()
             .HasMany(t => t.Akas)
             .WithOne(a => a.Title)
@@ -323,8 +322,6 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Aka>()
             .Property(a => a.IsOriginalTitle)
             .HasColumnName("isoriginaltitle");
-
-        // check if correct
         modelBuilder.Entity<Aka>()
             .HasMany(t => t.Types)
             .WithMany()
@@ -354,5 +351,21 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Type>()
             .Property(at => at.TypeName)
             .HasColumnName("typename");
+
+        // SimiliarMovieResult
+        modelBuilder.Entity<SimiliarMoviesResult>()
+            .HasNoKey();
+        modelBuilder.Entity<SimiliarMoviesResult>()
+            .Property(smr => smr.TitleId)
+            .HasColumnName("_titleid");
+        modelBuilder.Entity<SimiliarMoviesResult>()
+            .Property(smr => smr.PrimaryTitle)
+            .HasColumnName("primarytitle");
+        modelBuilder.Entity<SimiliarMoviesResult>()
+            .Property(smr => smr.StartYear)
+            .HasColumnName("startyear");
+        modelBuilder.Entity<SimiliarMoviesResult>()
+            .Property(smr => smr.RunTimeMinutes)
+            .HasColumnName("runtimeminutes");
     }
 }
