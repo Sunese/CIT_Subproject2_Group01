@@ -2,6 +2,7 @@
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
 using Microsoft.Extensions.Options;
+using Type = Domain.Models.Type;
 
 namespace Application.Context;
 
@@ -21,6 +22,9 @@ public class ImdbContext : DbContext
     public DbSet<CoPlayers> CoPlayers { get; set; }
     public DbSet<PopularActorsResult> PopularActorsResults { get; set; }
     public DbSet<NameRating> NameRatings { get; set; }
+    public DbSet<Aka> Aka { get; set; }
+    public DbSet<AkaType> AkaType { get; set; }
+    public DbSet<Type> Type { get; set; }
 
     public ImdbContext(
         DbContextOptions<ImdbContext> dbContextOptions) : base(dbContextOptions)
@@ -99,7 +103,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<User>()
             .Property(u => u.Email)
             .HasColumnName("email");
-        modelBuilder.Entity<User>()
+        modelBuilder.Entity<User>()   
             .Property(u => u.Salt)
             .HasColumnName("salt");
         modelBuilder.Entity<User>()
@@ -373,5 +377,56 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<CoPlayers>()
             .Property(cp => cp.Frequency)
             .HasColumnName("frequency");
+
+        // TitleAkas
+        modelBuilder.Entity<Aka>()
+            .ToTable("akas"); 
+        modelBuilder.Entity<Aka>()
+            .HasKey(a => new { a.TitleId, a.Ordering });
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.TitleId)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.Ordering)
+            .HasColumnName("ordering");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.Title)
+            .HasColumnName("title");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.Region)
+            .HasColumnName("region");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.Attribtues)
+            .HasColumnName("attributes");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.Language)
+            .HasColumnName("language");
+        modelBuilder.Entity<Aka>()
+            .Property(a => a.IsOridinalTitle)
+            .HasColumnName("isoriginaltitle");
+
+        // AkaType
+        modelBuilder.Entity<AkaType>()
+            .ToTable("akastypes");
+        modelBuilder.Entity<AkaType>()
+            .HasKey(at => new { at.TitleId, at.Ordering });
+        modelBuilder.Entity<AkaType>()
+            .Property(at => at.TitleId)
+            .HasColumnName("titleId");
+        modelBuilder.Entity<AkaType>()
+            .Property(at => at.Ordering)
+            .HasColumnName("ordering");
+        modelBuilder.Entity<AkaType>()
+            .Property(at => at.TypeName)
+            .HasColumnName("typename");
+
+        // Type
+        modelBuilder.Entity<Type>()
+            .ToTable("types");
+        modelBuilder.Entity<Type>()
+            .HasKey(t => t.TypeName);
+        modelBuilder.Entity<Type>()
+            .Property(at => at.TypeName)
+            .HasColumnName("typename");
     }
 }
