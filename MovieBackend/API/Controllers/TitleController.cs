@@ -33,14 +33,14 @@ public class TitleController : ControllerBase
         return _titleService.GetTitle(id);
     }
 
-    // Title/GetFeature
+    // TitleName/GetFeature
     [HttpGet(nameof(GetFeature))]
     public IList<TitleDTO> GetFeature(int year = 0, int month = 0, int count = 10)
     {
         return _titleService.GetFeature(year, month, count);
     }
 
-    // Title/GetPopular
+    // TitleName/GetPopular
     [HttpGet(nameof(GetPopular))]
     public IList<TitleDTO> GetPopular(int year = 1, int month = 1, int day = 1, int count = 10)
     {
@@ -48,7 +48,7 @@ public class TitleController : ControllerBase
         return _titleService.GetPopular(datetime, count);
     }
 
-    // Title/{id}/rating
+    // TitleName/{id}/rating
     [HttpGet("{id}/rating")]
     public TitleRatingDTO? GetRating(string id)
     {

@@ -37,7 +37,7 @@ public class TitleService : ITitleService
         if (startDateTime.Year == 1 && endDateTime.Year == 9999)
         {
             titles = _imdbContext.Titles
-                .Include(t => t.Genres)
+                .Include(t => t.Genres)  
                 .Where(t => t.IsAdult == isAdult)
                 .Take(count)
                 .ToList();
@@ -159,14 +159,14 @@ public class TitleService : ITitleService
             return _mapper.Map<IList<AkaDTO>>(
                 _imdbContext.Aka
                 .Where(ta => ta.TitleId == id && ta.Ordering == ordering)
-                .ToString());
+                .Include(ty => ty.Types)
+                .ToList());
         }
-        else
-        {
-            return _mapper.Map<IList<AkaDTO>>(
-                _imdbContext.Aka
-                    .Where(ta => ta.TitleId == id)
-                    .ToString());
-        }
+
+        return _mapper.Map<IList<AkaDTO>>(
+            _imdbContext.Aka
+                .Where(ta => ta.TitleId == id)
+                .Include(ty => ty.Types)
+                .ToList());
     }
 }
