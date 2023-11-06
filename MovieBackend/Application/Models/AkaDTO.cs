@@ -1,7 +1,12 @@
 ﻿using System;
-namespace Domain.Models;
+using System.Collections.Generic;
+using System.Linq;
+using System.Text;
+using System.Threading.Tasks;
 
-public class Aka
+namespace Application.Models;
+
+public class AkaDTO
 {
     public string TitleId { get; set; }
     public int Ordering { get; set; }
@@ -11,4 +16,3 @@ public class Aka
     public string Language { get; set; }
     public bool IsOridinalTitle { get; set; }
 }
-

@@ -151,4 +151,22 @@ public class TitleService : ITitleService
             .ToList();
         return _mapper.Map<IList<PopularActorsDTO>>(actors);
     }
+
+    public IList<AkaDTO> GetAkas(string id, int ordering)
+    {
+        if (ordering != 0)
+        {
+            return _mapper.Map<IList<AkaDTO>>(
+                _imdbContext.Aka
+                .Where(ta => ta.TitleId == id && ta.Ordering == ordering)
+                .ToString());
+        }
+        else
+        {
+            return _mapper.Map<IList<AkaDTO>>(
+                _imdbContext.Aka
+                    .Where(ta => ta.TitleId == id)
+                    .ToString());
+        }
+    }
 }

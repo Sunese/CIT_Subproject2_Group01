@@ -18,4 +18,5 @@ public interface ITitleService
     TitleRatingDTO? GetRating(string id);
     IList<TitleDTO> GetRatings(bool orderByHighestRating, int count, int? days);
     IList<PopularActorsDTO> GetPopularActors(string titleId);
+    IList<AkaDTO> GetAkas(string id, int ordering);
 }

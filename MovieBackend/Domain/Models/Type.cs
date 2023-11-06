@@ -3,8 +3,5 @@ namespace Domain.Models;
 
 public class Type
 {
-	public Type()
-	{
-	}
+	public string TypeName { get; set; }
 }
-

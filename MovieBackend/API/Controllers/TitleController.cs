@@ -19,7 +19,8 @@ public class TitleController : ControllerBase
     }
 
     [HttpGet]
-    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999, int endMonth = 12, int endDay = 31, int num = 10)
+    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999,
+        int endMonth = 12, int endDay = 31, int num = 10)
     {
         DateOnly startDate = new(startYear, startMonth, startDay);
         DateOnly endDate = new(endYear, endMonth, endDay);
@@ -68,8 +69,17 @@ public class TitleController : ControllerBase
     // title/{id}/popularActors
     [HttpGet("{id}/popularActors")]
     public IActionResult GetPopularActors(string id)
-    { 
+    {
         var actors = _titleService.GetPopularActors(id);
         return Ok(new { count = actors.Count, actors });
     }
+
+
+    [HttpGet("{id}/aka")]
+    public IActionResult GetIaActionResult(string id, int ordering = 0)
+    {
+        var titleAka = _titleService.GetAkas(id, ordering);
+        return Ok(titleAka);
+    }
+
 }
