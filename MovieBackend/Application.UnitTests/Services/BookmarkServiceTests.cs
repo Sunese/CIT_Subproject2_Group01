@@ -1,9 +1,12 @@
 using Application.Context;
 using Application.Models;
 using Application.Profiles;
+using Application.Services;
+using Application.UnitTests.Data;
 using AutoMapper;
 using Domain.Models;
 using Microsoft.EntityFrameworkCore;
+using Microsoft.Extensions.Options;
 using Moq;
 
 namespace Application.UnitTests.Services;
@@ -15,13 +18,14 @@ public class BookmarkServiceTests
     [MemberData(nameof(TitleBookmarkServiceTestData.Data), MemberType = typeof(TitleBookmarkServiceTestData))]
     public void GetTitleBookmarks_ExistingUsername_ReturnsBookmarks(
         IMapper mapper,
-        Mock<ImdbContext> mockContext
+        DbContextOptions<ImdbContext> dbContextOptions
     )
     {
         // Arrange
-        var service = new BookmarkService(mockContext.Object, mapper);
+        using var context = new ImdbContext(dbContextOptions);
+        var service = new BookmarkService(context, mapper);
         // Act
-        var bookmarks = service.GetTitleBookmarks("testUser");
+        var bookmarks = service.GetTitleBookmarks("testUser", OrderBy.Alphabetical, 10);
         // Assert
         Assert.Equal(2, bookmarks.Count);
         Assert.Equal("tt0000001", bookmarks[0].TitleId);
@@ -32,13 +36,14 @@ public class BookmarkServiceTests
     [MemberData(nameof(TitleBookmarkServiceTestData.Data), MemberType = typeof(TitleBookmarkServiceTestData))]
     public void GetTitleBookmarks_NonExistingUsername_ReturnsEmptyList(
         IMapper mapper,
-        Mock<ImdbContext> mockContext
+        DbContextOptions<ImdbContext> dbContextOptions
     )
     {
         // Arrange
-        var service = new BookmarkService(mockContext.Object, mapper);
+        using var context = new ImdbContext(dbContextOptions);
+        var service = new BookmarkService(context, mapper);
         // Act
-        var bookmarks = service.GetTitleBookmarks("nonExistingUser");
+        var bookmarks = service.GetTitleBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
         // Assert
         Assert.Empty(bookmarks);
     }
@@ -47,13 +52,14 @@ public class BookmarkServiceTests
     [MemberData(nameof(NameBookmarkServiceTestData.Data), MemberType = typeof(NameBookmarkServiceTestData))]
     public void GetNameBookmarks_ExistingUsername_ReturnsBookmarks(
         IMapper mapper,
-        Mock<ImdbContext> mockContext
+        DbContextOptions<ImdbContext> dbContextOptions
     )
     {
         // Arrange
-        var service = new BookmarkService(mockContext.Object, mapper);
+        using var context = new ImdbContext(dbContextOptions);
+        var service = new BookmarkService(context, mapper);
         // Act
-        var bookmarks = service.GetNameBookmarks("testUser");
+        var bookmarks = service.GetNameBookmarks("testUser", OrderBy.Alphabetical, 10);
         // Assert
         Assert.Equal(2, bookmarks.Count);
         Assert.Equal("nm0000001", bookmarks[0].NameId);
@@ -64,13 +70,14 @@ public class BookmarkServiceTests
     [MemberData(nameof(NameBookmarkServiceTestData.Data), MemberType = typeof(NameBookmarkServiceTestData))]
     public void GetNameBookmarks_NonExistingUsername_ReturnsEmptyList(
         IMapper mapper,
-        Mock<ImdbContext> mockContext
+        DbContextOptions<ImdbContext> dbContextOptions
     )
     {
         // Arrange
-        var service = new BookmarkService(mockContext.Object, mapper);
+        using var context = new ImdbContext(dbContextOptions);
+        var service = new BookmarkService(context, mapper);
         // Act
-        var bookmarks = service.GetNameBookmarks("nonExistingUser");
+        var bookmarks = service.GetNameBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
         // Assert
         Assert.Empty(bookmarks);
     }

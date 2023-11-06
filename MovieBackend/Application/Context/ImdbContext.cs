@@ -7,7 +7,7 @@ namespace Application.Context;
 
 public class ImdbContext : DbContext
 {
-    private readonly string _connectionString;
+
     public DbSet<Title> Titles { get; set; }
     public DbSet<User> Users { get; set; }
     public DbSet<Name> Names { get; set; }
@@ -22,18 +22,18 @@ public class ImdbContext : DbContext
     public DbSet<PopularActorsResult> PopularActorsResults { get; set; }
     public DbSet<NameRating> NameRatings { get; set; }
 
-    public ImdbContext(IOptions<ImdbContextOptions> options)
+    public ImdbContext(
+        DbContextOptions<ImdbContext> dbContextOptions) : base(dbContextOptions)
     {
-        _connectionString = options.Value.ConnectionString;
     }
 
-    protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
-    {
-        optionsBuilder.EnableSensitiveDataLogging();
-        optionsBuilder.LogTo(Console.Out.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
-        // Set up configurations
-        optionsBuilder.UseNpgsql(_connectionString);
-    }
+    // protected override void OnConfiguring(DbContextOptionsBuilder optionsBuilder)
+    // {
+    //     optionsBuilder.EnableSensitiveDataLogging();
+    //     optionsBuilder.LogTo(Console.Out.WriteLine, Microsoft.Extensions.Logging.LogLevel.Information);
+    //     // Set up configurations
+    //     optionsBuilder.UseNpgsql(_connectionString);
+    // }
 
     protected override void OnModelCreating(ModelBuilder modelBuilder)
     {

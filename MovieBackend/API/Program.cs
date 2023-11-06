@@ -3,6 +3,10 @@ using Application.Services;
 using Microsoft.AspNetCore.Authentication.JwtBearer;
 using API.Security;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.Extensions.Options;
+using Npgsql;
+using Microsoft.EntityFrameworkCore;
+using Microsoft.VisualBasic;
 
 // https://www.npgsql.org/doc/types/datetime.html#timestamps-and-timezones
 AppContext.SetSwitch("Npgsql.EnableLegacyTimestampBehavior", true);
@@ -37,7 +41,14 @@ builder.Services.AddAuthorization(options =>
 
 builder.Services.AddControllers();
 
-builder.Services.AddDbContext<ImdbContext>(); // Defaults to scoped
+builder.Services.AddDbContext<ImdbContext>(
+    options =>
+    {
+        options.EnableSensitiveDataLogging();
+        options.LogTo(Console.Out.WriteLine, LogLevel.Information);
+        options.UseNpgsql(builder.Configuration.GetValue<string>("ImdbContext:ConnectionString"));
+    }
+); // Defaults to scoped
 builder.Services.AddScoped<ITitleService, TitleService>();
 builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
