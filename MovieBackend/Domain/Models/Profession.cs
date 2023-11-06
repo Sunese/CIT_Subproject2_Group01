@@ -3,8 +3,6 @@ namespace Domain.Models;
 
 public class Profession
 {
-	public Profession()
-	{
-	}
+	public string ProfessionName { get; set; }
 }
 

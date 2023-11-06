@@ -8,5 +8,5 @@ public class NameBookmarkDTO
     public string NameId { get; set; }
     public DateTime Timestamp { get; set; }
     public string Notes { get; set; } = string.Empty; // Default to empty string
-    public Name Name { get; set; }
+    public NameDTO Name { get; set; }
 }

@@ -43,6 +43,7 @@ builder.Services.AddScoped<IAccountService, AccountService>();
 builder.Services.AddScoped<IBookmarkService, BookmarkService>();
 builder.Services.AddScoped<IUserRatingService, UserRatingService>();
 builder.Services.AddScoped<ISearchService, SearchService>();
+builder.Services.AddScoped<INameService, NameService>();
 builder.Services.AddAutoMapper(AppDomain.CurrentDomain.GetAssemblies());
 
 var app = builder.Build();
