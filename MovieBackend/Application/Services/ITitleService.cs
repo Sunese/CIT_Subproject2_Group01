@@ -11,7 +11,7 @@ namespace Application.Services;
 public interface ITitleService
 {
     bool TitleExists(string id, out TitleDTO? title);
-    IList<TitleDTO> Get(DateOnly startdatetime, DateOnly enddatetime, int count, bool isAdult = false);
+    (IList<TitleDTO> titles, int count) Get(DateOnly startDateTime, DateOnly endDateTime, int count, int page, bool isAdult = false);
     TitleDTO GetTitle(string id, bool isAdult = false);
     IList<TitleDTO> GetFeature(int year, int month, int count, bool isAdult = false);
     IList<TitleDTO> GetPopular(DateOnly datetime, int count, bool isAdult = false);

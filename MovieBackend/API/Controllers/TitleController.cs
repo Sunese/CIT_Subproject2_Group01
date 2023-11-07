@@ -6,25 +6,28 @@ namespace API.Controllers;
 
 [ApiController]
 [Route("api/v1/title")]
-public class TitleController : ControllerBase
+public class TitleController : BaseController
 {
 
     private readonly ILogger<TitleController> _logger;
     private readonly ITitleService _titleService;
 
-    public TitleController(ILogger<TitleController> logger, ITitleService titleService)
+    public TitleController(ILogger<TitleController> logger, ITitleService titleService, LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _logger = logger;
         _titleService = titleService;
     }
 
     [HttpGet]
-    public IList<TitleDTO> Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999,
-        int endMonth = 12, int endDay = 31, int num = 10)
+    public IActionResult Get(int startYear = 1, int startMonth = 1, int startDay = 1, int endYear = 9999,
+        int endMonth = 12, int endDay = 31, int num = 10, int page = 0, bool isAdult = false)
     {
         DateOnly startDate = new(startYear, startMonth, startDay);
         DateOnly endDate = new(endYear, endMonth, endDay);
-        return _titleService.Get(startDate, endDate, num);
+        (var titles, var total) = _titleService.Get(startDate, endDate, num, page, isAdult);
+        var items = titles.Select(CreateTitlePageModel);
+        
+        return Ok(Paging(items, total, page, num, nameof(Get)));
     }
 
     [HttpGet("{id}")]
@@ -89,4 +92,13 @@ public class TitleController : ControllerBase
         return Ok(titleAka);
     }
 
+    private object CreateTitlePageModel(TitleDTO title)
+    {
+        return new
+        {
+            Url = GetUrl(nameof(Get), new { title.TitleID }),
+            Name = title.PrimaryTitle,
+            Description = title.Plot
+        };
+    }
 }
