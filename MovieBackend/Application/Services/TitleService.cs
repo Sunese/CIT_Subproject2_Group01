@@ -30,7 +30,7 @@ public class TitleService : ITitleService
         return title != null;
     }
 
-    public IList<TitleDTO> Get(DateOnly startDateTime, DateOnly endDateTime, int count, bool isAdult = false)
+    public (IList<TitleDTO> titles, int count) Get(DateOnly startDateTime, DateOnly endDateTime, int count, int page, bool isAdult)
     {
         var titles = new List<Title>();
         // default input of start- and endDateTime
@@ -39,9 +39,10 @@ public class TitleService : ITitleService
             titles = _imdbContext.Titles
                 .Include(t => t.Genres)  
                 .Where(t => t.IsAdult == isAdult)
+                .Skip(page * count)
                 .Take(count)
                 .ToList();
-            return _mapper.Map<IList<TitleDTO>>(titles);
+            return (_mapper.Map<IList<TitleDTO>>(titles), _imdbContext.Titles.Count());
         }
         titles = _imdbContext.Titles
             .Include(t => t.Genres)
@@ -50,9 +51,10 @@ public class TitleService : ITitleService
                 t.Released.HasValue &&
                 t.Released.Value.Year >= startDateTime.Year &&
                 t.Released.Value.Year <= endDateTime.Year)
+            .Skip(page * count)
             .Take(count)
             .ToList();
-        return _mapper.Map<IList<TitleDTO>>(titles);
+        return (_mapper.Map<IList<TitleDTO>>(titles), _imdbContext.Titles.Count());
     }
 
     public TitleDTO GetTitle(string id, bool isAdult = false)
