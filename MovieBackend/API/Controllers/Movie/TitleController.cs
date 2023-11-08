@@ -38,8 +38,8 @@ public class TitleController : MovieBaseController
         return Ok(Paging(items, total, page, pageSize, nameof(GetTitles)));
     }
 
-    [HttpGet("{id}", Name = nameof(GetById))]
-    public IActionResult GetById(string id)
+    [HttpGet("{id}", Name = nameof(GetTitle))]
+    public IActionResult GetTitle(string id)
     {
         if (!_titleService.TitleExists(id, out var titleDTO))
         {
@@ -48,24 +48,24 @@ public class TitleController : MovieBaseController
         return Ok(titleDTO);
     }
 
-    [HttpGet("featured", Name = nameof(GetFeatured))]
-    public IActionResult GetFeatured(int page = 0, int pageSize = 10)
+    [HttpGet("featured", Name = nameof(GetFeaturedTitles))]
+    public IActionResult GetFeaturedTitles(int page = 0, int pageSize = 10)
     {
         var (titles, total) = _titleService.GetFeatured(page, pageSize);
         var items = titles.Select(CreateTitlePageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetFeatured)));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetFeaturedTitles)));
     }
 
-    [HttpGet("popular", Name = nameof(GetPopular))]
-    public IActionResult GetPopular(int page = 0, int pageSize = 10)
+    [HttpGet("popular", Name = nameof(GetPopularTitles))]
+    public IActionResult GetPopularTitles(int page = 0, int pageSize = 10)
     {
         var (titles, total) = _titleService.GetPopular(page, pageSize);
         var items = titles.Select(CreateTitlePageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetPopular)));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetPopularTitles)));
     }
 
-    [HttpGet("{id}/rating", Name = nameof(GetRating))]
-    public IActionResult GetRating(string id)
+    [HttpGet("{id}/rating", Name = nameof(GetTitleRating))]
+    public IActionResult GetTitleRating(string id)
     {
         var rating = _titleService.GetRating(id);
         if (rating == null)
@@ -79,30 +79,30 @@ public class TitleController : MovieBaseController
     // where OrderBy can be AverageRating or NumVotes
     // count is the number of titles to return
     // all query parameters are optional
-    [HttpGet("rating", Name = nameof(GetRatings))]
-    public IActionResult GetRatings(int page = 0, int pageSize = 10, bool orderByHighestRating = true, int? days = null)
+    [HttpGet("rating", Name = nameof(GetTitleRatings))]
+    public IActionResult GetTitleRatings(int page = 0, int pageSize = 10, bool orderByHighestRating = true, int? days = null)
     {
         var (ratings, total) = _titleService.GetRatings(page, pageSize, orderByHighestRating, days);
         var items = ratings.Select(CreateTitleRatingPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetRatings)));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetTitleRatings)));
     }
 
     // title/{id}/popularActors
-    [HttpGet("{id}/popularActors", Name = nameof(GetPopularActors))]
-    public IActionResult GetPopularActors(string id, int page = 0, int pageSize = 10)
+    [HttpGet("{id}/popularActors", Name = nameof(GetPopularActorsFromTitle))]
+    public IActionResult GetPopularActorsFromTitle(string id, int page = 0, int pageSize = 10)
     {
         var (popularActors, total) = _titleService.GetPopularActors(id, page, pageSize);
         var items = popularActors.Select(CreatePopularActorPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetPopularActors), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetPopularActorsFromTitle), id));
     }
 
 
-    [HttpGet("{id}/aka", Name = nameof(GetAkas))]
-    public IActionResult GetAkas(string id, int page = 0, int pageSize = 10)
+    [HttpGet("{id}/aka", Name = nameof(GetTitleAkas))]
+    public IActionResult GetTitleAkas(string id, int page = 0, int pageSize = 10)
     {
         var (akas, total) = _titleService.GetAkas(id, page, pageSize);
         var items = akas.Select(CreateAkaPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetAkas), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetTitleAkas), id));
     }
 
     [HttpGet("{id}/similarmovies", Name = nameof(GetSimiliarMovies))]
@@ -117,7 +117,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            Url = GetUrl(nameof(GetById), new { id = title.TitleID }),
+            Url = GetUrl(nameof(GetTitle), new { id = title.TitleID }),
             Name = title.PrimaryTitle,
             Released = title.Released,
             Poster = title.Poster
@@ -128,7 +128,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            Url = GetUrl(nameof(GetRating), new { id = titleRatingDTO.TitleID }),
+            Url = GetUrl(nameof(GetTitleRating), new { id = titleRatingDTO.TitleID }),
             PrimaryTitle = titleRatingDTO.PrimaryTitle,
             AverageRating = titleRatingDTO.AverageRating,
             NumVotes = titleRatingDTO.NumVotes
@@ -149,7 +149,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            Url = GetUrl(nameof(GetAkas), new { id = akaDTO.TitleId }),
+            Url = GetUrl(nameof(GetTitleAkas), new { id = akaDTO.TitleId }),
             TitleName = akaDTO.TitleName,
             Language = akaDTO.Language,
             Region = akaDTO.Region
@@ -160,7 +160,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            Url = GetUrl(nameof(GetById), new { id = similiarMovieDTO.TitleId }),
+            Url = GetUrl(nameof(GetTitle), new { id = similiarMovieDTO.TitleId }),
             Title = similiarMovieDTO.PrimaryTitle
         };
     }
