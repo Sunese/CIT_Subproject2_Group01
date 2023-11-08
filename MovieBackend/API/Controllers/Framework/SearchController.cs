@@ -28,54 +28,76 @@ public class SearchController : MovieBaseController
         _searchService = searchService;
     }
 
-    [HttpGet]
+    [HttpGet("title", Name = nameof(TitleSearch))]
     [Authorize]
-    public IActionResult Search([FromQuery] string query)
+    public IActionResult TitleSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.Search(username, query));
+        var (searchResult, total) = _searchService.TitleSearch(username, query, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Url = GetUrl("GetTitle", new { id = result.TitleID }),
+            PrimaryTitle = result.PrimaryTitle
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(TitleSearch)));
     }
 
-    [HttpGet("title")]
+    [HttpGet("name", Name = nameof(NameSearch))]
     [Authorize]
-    public IActionResult TitleSearch([FromQuery] string query)
+    public IActionResult NameSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.TitleSearch(username, query));
-    }
-
-    [HttpGet("name")]
-    [Authorize]
-    public IActionResult NameSearch([FromQuery] string query)
-    {
-        var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.NameSearch(username, query));
+        var (searchResult, total) = _searchService.NameSearch(username, query, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Url = GetUrl("GetName", new { id = result.NameId }),
+            PrimaryName = result.PrimaryName
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(NameSearch)));
     }
 
     // Find actors by name
-    [HttpGet("actor")]
+    [HttpGet("actor", Name = nameof(ActorSearch))]
     [Authorize]
-    public IActionResult ActorSearch([FromQuery] string query)
+    public IActionResult ActorSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.FindActors(username, query)); // Use SP
+        var (searchResult, total) = _searchService.FindActors(username, query, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Url = GetUrl("GetName", new { id = result.NameId }),
+            PrimaryName = result.PrimaryName
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(ActorSearch)));
     }
 
     // Find writers by name
-    [HttpGet("writer")]
+    [HttpGet("writer", Name = nameof(WriterSearch))]
     [Authorize]
-    public IActionResult WriterSearch([FromQuery] string query)
+    public IActionResult WriterSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.FindWriters(username, query)); // Use SP
+        var (searchResult, total) = _searchService.FindWriters(username, query, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Url = GetUrl("GetName", new { id = result.NameId }),
+            PrimaryName = result.PrimaryName
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(WriterSearch)));
     }
 
     // Find co-players by name
-    [HttpGet("coplayer")]
+    [HttpGet("coplayer", Name = nameof(CoPlayerSearch))]
     [Authorize]
-    public IActionResult CoPlayerSearch([FromQuery] string query)
+    public IActionResult CoPlayerSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        return Ok(_searchService.FindCoPlayers(username, query)); // Use SP
+        var (searchResult, total) = _searchService.FindCoPlayers(username, query, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Url = GetUrl("GetName", new { id = result.NameId }),
+            PrimaryName = result.PrimaryName
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(CoPlayerSearch)));
     }
 }

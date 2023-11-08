@@ -24,24 +24,7 @@ public class SearchService : ISearchService
         _mapper = mapper;
     }
 
-    public IList<SearchResultDTO> Search(string username, string query)
-    {
-        // TODO: this will cause search history records to be created
-        // twice for the same search
-        var titles = TitleSearch(username, query);
-        var names = NameSearch(username, query);
-
-        return new List<SearchResultDTO>()
-        {
-            new SearchResultDTO()
-            {
-                Titles = titles,
-                Names = names
-            }
-        };
-    }
-
-    public IList<NameSearchResultDTO> NameSearch(string username, string query)
+    public (IList<NameSearchResultDTO>, int) NameSearch(string username, string query, int page, int pageSize)
     {
         // TODO: consider the frontend search functionality might "spam"
         // with search requests, hence a lot of search history records
@@ -56,14 +39,17 @@ public class SearchService : ISearchService
         _imdbContext.Searches.Add(search);
 
         var names = _imdbContext.Names
-            .Where(n => n.PrimaryName.ToLower().Contains(query.ToLower()))
+            .Where(n => n.PrimaryName.ToLower().Contains(query.ToLower()));
+        var paged = names
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
 
         _imdbContext.SaveChanges();
-        return _mapper.Map<IList<NameSearchResultDTO>>(names);
+        return (_mapper.Map<IList<NameSearchResultDTO>>(paged), names.Count());
     }
 
-    public IList<TitleSearchResultDTO> TitleSearch(string username, string query)
+    public (IList<TitleSearchResultDTO>, int) TitleSearch(string username, string query, int page, int pageSize)
     {
         var search = new Search()
         {
@@ -90,34 +76,46 @@ public class SearchService : ISearchService
         sqlQuery.Append(");");
 
         var titles = _imdbContext.TitleSearchResults
-            .FromSqlRaw(sqlQuery.ToString())
+            .FromSqlRaw(sqlQuery.ToString());
+        var paged = titles
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
 
         _imdbContext.SaveChanges();
-        return _mapper.Map<IList<TitleSearchResultDTO>>(titles);
+        return (_mapper.Map<IList<TitleSearchResultDTO>>(paged), titles.Count());
     }
 
-    public IList<NameSearchResultDTO> FindActors(string username, string query)
+    public (IList<NameSearchResultDTO>, int) FindActors(string username, string query, int page, int pageSize)
     {
         var actors = _imdbContext.NameSearchResults
-            .FromSqlInterpolated($"SELECT * FROM find_actors({query}, {username})")
+            .FromSqlInterpolated($"SELECT * FROM find_actors({query}, {username})");
+        var paged = actors
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<IList<NameSearchResultDTO>>(actors);
+        return (_mapper.Map<IList<NameSearchResultDTO>>(paged), actors.Count());
     }
 
-    public IList<NameSearchResultDTO> FindWriters(string username, string query)
+    public (IList<NameSearchResultDTO>, int) FindWriters(string username, string query, int page, int pageSize)
     {
         var writers = _imdbContext.NameSearchResults
-            .FromSqlInterpolated($"SELECT * FROM find_writers({query}, {username})")
+            .FromSqlInterpolated($"SELECT * FROM find_writers({query}, {username})");
+        var paged = writers
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<IList<NameSearchResultDTO>>(writers);
+        return (_mapper.Map<IList<NameSearchResultDTO>>(paged), writers.Count());
     }
 
-    public IList<CoPlayersDTO> FindCoPlayers(string username, string query)
+    public (IList<CoPlayersDTO>, int) FindCoPlayers(string username, string query, int page, int pageSize)
     {
         var coPlayers = _imdbContext.CoPlayers
-            .FromSqlInterpolated($"SELECT * FROM co_players({query}, {username})")
+            .FromSqlInterpolated($"SELECT * FROM co_players({query}, {username})");
+        var paged = coPlayers
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<IList<CoPlayersDTO>>(coPlayers);
+        return (_mapper.Map<IList<CoPlayersDTO>>(paged), coPlayers.Count());
     }
 }
