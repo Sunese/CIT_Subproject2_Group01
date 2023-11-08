@@ -30,92 +30,87 @@ public class TitleService : ITitleService
         return title != null;
     }
 
-    public (IList<TitleDTO> titles, int count) Get(DateOnly startDateTime, DateOnly endDateTime, int count, int page, bool isAdult)
+    public (IList<TitleDTO>, int) GetTitles(DateOnly startDateTime, DateOnly endDateTime, int pageSize, int page, bool isAdult)
     {
-        var titles = new List<Title>();
-        // default input of start- and endDateTime
-        if (startDateTime.Year == 1 && endDateTime.Year == 9999)
-        {
-            titles = _imdbContext.Titles
-                .Include(t => t.Genres)  
-                .Where(t => t.IsAdult == isAdult)
-                .Skip(page * count)
-                .Take(count)
-                .ToList();
-            return (_mapper.Map<IList<TitleDTO>>(titles), _imdbContext.Titles.Count());
-        }
-        titles = _imdbContext.Titles
+        var filtered = _imdbContext.Titles
             .Include(t => t.Genres)
             .Where(t => 
-                t.IsAdult == isAdult &&
-                t.Released.HasValue &&
+                //t.IsAdult == isAdult && // Until we implement child accounts, this does not matter and will filter away a lot of data
+                t.Released.HasValue && // NOTE: we strip away all movies that are NOT present in OMDb here
                 t.Released.Value.Year >= startDateTime.Year &&
-                t.Released.Value.Year <= endDateTime.Year)
-            .Skip(page * count)
-            .Take(count)
+                t.Released.Value.Year <= endDateTime.Year);
+        var paged = filtered
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return (_mapper.Map<IList<TitleDTO>>(titles), _imdbContext.Titles.Count());
+        return (_mapper.Map<IList<TitleDTO>>(paged), filtered.Count());
     }
 
     public TitleDTO GetTitle(string id, bool isAdult = false)
     {
         var title = _imdbContext.Titles
-            .Where(t => t.TitleID == id && t.IsAdult == isAdult)
+            .Where(t => 
+                t.TitleID == id)
+            //&& t.IsAdult == isAdult) // Until we implement child accounts, this does not matter and will filter away a lot of data
             .Include(t => t.Genres)
             .Include(t => t.TitleRating);
         return _mapper.Map<TitleDTO>(title.FirstOrDefault());
     }
 
-    // will get a number of current month and/or year of featured movies
-    public IList<TitleDTO> GetFeature(int year, int month, int count, bool isAdult = false)
+    // Get featured movies each month
+    // NOTE: for now we simply define "featured" as movies released this month
+    public (IList<TitleDTO>, int) GetFeatured(int page, int pageSize)
     {
-        var titles = new List<Title>();
-        
-        if (year > 0 && month == 0)
-        {
-            titles = _imdbContext.Titles
-                .Where(t =>
-                    t.IsAdult == isAdult &&
-                    t.Released.HasValue &&
-                    t.Released.Value.Year == year)
-                .Take(count)
-                .ToList();
-
-            return _mapper.Map<IList<TitleDTO>>(titles);
-        }
-        if (year > 0 && month > 0)
-        {
-            titles = _imdbContext.Titles
+        var month = DateTime.Now.Month;
+        var year = DateTime.Now.Year;
+        var filteredTitles = _imdbContext.Titles
                 .Where(t => 
-                        t.Released.HasValue &&
-                        t.Released.Value.Year == year &&
-                        t.Released.Value.Month == month)
-                .Take(count)
+                        t.Released.HasValue && 
+                        t.Released.Value.Month == month &&
+                        t.Released.Value.Year == year)
+                .OrderByDescending(t => t.Released);
+
+        var paged = filteredTitles
+                .Skip(page * pageSize)
+                .Take(pageSize)
                 .ToList();
 
-            return _mapper.Map<IList<TitleDTO>>(titles);
-        }
-        titles = _imdbContext.Titles.Take(count).ToList();
-        return _mapper.Map<IList<TitleDTO>>(titles);
+        return (_mapper.Map<IList<TitleDTO>>(paged), filteredTitles.Count());
     }
 
-    // will get popular movies with a period of time based on year or month, requires ratings to work
-    public IList<TitleDTO> GetPopular(DateOnly datetime, int count, bool isAdult = false)
+    // will get the best rated movies from the last month
+    public (IList<TitleDTO>, int) GetPopular(int page, int pageSize)
     {
-        throw new NotImplementedException();
+        var filteredTitles = _imdbContext.Titles
+                .Include(t => t.TitleRating)
+                .Where(t =>
+                        t.Released.HasValue && 
+                        t.Released.Value <= DateOnly.FromDateTime(DateTime.Now.AddDays(30)) &&
+                        t.Released.Value >= DateOnly.FromDateTime(DateTime.Now.AddDays(-30)))
+                .OrderByDescending(t => t.TitleRating.AverageRating);
+
+        var paged = filteredTitles
+                .Skip(page * pageSize)
+                .Take(pageSize)
+                .ToList();
+
+        return (_mapper.Map<IList<TitleDTO>>(paged), filteredTitles.Count());
     }
 
     public TitleRatingDTO? GetRating(string id)
     {
-        var title = _imdbContext.TitleRatings.Find(id);
+        var title = _imdbContext.Titles
+            .Where(t => t.TitleID == id)
+            .Include(t => t.TitleRating)
+            .FirstOrDefault();
         return _mapper.Map<TitleRatingDTO>(title);
     }
 
     // Returns N amount of titles ordered by ratings, between input day and today.
     // If no day is inputted, then it returns all titles and its ratings between year 0 and today.
-    public IList<TitleDTO> GetRatings(bool orderByHighestRating, int count, int? days)
+    public (IList<TitleRatingDTO>, int) GetRatings(int page, int pageSize, bool orderByHighestRating, int? days)
     {
-        IList<Title> titles;
+        IEnumerable<Title> filtered;
         var today = DateOnly.FromDateTime(DateTime.Now);
         var limit = DateOnly.MinValue;
         if (days.HasValue)
@@ -124,59 +119,60 @@ public class TitleService : ITitleService
         }
         if (orderByHighestRating)
         {
-                titles = _imdbContext.Titles
+                filtered = _imdbContext.Titles
                     .Include(t => t.TitleRating)
                     .Where(t => t.TitleRating != null)
                     .Where(t => t.Released >= limit)
                     .Where(t => t.Released <= today)
-                    .OrderByDescending(t => t.TitleRating.AverageRating)
-                    .Take(count)
-                    .ToList();
+                    .OrderByDescending(t => t.TitleRating.AverageRating);
         }
         else
         {
-            titles = _imdbContext.Titles
+            filtered = _imdbContext.Titles
                     .Include(t => t.TitleRating)
                     .Where(t => t.TitleRating != null)
                     .Where(t => t.Released >= limit)
-                    .Where(t => t.Released <= today)
-                    .Take(count)
-                    .ToList();
+                    .Where(t => t.Released <= today);
         }
-        return _mapper.Map<IList<TitleDTO>>(titles);
+        var paged = filtered
+                .Skip(page * pageSize)
+                .Take(pageSize)
+                .ToList();
+        return (_mapper.Map<IList<TitleRatingDTO>>(paged), filtered.Count());
     }
 
-    public IList<PopularActorsDTO> GetPopularActors(string titleId)
+    public (IList<PopularActorsDTO>, int) GetPopularActors(string titleId, int page, int pageSize)
     {
         var actors = _imdbContext.PopularActorsResults
-            .FromSqlInterpolated($"SELECT * FROM popular_actors({titleId})")
+            .FromSqlInterpolated($"SELECT * FROM popular_actors({titleId})");
+        var paged = actors
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<IList<PopularActorsDTO>>(actors);
+        return (_mapper.Map<IList<PopularActorsDTO>>(paged), actors.Count());
     }
 
-    public IList<AkaDTO> GetAkas(string id, int ordering)
+    public (IList<AkaDTO>, int) GetAkas(string id, int page, int pageSize)
     {
-        if (ordering != 0)
-        {
-            return _mapper.Map<IList<AkaDTO>>(
-                _imdbContext.Aka
-                .Where(ta => ta.TitleId == id && ta.Ordering == ordering)
-                .Include(ty => ty.Types)
-                .ToList());
-        }
+        var filtered = _imdbContext.Aka
+            .Where(ta => ta.TitleId == id)
+            .Include(ty => ty.Types);
+        var paged = filtered
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
 
-        return _mapper.Map<IList<AkaDTO>>(
-            _imdbContext.Aka
-                .Where(ta => ta.TitleId == id)
-                .Include(ty => ty.Types)
-                .ToList());
+        return (_mapper.Map<IList<AkaDTO>>(paged), filtered.Count());
     }
 
-    public IList<SimiliarMoviesResultDTO> GetSimiliarMovies(string titleId)
+    public (IList<SimiliarMoviesResultDTO>, int) GetSimiliarMovies(string titleId, int page, int pageSize)
     {
-        return _mapper.Map<IList<SimiliarMoviesResultDTO>>(
-            _imdbContext.SimiliarMoviesResult
-                .FromSqlInterpolated($"SELECT * FROM similar_movies({titleId})"))
-                .ToList();
+        var similiarMovies = _imdbContext.SimiliarMoviesResult
+            .FromSqlInterpolated($"SELECT * FROM similar_movies({titleId})");
+        var paged = similiarMovies
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (_mapper.Map<IList<SimiliarMoviesResultDTO>>(paged), similiarMovies.Count());
     }
 }

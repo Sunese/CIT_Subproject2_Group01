@@ -17,5 +17,10 @@ public class TitleProfile : Profile
         CreateMap<TitleDTO, Title>();
         CreateMap<Title, PrincipalTitleDTO>();
         CreateMap<Title, KnownForTitlesDTO>();
+        CreateMap<Title, TitleRatingDTO>()
+            .ForMember(dest => dest.TitleID, opt => opt.MapFrom(src => src.TitleID))
+            .ForMember(dest => dest.PrimaryTitle, opt => opt.MapFrom(src => src.PrimaryTitle))
+            .ForMember(dest => dest.AverageRating, opt => opt.MapFrom(src => src.TitleRating.AverageRating))
+            .ForMember(dest => dest.NumVotes, opt => opt.MapFrom(src => src.TitleRating.NumVotes));
     }
 }
