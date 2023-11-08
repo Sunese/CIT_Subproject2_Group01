@@ -31,10 +31,10 @@ public class NameController : MovieBaseController
     }
 
     // Get name rating by id
-    [HttpGet("{nameId}/rating", Name = nameof(GetRating))]
-    public IActionResult GetRating(string nameId)
+    [HttpGet("{id}/rating", Name = nameof(GetRating))]
+    public IActionResult GetRating(string id)
     {
-        var nameRating = _nameService.GetRating(nameId);
+        var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
         {
             return NotFound("Name does not have a rating");
@@ -43,12 +43,12 @@ public class NameController : MovieBaseController
     }
 
     // Get primary professions by name id
-    [HttpGet("{nameId}/primaryProfessions", Name = nameof(GetPrimaryProfessions))]
-    public IActionResult GetPrimaryProfessions(string nameId)
+    [HttpGet("{id}/primaryProfessions", Name = nameof(GetPrimaryProfessions))]
+    public IActionResult GetPrimaryProfessions(string id)
     {
         // names can have at most 3 professions, hence no need for paging
         // on another note, professions don't have any references to any pther entities either
-        var primaryProfessions = _nameService.GetPrimaryProfessions(nameId);
+        var primaryProfessions = _nameService.GetPrimaryProfessions(id);
         if (primaryProfessions == null)
         {
             return NotFound("Name does not have any primary professions");
