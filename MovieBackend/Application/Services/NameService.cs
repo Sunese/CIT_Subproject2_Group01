@@ -38,18 +38,21 @@ public class NameService : INameService
         return _mapper.Map<NameRatingDTO>(nameRating);
     }
 
-    public List<KnownForTitlesDTO> GetKnownForTitles(string nameId)
+    public (IList<KnownForTitlesDTO>, int) GetKnownForTitles(string nameId, int page, int pageSize)
     {
         var knownForTitles = _imdbContext.Names
             .Where(n => n.NameId == nameId)
             .Include(n => n.KnownForTitles)
             .ThenInclude(t => t.Genres)
-            .SelectMany(n => n.KnownForTitles)
+            .SelectMany(n => n.KnownForTitles);
+        var paged = knownForTitles
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<List<KnownForTitlesDTO>>(knownForTitles);
+        return (_mapper.Map<List<KnownForTitlesDTO>>(paged), knownForTitles.Count());
     }
 
-    public List<ProfessionDTO> GetPrimaryProfessions(string nameId)
+    public IList<ProfessionDTO> GetPrimaryProfessions(string nameId)
     {
         var primaryProfessions = _imdbContext.Names
             .Where(n => n.NameId == nameId)
@@ -59,14 +62,17 @@ public class NameService : INameService
         return _mapper.Map<List<ProfessionDTO>>(primaryProfessions);
     }
 
-    public List<PrincipalDTO> GetPrincipals(string nameId)
+    public (IList<PrincipalDTO>, int) GetPrincipals(string nameId, int page, int pageSize)
     {
         var principals = _imdbContext.Names
             .Where(n => n.NameId == nameId)
             .Include(n => n.Principals).ThenInclude(p => p.Title)
             .Include(n => n.Principals).ThenInclude(p => p.Characters)
-            .SelectMany(n => n.Principals)
+            .SelectMany(n => n.Principals);
+        var paged = principals
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
-        return _mapper.Map<List<PrincipalDTO>>(principals);
+        return (_mapper.Map<List<PrincipalDTO>>(paged), principals.Count());
     }
 }

@@ -2,6 +2,7 @@ using System;
 using System.Collections.Generic;
 using System.Linq;
 using System.Threading.Tasks;
+using Application.Models;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
@@ -30,7 +31,7 @@ public class NameController : MovieBaseController
     }
 
     // Get name rating by id
-    [HttpGet("{nameId}/rating")]
+    [HttpGet("{nameId}/rating", Name = nameof(GetRating))]
     public IActionResult GetRating(string nameId)
     {
         var nameRating = _nameService.GetRating(nameId);
@@ -42,9 +43,11 @@ public class NameController : MovieBaseController
     }
 
     // Get primary professions by name id
-    [HttpGet("{nameId}/primaryProfessions")]
+    [HttpGet("{nameId}/primaryProfessions", Name = nameof(GetPrimaryProfessions))]
     public IActionResult GetPrimaryProfessions(string nameId)
     {
+        // names can have at most 3 professions, hence no need for paging
+        // on another note, professions don't have any references to any pther entities either
         var primaryProfessions = _nameService.GetPrimaryProfessions(nameId);
         if (primaryProfessions == null)
         {
@@ -54,26 +57,50 @@ public class NameController : MovieBaseController
     }
 
     // Get known for titles by name id
-    [HttpGet("{nameId}/knownForTitles")]
-    public IActionResult GetKnownForTitles(string nameId)
+    [HttpGet("{id}/knownForTitles", Name = nameof(GetKnownForTitles))]
+    public IActionResult GetKnownForTitles(string id, int page = 0, int pageSize = 10)
     {
-        var knownForTitles = _nameService.GetKnownForTitles(nameId);
+        var (knownForTitles, total) = _nameService.GetKnownForTitles(id, page, pageSize);
         if (knownForTitles == null)
         {
-            return NotFound("Name does not have any known for titles");
+            return NotFound("Name does not have any \"known for\" titles");
         }
-        return Ok(knownForTitles);
+        var items = knownForTitles.Select(CreateKnownForTitlePageItem);
+        return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), id));
     }
 
     // Get principals by name id
-    [HttpGet("{nameId}/principals")]
-    public IActionResult GetPrincipals(string nameId)
+    [HttpGet("{id}/principals", Name = nameof(GetPrincipals))]
+    public IActionResult GetPrincipals(string id, int page = 0, int pageSize = 10)
     {
-        var principals = _nameService.GetPrincipals(nameId);
+        var (principals, total) = _nameService.GetPrincipals(id, page, pageSize);
         if (principals == null)
         {
             return NotFound("Name does not have any principals");
         }
-        return Ok(principals);
+        var items = principals.Select(CreatePrincipalPageItem);
+        return Ok(Paging(items, total, page, pageSize, nameof(GetPrincipals), id));
+    }
+
+    private object CreateKnownForTitlePageItem(KnownForTitlesDTO knownForTitles)
+    {
+        return new
+        {
+            Url = GetUrl("GetTitle", new { id = knownForTitles.TitleID }),
+            PrimaryTitle = knownForTitles.PrimaryTitle,
+            TitleType = knownForTitles.TitleType,
+            Genres = knownForTitles.Genres.Select(g => g.GenreName)
+        };
+    }
+
+    private object CreatePrincipalPageItem(PrincipalDTO principal)
+    {
+        return new
+        {
+            Url = GetUrl("GetTitle", new { id = principal.Title.TitleID }),
+            Category = principal.Category,
+            Job = principal.Job,
+            Characters = principal.Characters.Select(c => c.CharacterName)
+        };
     }
 }

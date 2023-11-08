@@ -10,7 +10,7 @@ public interface INameService
 {
     NameDTO GetName(string nameId);
     NameRatingDTO GetRating(string nameId);
-    List<ProfessionDTO> GetPrimaryProfessions(string nameId);
-    List<KnownForTitlesDTO> GetKnownForTitles(string nameId);
-    List<PrincipalDTO> GetPrincipals(string nameId);
+    IList<ProfessionDTO> GetPrimaryProfessions(string nameId);
+    (IList<KnownForTitlesDTO>, int) GetKnownForTitles(string nameId, int page, int pageSize);
+    (IList<PrincipalDTO>, int) GetPrincipals(string nameId, int page, int pageSize);
 }
