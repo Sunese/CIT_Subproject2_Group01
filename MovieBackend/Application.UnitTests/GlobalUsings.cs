@@ -1,7 +1,6 @@
 global using Xunit;
 global using Application.Services;
 global using AutoMapper;
-global using Application.UnitTests.Data;
 global using System;
 global using System.Collections.Generic;
 global using System.Linq;
