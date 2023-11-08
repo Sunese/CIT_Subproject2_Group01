@@ -5,23 +5,23 @@ using System.Threading.Tasks;
 using Application.Services;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Controllers.Movie;
 
 [ApiController]
 [Route("/api/v1/name")]
-public class NameController : ControllerBase
+public class NameController : MovieBaseController
 {
     private readonly INameService _nameService;
-    public NameController(INameService nameService)
+    public NameController(INameService nameService, LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _nameService = nameService;
     }
 
     // Get name by id
-    [HttpGet("{nameId}")]
-    public IActionResult Get(string nameId)
+    [HttpGet("{id}", Name = nameof(GetName))]
+    public IActionResult GetName(string id)
     {
-        var name = _nameService.GetName(nameId);
+        var name = _nameService.GetName(id);
         if (name == null)
         {
             return NotFound("Name does not exist");

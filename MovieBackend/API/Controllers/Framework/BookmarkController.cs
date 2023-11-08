@@ -7,18 +7,19 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace API.Controllers;
+namespace API.Controllers.Framework;
 
 [ApiController]
 [Route("api/v1")] // routes are defined in the methods, they depend on the username
-public class BookmarkController : FrameworkBaseController
+public class BookmarkController : MovieBaseController
 {
     private readonly IAccountService _userService;
     private readonly IBookmarkService _bookmarkService;
 
     public BookmarkController(
         IAccountService userService,
-        IBookmarkService bookmarkService)
+        IBookmarkService bookmarkService,
+        LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _userService = userService;
         _bookmarkService = bookmarkService;
@@ -43,7 +44,7 @@ public class BookmarkController : FrameworkBaseController
     [HttpPost("{username}/titlebookmark")]
     [Authorize]
     public IActionResult CreateTitleBookmark(
-        string username, 
+        string username,
         [FromBody] TitleBookmarkDTO model)
     {
         if (!_userService.UserExists(username, out _))
@@ -119,7 +120,7 @@ public class BookmarkController : FrameworkBaseController
     [HttpPost("{username}/namebookmark")]
     [Authorize]
     public IActionResult CreateNameBookmark(
-        string username, 
+        string username,
         [FromBody] NameBookmarkDTO model)
     {
         if (!_userService.UserExists(username, out _))

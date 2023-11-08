@@ -5,12 +5,12 @@ using AutoMapper;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 
-namespace API.Controllers;
+namespace API.Controllers.Framework;
 
 
 [ApiController]
 [Route("/api/v1")]
-public class UserRatingController : FrameworkBaseController
+public class UserRatingController : MovieBaseController
 {
     private readonly IAccountService _userService;
     private readonly IUserRatingService _userRatingService;
@@ -21,7 +21,8 @@ public class UserRatingController : FrameworkBaseController
         IAccountService userService,
         IUserRatingService userRatingService,
         ITitleService titleService,
-        IMapper mapper)
+        IMapper mapper,
+        LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _userService = userService;
         _userRatingService = userRatingService;

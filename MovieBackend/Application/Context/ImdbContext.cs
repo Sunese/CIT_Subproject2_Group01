@@ -439,6 +439,19 @@ public class ImdbContext : DbContext
             .Property(at => at.TypeName)
             .HasColumnName("typename");
 
+        // PopularActorsResult
+        modelBuilder.Entity<PopularActorsResult>()
+            .HasNoKey();
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.NameId)
+            .HasColumnName("nameid");
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.PrimaryName)
+            .HasColumnName("primaryname");
+        modelBuilder.Entity<PopularActorsResult>()
+            .Property(par => par.Rating)
+            .HasColumnName("rating");
+
         // SimiliarMovieResult
         modelBuilder.Entity<SimiliarMoviesResult>()
             .HasNoKey();

@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace API.Controllers;
+namespace API.Controllers.Framework;
 
 [ApiController]
 [Route("api/v1/search")]
-public class SearchController : FrameworkBaseController
+public class SearchController : MovieBaseController
 {
     private readonly IAccountService _accountService;
     private readonly IBookmarkService _bookmarkService;
@@ -20,7 +20,8 @@ public class SearchController : FrameworkBaseController
     public SearchController(
         IAccountService accountService,
         IBookmarkService bookmarkService,
-        ISearchService searchService)
+        ISearchService searchService,
+        LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _accountService = accountService;
         _bookmarkService = bookmarkService;
@@ -29,7 +30,7 @@ public class SearchController : FrameworkBaseController
 
     [HttpGet]
     [Authorize]
-    public IActionResult Search([FromQuery]string query)
+    public IActionResult Search([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
         return Ok(_searchService.Search(username, query));
@@ -37,7 +38,7 @@ public class SearchController : FrameworkBaseController
 
     [HttpGet("title")]
     [Authorize]
-    public IActionResult TitleSearch([FromQuery]string query)
+    public IActionResult TitleSearch([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
         return Ok(_searchService.TitleSearch(username, query));
@@ -45,7 +46,7 @@ public class SearchController : FrameworkBaseController
 
     [HttpGet("name")]
     [Authorize]
-    public IActionResult NameSearch([FromQuery]string query)
+    public IActionResult NameSearch([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
         return Ok(_searchService.NameSearch(username, query));
@@ -54,16 +55,16 @@ public class SearchController : FrameworkBaseController
     // Find actors by name
     [HttpGet("actor")]
     [Authorize]
-    public IActionResult ActorSearch([FromQuery]string query)
+    public IActionResult ActorSearch([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
-            return Ok(_searchService.FindActors(username, query)); // Use SP
+        return Ok(_searchService.FindActors(username, query)); // Use SP
     }
 
     // Find writers by name
     [HttpGet("writer")]
     [Authorize]
-    public IActionResult WriterSearch([FromQuery]string query)
+    public IActionResult WriterSearch([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
         return Ok(_searchService.FindWriters(username, query)); // Use SP
@@ -72,7 +73,7 @@ public class SearchController : FrameworkBaseController
     // Find co-players by name
     [HttpGet("coplayer")]
     [Authorize]
-    public IActionResult CoPlayerSearch([FromQuery]string query)
+    public IActionResult CoPlayerSearch([FromQuery] string query)
     {
         var username = HttpContext.User.Identity.Name;
         return Ok(_searchService.FindCoPlayers(username, query)); // Use SP

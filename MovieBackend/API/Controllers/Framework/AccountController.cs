@@ -7,11 +7,11 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
-namespace API.Controllers;
+namespace API.Controllers.Framework;
 
 [ApiController]
 [Route("api/v1/account")]
-public class AccountController : FrameworkBaseController
+public class AccountController : MovieBaseController
 {
     private readonly IAccountService _accountService;
     private readonly IHashingService _hashingService;
@@ -20,7 +20,8 @@ public class AccountController : FrameworkBaseController
     public AccountController(
         IAccountService accountService,
         IHashingService hashingService,
-        IJwtProvider jwtProvider)
+        IJwtProvider jwtProvider,
+        LinkGenerator linkGenerator) : base(linkGenerator)
     {
         _accountService = accountService;
         _jwtProvider = jwtProvider;

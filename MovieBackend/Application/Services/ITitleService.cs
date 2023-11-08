@@ -11,13 +11,13 @@ namespace Application.Services;
 public interface ITitleService
 {
     bool TitleExists(string id, out TitleDTO? title);
-    (IList<TitleDTO> titles, int count) Get(DateOnly startDateTime, DateOnly endDateTime, int count, int page, bool isAdult = false);
+    (IList<TitleDTO> titles, int count) GetTitles(DateOnly startDateTime, DateOnly endDateTime, int count, int page, bool isAdult = false);
     TitleDTO GetTitle(string id, bool isAdult = false);
-    IList<TitleDTO> GetFeature(int year, int month, int count, bool isAdult = false);
-    IList<TitleDTO> GetPopular(DateOnly datetime, int count, bool isAdult = false);
+    (IList<TitleDTO>, int count) GetFeatured(int page, int pageSize);
+    (IList<TitleDTO>, int count) GetPopular(int page, int pageSize);
     TitleRatingDTO? GetRating(string id);
-    IList<TitleDTO> GetRatings(bool orderByHighestRating, int count, int? days);
-    IList<PopularActorsDTO> GetPopularActors(string titleId);
-    IList<AkaDTO> GetAkas(string id, int ordering);
-    IList<SimiliarMoviesResultDTO> GetSimiliarMovies(string id);
+    (IList<TitleRatingDTO>, int count) GetRatings(int page, int pageSize, bool orderByHighestRating, int? days);
+    (IList<PopularActorsDTO>, int count) GetPopularActors(string titleId, int page, int pageSize);
+    (IList<AkaDTO>, int count) GetAkas(string id, int page, int pageSize);
+    (IList<SimiliarMoviesResultDTO>, int count) GetSimiliarMovies(string id, int page, int pageSize);
 }
