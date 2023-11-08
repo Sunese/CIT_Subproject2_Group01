@@ -36,19 +36,32 @@ public class MovieBaseController : ControllerBase
         };
     }
 
-    // Same as the other Paging(), but an ID is provided
+    // Same as the other Paging(), but with a RouteValueDictionary
+    // such that specific template+values can be used
     // when creating a paged result for something resource-specific
-    protected object Paging<T>(IEnumerable<T> items, int total, int page, int pageSize, string endpointName, string id)
+    protected object Paging<T>(IEnumerable<T> items, int total, int page, int pageSize, string endpointName, RouteValueDictionary routeValueDictionary)
     {
         var numPages = (int)Math.Ceiling(total / (double)pageSize);
-        var next = page < numPages - 1
-            ? GetUrl(endpointName, new { id, page = page + 1, pageSize })
-            : null;
-        var prev = page > 0
-            ? GetUrl(endpointName, new { id, page = page - 1, pageSize })
-            : null;
+        string? next;
+        string? prev;
+        if (page < numPages - 1)
+        {
+            routeValueDictionary["page"] = page + 1;
+            routeValueDictionary["pageSize"] = pageSize;
+            next = GetUrl(endpointName, routeValueDictionary);
+        }
+        else next = null;
+        if (page > 0)
+        {
+            routeValueDictionary["page"] = page - 1;
+            routeValueDictionary["pageSize"] = pageSize;
+            prev = GetUrl(endpointName, routeValueDictionary);
+        }
+        else prev = null;
 
-        var cur = GetUrl(endpointName, new { id, page, pageSize });
+        routeValueDictionary["page"] = page;
+        routeValueDictionary["pageSize"] = pageSize;
+        var cur = GetUrl(endpointName, routeValueDictionary);
 
         return new
         {
@@ -62,6 +75,11 @@ public class MovieBaseController : ControllerBase
     }
 
     protected string GetUrl(string name, object values)
+    {
+        return _linkGenerator.GetUriByName(HttpContext, name, values) ?? "Not specified";
+    }
+
+    protected string GetUrl(string name, RouteValueDictionary values)
     {
         return _linkGenerator.GetUriByName(HttpContext, name, values) ?? "Not specified";
     }

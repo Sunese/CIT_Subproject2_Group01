@@ -8,7 +8,6 @@ namespace API.Controllers.Movie;
 [Route("api/v1/title")]
 public class TitleController : MovieBaseController
 {
-
     private readonly ILogger<TitleController> _logger;
     private readonly ITitleService _titleService;
 
@@ -93,7 +92,7 @@ public class TitleController : MovieBaseController
     {
         var (popularActors, total) = _titleService.GetPopularActors(id, page, pageSize);
         var items = popularActors.Select(CreatePopularActorPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetPopularActorsFromTitle), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetPopularActorsFromTitle), new RouteValueDictionary { { "id", id } }));
     }
 
 
@@ -102,7 +101,7 @@ public class TitleController : MovieBaseController
     {
         var (akas, total) = _titleService.GetAkas(id, page, pageSize);
         var items = akas.Select(CreateAkaPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetTitleAkas), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetTitleAkas), new RouteValueDictionary { { "id", id } }));
     }
 
     [HttpGet("{id}/similarmovies", Name = nameof(GetSimiliarMovies))]
@@ -110,7 +109,7 @@ public class TitleController : MovieBaseController
     {
         var (similiarMovies, total) = _titleService.GetSimiliarMovies(id, page, pageSize);
         var items = similiarMovies.Select(CreateSimiliarMoviePageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetSimiliarMovies), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetSimiliarMovies), new RouteValueDictionary { { "id", id } }));
     }
 
     private object CreateTitlePageItem(TitleDTO title)

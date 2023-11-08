@@ -37,38 +37,36 @@ public class BookmarkService : IBookmarkService
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public IList<TitleBookmarkDTO> GetTitleBookmarks(string username, OrderBy orderBy, int count)
+    public (IList<TitleBookmarkDTO>, int) GetTitleBookmarks(string username, OrderBy orderBy, int page, int pageSize)
     {
-        IList<TitleBookmark> bookmarks = orderBy switch
+        IEnumerable<TitleBookmark> bookmarks = orderBy switch
         {
             OrderBy.Alphabetical => _context.TitleBookmarks
                                 .Include(tb => tb.Title)
                                 .Where(tb => tb.Username == username)
-                                .OrderBy(tb => tb.Title.PrimaryTitle)
-                                .Take(count)
-                                .ToList(),
+                                .OrderBy(tb => tb.Title.PrimaryTitle),
             OrderBy.Rating => _context.TitleBookmarks
                                 .Include(tb => tb.Title)
                                 .ThenInclude(t => t.TitleRating)
                                 .Where(tb => tb.Username == username)
-                                .OrderByDescending(tb => tb.Title.TitleRating.AverageRating)
-                                .Take(count)
-                                .ToList(),
+                                .OrderByDescending(tb => tb.Title.TitleRating.AverageRating),
             OrderBy.ReleaseDate => _context.TitleBookmarks
                                 .Include(tb => tb.Title)
                                 .Where(tb => tb.Username == username)
-                                .OrderBy(tb => tb.Title.Released)
-                                .Take(count)
-                                .ToList(),
+                                .OrderBy(tb => tb.Title.Released),
             OrderBy.Created => _context.TitleBookmarks
                                 .Include(tb => tb.Title)
                                 .Where(tb => tb.Username == username)
-                                .OrderBy(tb => tb.Timestamp)
-                                .Take(count)
-                                .ToList(),
+                                .OrderBy(tb => tb.Timestamp),
             _ => throw new NotImplementedException(),
         };
-        return _mapper.Map<IList<TitleBookmarkDTO>>(bookmarks);
+
+        var paged = bookmarks
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return (_mapper.Map<IList<TitleBookmarkDTO>>(paged), bookmarks.Count());
     }
 
     public void UpdateTitleBookmarkNote(string username, TitleBookmarkDTO model)
@@ -83,30 +81,37 @@ public class BookmarkService : IBookmarkService
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
+    public bool TitleBookmarkExists(string username, string titleId)
+    {
+        return _context.TitleBookmarks.Any(tb => tb.Username == username && tb.TitleId == titleId);
+    }
+
     public void CreateNameBookmark(string username, NameBookmarkDTO model)
     {
         FormattableString query = $"CALL AddNameBookmark({username}, {model.NameId}, {model.Notes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public IList<NameBookmarkDTO> GetNameBookmarks(string username, OrderBy orderBy, int count)
+    public (IList<NameBookmarkDTO>, int) GetNameBookmarks(string username, OrderBy orderBy, int page, int pageSize)
     {
-        IList<NameBookmark> bookmarks = orderBy switch
+        IEnumerable<NameBookmark> bookmarks = orderBy switch
         {
             OrderBy.Alphabetical => _context.NameBookmarks
                 .Include(n => n.Name)
                 .Where(nb => nb.Username == username)
-                .OrderBy(nb => nb.Name.PrimaryName)
-                .Take(count)
-                .ToList(),
+                .OrderBy(nb => nb.Name.PrimaryName),
             OrderBy.Created => _context.NameBookmarks
                 .Where(tb => tb.Username == username)
-                .OrderBy(tb => tb.Timestamp)
-                .Take(count)
-                .ToList(),
+                .OrderBy(tb => tb.Timestamp),
             _ => throw new NotImplementedException(),
         };
-        return _mapper.Map<IList<NameBookmarkDTO>>(bookmarks);
+
+        var paged = bookmarks
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+
+        return (_mapper.Map<IList<NameBookmarkDTO>>(paged), bookmarks.Count());
     }
 
     public void UpdateNameBookmarkNote(string username, NameBookmarkDTO model)
@@ -119,5 +124,10 @@ public class BookmarkService : IBookmarkService
     {
         FormattableString query = $"CALL DeleteNameBookmark({username}, {model.NameId})";
         _context.Database.ExecuteSqlInterpolated(query);
+    }
+
+    public bool NameBookmarkExists(string username, string nameId)
+    {
+        return _context.NameBookmarks.Any(nb => nb.Username == username && nb.NameId == nameId);
     }
 }

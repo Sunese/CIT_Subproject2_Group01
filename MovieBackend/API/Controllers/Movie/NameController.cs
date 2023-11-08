@@ -31,8 +31,8 @@ public class NameController : MovieBaseController
     }
 
     // Get name rating by id
-    [HttpGet("{id}/rating", Name = nameof(GetRating))]
-    public IActionResult GetRating(string id)
+    [HttpGet("{id}/rating", Name = nameof(GetNameRating))]
+    public IActionResult GetNameRating(string id)
     {
         var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
@@ -66,7 +66,7 @@ public class NameController : MovieBaseController
             return NotFound("Name does not have any \"known for\" titles");
         }
         var items = knownForTitles.Select(CreateKnownForTitlePageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), new RouteValueDictionary { { "id", id } }));
     }
 
     // Get principals by name id
@@ -79,7 +79,7 @@ public class NameController : MovieBaseController
             return NotFound("Name does not have any principals");
         }
         var items = principals.Select(CreatePrincipalPageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetPrincipals), id));
+        return Ok(Paging(items, total, page, pageSize, nameof(GetPrincipals), new RouteValueDictionary { { "id", id } }));
     }
 
     private object CreateKnownForTitlePageItem(KnownForTitlesDTO knownForTitles)

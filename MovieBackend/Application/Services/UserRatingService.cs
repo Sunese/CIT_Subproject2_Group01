@@ -33,7 +33,7 @@ public class UserRatingService : IUserRatingService
         return true;
     }
 
-    public IList<UserTitleRatingDTO> GetUserTitleRatings(string username)
+    public (IList<UserTitleRatingDTO>, int) GetUserTitleRatings(string username, int page, int pageSize)
     {
         var userRatings = _imdbContext.UserTitleRatings
             // TODO: consider setting up a materialized view for titles
@@ -41,10 +41,13 @@ public class UserRatingService : IUserRatingService
             // every time
             .Include(userRating => userRating.Title).ThenInclude(title => title.TitleRating)
             .Include(userRating => userRating.Title).ThenInclude(title => title.Genres)
-            .Where(ur => ur.Username == username)
+            .Where(ur => ur.Username == username);
+        var paged = userRatings
+            .Skip(page * pageSize)
+            .Take(pageSize)
             .ToList();
 
-        return _mapper.Map<IList<UserTitleRatingDTO>>(userRatings);
+        return (_mapper.Map<IList<UserTitleRatingDTO>>(paged), userRatings.Count());
     }
 
     public bool UserTitleRatingExists(string username, string titleId, out UserTitleRatingDTO? userTitleRatingDTO)

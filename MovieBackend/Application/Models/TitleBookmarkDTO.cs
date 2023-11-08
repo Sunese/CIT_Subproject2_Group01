@@ -2,6 +2,9 @@ namespace Application.Models;
     
 public class TitleBookmarkDTO
 {
-	public string TitleId { get; set; } = String.Empty;
-    public string Notes { get; set; } = String.Empty;
+	// public string Username { get; set; }
+	public string TitleId { get; set; }
+	public DateTime Timestamp { get; set; }
+	public string Notes { get; set; } = string.Empty; // Default to empty string
+	public TitleDTO Title { get; set; }
 }

@@ -5,7 +5,7 @@ using System.Threading.Tasks;
 
 namespace API.Models
 {
-    public class UserTitleRatingForm
+    public class CreateTitleRatingModel
     {
         public string TitleId { get; set; }
         public int Rating { get; set; }

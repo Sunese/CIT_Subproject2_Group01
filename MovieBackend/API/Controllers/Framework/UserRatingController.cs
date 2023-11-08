@@ -31,20 +31,28 @@ public class UserRatingController : MovieBaseController
     }
 
     // Get all title ratings from user
-    [HttpGet("{username}/titlerating")]
-    public IActionResult Get(string username)
+    [HttpGet("{username}/titlerating", Name = nameof(GetUserTitleRatings))]
+    public IActionResult GetUserTitleRatings(string username, int page = 0, int pageSize = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
         }
 
-        return Ok(_userRatingService.GetUserTitleRatings(username));
+        var (ratings, total) = _userRatingService.GetUserTitleRatings(username, page, pageSize);
+        var items = ratings.Select(rating => new
+        {
+            Url = GetUrl("GetTitle", new { id = rating.TitleId }),
+            PrimaryTitle = rating.Title.PrimaryTitle,
+            Rating = rating.Rating,
+            TimeStamp = rating.TimeStamp
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(GetUserTitleRatings), new RouteValueDictionary { { "username", username } }));
     }
 
-    // Get ratings for specific title from user
+    // Get rating for specific title from user
     [HttpGet("{username}/titlerating/{titleId}")]
-    public IActionResult Get(string username, string titleId)
+    public IActionResult GetUserTitleRatingById(string username, string titleId, int page = 0, int pageSize = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
@@ -56,7 +64,8 @@ public class UserRatingController : MovieBaseController
             return BadRequest("TitleName does not exist");
         }
 
-        var userRating = _userRatingService.GetUserTitleRatings(username)
+        var userRating = _userRatingService.GetUserTitleRatings(username, page, pageSize)
+            .Ratings
             .FirstOrDefault(ur => ur.TitleId == titleId.ToLower());
 
         if (userRating == null)
@@ -72,7 +81,7 @@ public class UserRatingController : MovieBaseController
     [Authorize]
     public IActionResult Post(
         string username,
-        [FromBody] UserTitleRatingForm userRating)
+        [FromBody] CreateTitleRatingModel userRating)
     {
         if (!OwnsResource(username))
         {
@@ -100,7 +109,7 @@ public class UserRatingController : MovieBaseController
         {
             return StatusCode(500);
         }
-        return CreatedAtAction(nameof(Get), new { username, titleId = userRating.TitleId }, userRating);
+        return CreatedAtAction(nameof(GetUserTitleRatingById), new { username, titleId = userRating.TitleId }, userRating);
     }
 
     [HttpDelete("{username}/titlerating/{titleId}")]
@@ -137,7 +146,7 @@ public class UserRatingController : MovieBaseController
 
     private UserTitleRatingDTO ToUserTitleRatingDTO(
         string username,
-        UserTitleRatingForm form)
+        CreateTitleRatingModel form)
     {
         return new UserTitleRatingDTO
         {

@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using API.Models;
 using API.Security;
 using Application.Models;
 using Application.Services;
@@ -6,6 +7,7 @@ using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
+using AutoMapper;
 
 namespace API.Controllers.Framework;
 
@@ -14,20 +16,30 @@ namespace API.Controllers.Framework;
 public class BookmarkController : MovieBaseController
 {
     private readonly IAccountService _userService;
+    private readonly ITitleService _titleService;
+    private readonly IMapper _mapper;
     private readonly IBookmarkService _bookmarkService;
 
     public BookmarkController(
         IAccountService userService,
         IBookmarkService bookmarkService,
+        ITitleService titleService,
+        IMapper mapper,
         LinkGenerator linkGenerator) : base(linkGenerator)
     {
+        _mapper = mapper;
+        _titleService = titleService;
         _userService = userService;
         _bookmarkService = bookmarkService;
     }
 
-    [HttpGet("{username}/titlebookmark")]
+    [HttpGet("{username}/titlebookmark", Name = nameof(GetTitleBookmarks))]
     [Authorize]
-    public IActionResult GetTitleBookmarks(string username, OrderBy orderBy = OrderBy.Alphabetical, int count = 10)
+    // NOTE: only the user can access their own bookmarks
+    public IActionResult GetTitleBookmarks(string username,
+                                           OrderBy orderBy = OrderBy.Alphabetical,
+                                           int page = 0,
+                                           int pageSize = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
@@ -37,33 +49,41 @@ public class BookmarkController : MovieBaseController
         {
             return Unauthorized();
         }
-        var bookmarks = _bookmarkService.GetTitleBookmarks(username, orderBy, count);
-        return Ok(bookmarks);
+        var (bookmarks, total) = _bookmarkService
+                                    .GetTitleBookmarks(username, orderBy, page, pageSize);
+        var items = bookmarks.Select(CreateTitleBookmarkPageItem);
+        return Ok(Paging(items,
+                         total,
+                         page,
+                         pageSize,
+                         nameof(GetTitleBookmarks),
+                         new RouteValueDictionary { { "username", username } }));
     }
 
-    [HttpPost("{username}/titlebookmark")]
+    [HttpPost("{username}/titlebookmark", Name = nameof(CreateTitleBookmark))]
     [Authorize]
     public IActionResult CreateTitleBookmark(
         string username,
-        [FromBody] TitleBookmarkDTO model)
+        CreateTitleBookmarkModel model)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        _bookmarkService.CreateTitleBookmark(username, model);
-        return Ok(); // TODO: return HTTP 201 Created with Location header
-                     // to where the new resource can be found,
-                     // i.e. a GET method that is not implemented yet
-                     // NOTE: maybe not location header? maybe just return
-                     // an object with a URI property?
+        if (!_titleService.TitleExists(model.TitleId, out var foundTitle))
+        {
+            return BadRequest("Title does not exist");
+        }
+        if (_bookmarkService.TitleBookmarkExists(username, model.TitleId))
+        {
+            return BadRequest("Title bookmark already exists");
+        }
+        var bookmarkDTO = _mapper.Map<TitleBookmarkDTO>(model);
+        _bookmarkService.CreateTitleBookmark(username, bookmarkDTO);
+        return CreatedAtAction(nameof(GetTitleBookmarks), new { username }, bookmarkDTO);
     }
 
-    [HttpPatch("{username}/titlebookmark/{titleId}")]
+    [HttpPatch("{username}/titlebookmark/{titleId}", Name = nameof(UpdateTitleBookmarkNote))]
     [Authorize]
     public IActionResult UpdateTitleBookmarkNote(
         string username,
@@ -83,7 +103,7 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpDelete("{username}/titlebookmark")]
+    [HttpDelete("{username}/titlebookmark", Name = nameof(DeleteTitleBookmark))]
     [Authorize]
     public IActionResult DeleteTitleBookmark(
         string username,
@@ -101,56 +121,57 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpGet("{username}/namebookmark")]
+    [HttpGet("{username}/namebookmark", Name = nameof(GetNameBookmarks))]
     [Authorize]
-    public IActionResult GetNameBookmarks(string username, OrderBy orderBy = OrderBy.Alphabetical, int count = 10)
+    // NOTE: only the user can access their own bookmarks
+    public IActionResult GetNameBookmarks(string username, 
+                                          OrderBy orderBy = OrderBy.Alphabetical, 
+                                          int page = 0, 
+                                          int pageSize = 10)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        var bookmarks = _bookmarkService.GetNameBookmarks(username, orderBy, count);
-        return Ok(bookmarks);
+        var (bookmarks, total) = _bookmarkService
+                                    .GetNameBookmarks(username, orderBy, page, pageSize);
+        var items = bookmarks.Select(CreateNameBookmarkPageItem);
+        return Ok(Paging(items,
+                         total,
+                         page,
+                         pageSize,
+                         nameof(GetNameBookmarks),
+                         new RouteValueDictionary { { "username", username } }));
     }
 
-    [HttpPost("{username}/namebookmark")]
+    [HttpPost("{username}/namebookmark", Name = nameof(CreateNameBookmark))]
     [Authorize]
     public IActionResult CreateNameBookmark(
         string username,
-        [FromBody] NameBookmarkDTO model)
+        CreateNameBookmarkModel model)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        _bookmarkService.CreateNameBookmark(username, model);
-        return Ok(); // TODO: return HTTP 201 Created with Location header
-                     // to where the new resource can be found,
-                     // i.e. a GET method that is not implemented yet
-                     // NOTE: maybe not location header? maybe just return
-                     // an object with a URI property?
+        if (_bookmarkService.NameBookmarkExists(username, model.NameId))
+        {
+            return BadRequest("Name bookmark already exists");
+        }
+        var bookmarkDTO = _mapper.Map<NameBookmarkDTO>(model);
+        _bookmarkService.CreateNameBookmark(username, bookmarkDTO);
+        return CreatedAtAction(nameof(GetNameBookmarks), new { username }, bookmarkDTO);
     }
 
-    [HttpPatch("{username}/namebookmark/{nameId}")]
+    [HttpPatch("{username}/namebookmark/{nameId}", Name = nameof(UpdateNameBookmarkNote))]
     [Authorize]
     public IActionResult UpdateNameBookmarkNote(
         string username,
         string nameId,
         [FromBody] NameBookmarkDTO model)
     {
+        // TODO: fix PATCH
         model.NameId = nameId;
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -159,7 +180,7 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpDelete("{username}/namebookmark")]
+    [HttpDelete("{username}/namebookmark", Name = nameof(DeleteNameBookmark))]
     [Authorize]
     public IActionResult DeleteNameBookmark(
         string username,
@@ -175,5 +196,25 @@ public class BookmarkController : MovieBaseController
         }
         _bookmarkService.DeleteNameBookmark(username, model);
         return Ok();
+    }
+
+    private object CreateTitleBookmarkPageItem(TitleBookmarkDTO titleBookmarkDTO)
+    {
+        return new 
+        {
+            Url = GetUrl("GetTitle", new { id = titleBookmarkDTO.TitleId }),
+            PrimaryTitle = titleBookmarkDTO.Title.PrimaryTitle,
+            Notes = titleBookmarkDTO.Notes,
+        };
+    }
+
+    private object CreateNameBookmarkPageItem(NameBookmarkDTO nameBookmarkDTO)
+    {
+        return new
+        {
+            Url = GetUrl("GetName", new { id = nameBookmarkDTO.NameId }),
+            PrimaryName = nameBookmarkDTO.Name.PrimaryName,
+            Notes = nameBookmarkDTO.Notes,
+        };
     }
 }
