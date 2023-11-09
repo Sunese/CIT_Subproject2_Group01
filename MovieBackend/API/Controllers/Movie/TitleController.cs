@@ -33,8 +33,8 @@ public class TitleController : MovieBaseController
         }
         var (titles, total) = _titleService.GetTitles(startDate, endDate, pageSize, page, isAdult);
         var items = titles.Select(CreateTitlePageItem);
-
-        return Ok(Paging(items, total, page, pageSize, nameof(GetTitles)));
+        var result = Paging(items, total, page, pageSize, nameof(GetTitles));
+        return Ok(result);
     }
 
     [HttpGet("{id}", Name = nameof(GetTitle))]
