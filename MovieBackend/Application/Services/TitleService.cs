@@ -24,10 +24,15 @@ public class TitleService : ITitleService
     public bool TitleExists(string id, out TitleDTO? titleDTO)
     {
         var title = _imdbContext.Titles.Find(id);
+        if (title is null)
+        {
+            titleDTO = null;
+            return false;
+        }
         // remove tracking
         _imdbContext.Entry(title).State = EntityState.Detached;
         titleDTO = _mapper.Map<TitleDTO>(title);
-        return title != null;
+        return true;
     }
 
     public (IList<TitleDTO>, int) GetTitles(DateOnly startDateTime, DateOnly endDateTime, int pageSize, int page, bool isAdult)

@@ -18,6 +18,14 @@ public class NameController : MovieBaseController
         _nameService = nameService;
     }
 
+    [HttpGet(Name = nameof(GetNames))]
+    public IActionResult GetNames(int page = 0, int pageSize = 10)
+    {
+        var (names, total) = _nameService.GetNames(page, pageSize);
+        var items = names.Select(CreateNamePageItem);
+        return Ok(Paging(items, total, page, pageSize, nameof(GetNames)));
+    }
+
     // Get name by id
     [HttpGet("{id}", Name = nameof(GetName))]
     public IActionResult GetName(string id)
@@ -25,7 +33,7 @@ public class NameController : MovieBaseController
         var name = _nameService.GetName(id);
         if (name == null)
         {
-            return NotFound("Name does not exist");
+            return NotFound();
         }
         return Ok(name);
     }
@@ -37,7 +45,7 @@ public class NameController : MovieBaseController
         var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
         {
-            return NotFound("Name does not have a rating");
+            return NotFound();
         }
         return Ok(nameRating);
     }
@@ -51,7 +59,7 @@ public class NameController : MovieBaseController
         var primaryProfessions = _nameService.GetPrimaryProfessions(id);
         if (primaryProfessions == null)
         {
-            return NotFound("Name does not have any primary professions");
+            return NotFound();
         }
         return Ok(primaryProfessions);
     }
@@ -63,7 +71,7 @@ public class NameController : MovieBaseController
         var (knownForTitles, total) = _nameService.GetKnownForTitles(id, page, pageSize);
         if (knownForTitles == null)
         {
-            return NotFound("Name does not have any \"known for\" titles");
+            return NotFound();
         }
         var items = knownForTitles.Select(CreateKnownForTitlePageItem);
         return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), new RouteValueDictionary { { "id", id } }));
@@ -76,10 +84,21 @@ public class NameController : MovieBaseController
         var (principals, total) = _nameService.GetPrincipals(id, page, pageSize);
         if (principals == null)
         {
-            return NotFound("Name does not have any principals");
+            return NotFound();
         }
         var items = principals.Select(CreatePrincipalPageItem);
         return Ok(Paging(items, total, page, pageSize, nameof(GetPrincipals), new RouteValueDictionary { { "id", id } }));
+    }
+
+    private object CreateNamePageItem(NameDTO nameDTO)
+    {
+        return new
+        {
+            Url = GetUrl(nameof(GetName), new { id = nameDTO.NameId }),
+            Name = nameDTO.PrimaryName,
+            BirthYear = nameDTO.BirthYear,
+            DeathYear = nameDTO.DeathYear
+        };
     }
 
     private object CreateKnownForTitlePageItem(KnownForTitlesDTO knownForTitles)

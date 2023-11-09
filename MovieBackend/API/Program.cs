@@ -46,7 +46,9 @@ builder.Services.AddDbContext<ImdbContext>(
     {
         options.EnableSensitiveDataLogging();
         options.LogTo(Console.Out.WriteLine, LogLevel.Information);
-        options.UseNpgsql(builder.Configuration.GetValue<string>("ImdbContext:ConnectionString"));
+        var connString = builder.Configuration.GetSection(ImdbContextOptions.ImdbContext)
+            .GetValue<string>("ConnectionString");
+        options.UseNpgsql(connString);
     }
 ); // Defaults to scoped
 builder.Services.AddScoped<ITitleService, TitleService>();
@@ -70,3 +72,4 @@ app.MapControllers();
 
 app.Run();
 
+public partial class Program { }

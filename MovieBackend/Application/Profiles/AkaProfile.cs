@@ -9,7 +9,7 @@ using System.Threading.Tasks;
 
 namespace Application.Profiles;
 
-internal class AkaProfile : Profile
+public class AkaProfile : Profile
 {
     public AkaProfile()
     {

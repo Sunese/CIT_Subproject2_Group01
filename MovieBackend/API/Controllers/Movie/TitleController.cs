@@ -42,7 +42,7 @@ public class TitleController : MovieBaseController
     {
         if (!_titleService.TitleExists(id, out var titleDTO))
         {
-            return NotFound("Title does not exist");
+            return NotFound();
         }
         return Ok(titleDTO);
     }
@@ -69,7 +69,7 @@ public class TitleController : MovieBaseController
         var rating = _titleService.GetRating(id);
         if (rating == null)
         {
-            return NotFound("Title does not have a rating");
+            return NotFound();
         }
         return Ok(rating);
     }

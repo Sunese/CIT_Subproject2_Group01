@@ -22,6 +22,15 @@ public class NameService : INameService
 
     }
 
+    public (IList<NameDTO>, int) GetNames(int page, int pageSize)
+    {
+        var names = _imdbContext.Names
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (_mapper.Map<List<NameDTO>>(names), _imdbContext.Names.Count());
+    }
+
     public NameDTO GetName(string nameId)
     {
         var name = _imdbContext.Names

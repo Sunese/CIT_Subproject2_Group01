@@ -8,6 +8,7 @@ namespace Application.Services;
 
 public interface INameService
 {
+    (IList<NameDTO>, int) GetNames(int page, int pageSize);
     NameDTO GetName(string nameId);
     NameRatingDTO GetRating(string nameId);
     IList<ProfessionDTO> GetPrimaryProfessions(string nameId);

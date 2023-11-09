@@ -1,4 +1,5 @@
 ﻿using System.Security.Claims;
+using API.Models;
 using API.Security;
 using Application.Models;
 using Application.Services;
@@ -29,36 +30,41 @@ public class AccountController : MovieBaseController
     }
 
     [HttpPost("login")]
-    public IActionResult Login(UserDTO loginUser)
+    public IActionResult Login(LoginModel loginModel)
     {
-        if (!_accountService.UserExists(loginUser.UserName, out var storedUser))
+        if (!_accountService.UserExists(loginModel.UserName, out var storedUser))
         {
-            return BadRequest("User does not exist");
+            return NotFound();
         }
-        if (!_hashingService.Verify(loginUser.Password, storedUser.Password, storedUser.Salt))
+        if (!_hashingService.Verify(loginModel.Password, storedUser.Password, storedUser.Salt))
         {
-            return BadRequest("Incorrect password");
+            return Unauthorized();
         }
         var jwtToken = "Bearer " + _jwtProvider.GenerateJwtToken(storedUser);
         return Ok(new { storedUser.UserName, token = jwtToken });
     }
 
     [HttpPost("register")]
-    public IActionResult RegisterUser(UserDTO user)
+    public IActionResult RegisterUser(RegisterModel registerModel)
     {
-        if (_accountService.UserExists(user.UserName, out _))
+        if (_accountService.UserExists(registerModel.UserName, out _))
         {
-            return BadRequest("User with specified username already exists");
+            return BadRequest();
         }
-        if (string.IsNullOrEmpty(user.Password))
+        if (string.IsNullOrEmpty(registerModel.Password))
         {
-            return BadRequest("Password cannot be empty");
+            return BadRequest();
         }
-        var (hash, salt) = _hashingService.Hash(user.Password);
-        user.Password = hash;
-        user.Salt = salt;
-
-        _accountService.CreateUser(user);
+        var (hash, salt) = _hashingService.Hash(registerModel.Password);
+        var newUser = new UserDTO
+        {
+            UserName = registerModel.UserName,
+            Email = registerModel.Email,
+            Role = registerModel.Role,
+            Password = hash,
+            Salt = salt
+        };
+        _accountService.CreateUser(newUser);
         return Ok();
     }
 
