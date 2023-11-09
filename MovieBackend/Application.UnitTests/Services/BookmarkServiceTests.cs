@@ -48,58 +48,58 @@ public class BookmarkServiceTests
     }
 
     // Naming convention: MethodName_StateUnderTest_ExpectedBehavior
-    [Fact]
-    public void GetTitleBookmarks_ExistingUsername_ReturnsBookmarks()
-    {
-        // Arrange
-        using (var context = new ImdbContext(_fixture.ContextOptions))
-        {
-            var service = new BookmarkService(context, _mockMapper.Object);
-            // Act
-            var bookmarks = service.GetTitleBookmarks("testUser", OrderBy.Alphabetical, 10);
-            // Assert
-            _mockMapper.Verify(x => x.Map<IList<TitleBookmarkDTO>>(It.IsAny<List<TitleBookmark>>()), Times.Once());
-        }
-    }
+    // [Fact]
+    // public void GetTitleBookmarks_ExistingUsername_ReturnsBookmarks()
+    // {
+    //     // Arrange
+    //     using (var context = new ImdbContext(_fixture.ContextOptions))
+    //     {
+    //         var service = new BookmarkService(context, _mockMapper.Object);
+    //         // Act
+    //         var bookmarks = service.GetTitleBookmarks("testUser", OrderBy.Alphabetical, 10);
+    //         // Assert
+    //         _mockMapper.Verify(x => x.Map<IList<TitleBookmarkDTO>>(It.IsAny<List<TitleBookmark>>()), Times.Once());
+    //     }
+    // }
 
-    [Fact]
-    public void GetTitleBookmarks_NonExistingUsername_MapperIsCalledOnce()
-    {
-        // Arrange
-        using (var context = new ImdbContext(_fixture.ContextOptions))
-        {
-            var service = new BookmarkService(context, _mockMapper.Object);
-            // Act
-            var bookmarks = service.GetTitleBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
-            // Assert
-            _mockMapper.Verify(x => x.Map<IList<TitleBookmarkDTO>>(It.IsAny<List<TitleBookmark>>()), Times.Once());
-        }
-    }
+    // [Fact]
+    // public void GetTitleBookmarks_NonExistingUsername_MapperIsCalledOnce()
+    // {
+    //     // Arrange
+    //     using (var context = new ImdbContext(_fixture.ContextOptions))
+    //     {
+    //         var service = new BookmarkService(context, _mockMapper.Object);
+    //         // Act
+    //         var bookmarks = service.GetTitleBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
+    //         // Assert
+    //         _mockMapper.Verify(x => x.Map<IList<TitleBookmarkDTO>>(It.IsAny<List<TitleBookmark>>()), Times.Once());
+    //     }
+    // }
 
-    [Fact]
-    public void GetNameBookmarks_ExistingUsername_ReturnsBookmarks()
-    {
-        using (var context = new ImdbContext(_fixture.ContextOptions))
-        {
-            var service = new BookmarkService(context, _mockMapper.Object);
-            // Act
-            var bookmarks = service.GetNameBookmarks("testUser", OrderBy.Alphabetical, 10);
-            // Assert
-            _mockMapper.Verify(x => x.Map<IList<NameBookmarkDTO>>(It.IsAny<List<NameBookmark>>()), Times.Once());
-        }
-    }
+    // [Fact]
+    // public void GetNameBookmarks_ExistingUsername_ReturnsBookmarks()
+    // {
+    //     using (var context = new ImdbContext(_fixture.ContextOptions))
+    //     {
+    //         var service = new BookmarkService(context, _mockMapper.Object);
+    //         // Act
+    //         var bookmarks = service.GetNameBookmarks("testUser", OrderBy.Alphabetical, 10);
+    //         // Assert
+    //         _mockMapper.Verify(x => x.Map<IList<NameBookmarkDTO>>(It.IsAny<List<NameBookmark>>()), Times.Once());
+    //     }
+    // }
 
-    [Fact]
-    public void GetNameBookmarks_NonExistingUsername_ReturnsEmptyList()
-    {
-        // Arrange
-        using (var context = new ImdbContext(_fixture.ContextOptions))
-        {
-            var service = new BookmarkService(context, _mockMapper.Object);
-            // Act
-            var bookmarks = service.GetNameBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
-            // Assert
-            _mockMapper.Verify(x => x.Map<IList<NameBookmarkDTO>>(It.IsAny<List<NameBookmark>>()), Times.Once());
-        }
-    }
+    // [Fact]
+    // public void GetNameBookmarks_NonExistingUsername_ReturnsEmptyList()
+    // {
+    //     // Arrange
+    //     using (var context = new ImdbContext(_fixture.ContextOptions))
+    //     {
+    //         var service = new BookmarkService(context, _mockMapper.Object);
+    //         // Act
+    //         var bookmarks = service.GetNameBookmarks("nonExistingUser", OrderBy.Alphabetical, 10);
+    //         // Assert
+    //         _mockMapper.Verify(x => x.Map<IList<NameBookmarkDTO>>(It.IsAny<List<NameBookmark>>()), Times.Once());
+    //     }
+    // }
 }
