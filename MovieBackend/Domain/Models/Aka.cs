@@ -13,4 +13,3 @@ public class Aka
     public bool IsOriginalTitle { get; set; }
     public List<Type> Types { get; set; }
 }
-

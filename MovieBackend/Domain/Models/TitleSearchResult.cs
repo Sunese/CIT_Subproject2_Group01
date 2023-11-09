@@ -10,4 +10,5 @@ public class TitleSearchResult
     public string TitleID { get; set; }
     public string PrimaryTitle { get; set; }
     public int Rank { get; set; }
+    public Title Title { get; set; }
 }

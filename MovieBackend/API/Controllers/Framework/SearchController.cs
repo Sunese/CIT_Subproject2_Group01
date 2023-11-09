@@ -1,5 +1,6 @@
 using System.Security.Claims;
 using API.Security;
+using Application.Enums;
 using Application.Models;
 using Application.Services;
 using Domain.Models;
@@ -30,10 +31,10 @@ public class SearchController : MovieBaseController
 
     [HttpGet("title", Name = nameof(TitleSearch))]
     [Authorize]
-    public IActionResult TitleSearch(string query, int page = 0, int pageSize = 10)
+    public IActionResult TitleSearch(string query, TitleType? titleType, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
-        var (searchResult, total) = _searchService.TitleSearch(username, query, page, pageSize);
+        var (searchResult, total) = _searchService.TitleSearch(username, query, titleType, page, pageSize);
         var items = searchResult.Select(result => new
         {
             Url = GetUrl("GetTitle", new { id = result.TitleID }),

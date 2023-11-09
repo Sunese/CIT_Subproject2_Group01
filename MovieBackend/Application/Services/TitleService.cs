@@ -180,4 +180,61 @@ public class TitleService : ITitleService
             .ToList();
         return (_mapper.Map<IList<SimiliarMoviesResultDTO>>(paged), similiarMovies.Count());
     }
+
+    public (IList<TitleDTO> titles, int count) GetTvSeries(int page, int pageSize)
+    {
+        var filtered = _imdbContext.Titles
+            .Include(t => t.Genres)
+            .Where(t => t.TitleType == "tvSeries");
+        var paged = filtered
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (_mapper.Map<IList<TitleDTO>>(paged), filtered.Count());
+    }
+
+    public (IList<EpisodeDTO>, int count) GetEpisodes(string id, int page, int pageSize)
+    {
+        var filtered = _imdbContext.Episodes
+            .Include(e => e.Title)
+            .Include(e => e.ParentTitle)
+            .Where(e => e.ParentTitleID == id)
+            .OrderBy(e => e.SeasonNumber)
+            .ThenBy(e => e.EpisodeNumber);
+        var paged = filtered
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (_mapper.Map<IList<EpisodeDTO>>(paged), filtered.Count());
+    }
+
+    public bool IsTvSeries(string id)
+    {
+        var title = _imdbContext.Titles.Find(id);
+        if (title is null)
+        {
+            return false;
+        }
+        return title.TitleType == "tvSeries";
+    }
+
+    public IList<WriterDTO> GetWriters(string id)
+    {
+        var writers = _imdbContext.Writers
+            .Where(w => w.TitleID == id)
+            .Include(w => w.Name)
+            .Include(w => w.Title)
+            .ToList();
+        return _mapper.Map<IList<WriterDTO>>(writers);
+    }
+
+    public IList<DirectorDTO> GetDirectors(string id)
+    {
+        var directors = _imdbContext.Directors
+            .Where(d => d.TitleID == id)
+            .Include(d => d.Name)
+            .Include(d => d.Title)
+            .ToList();
+        return _mapper.Map<IList<DirectorDTO>>(directors);
+    }
 }

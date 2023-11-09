@@ -25,6 +25,9 @@ public class ImdbContext : DbContext
     public DbSet<Aka> Aka { get; set; }
     public DbSet<AkaType> AkaType { get; set; }
     public DbSet<Type> Type { get; set; }
+    public DbSet<Episode> Episodes { get; set; }
+    public DbSet<Writer> Writers { get; set; }
+    public DbSet<Director> Directors { get; set; }
     public DbSet<SimiliarMoviesResult> SimiliarMoviesResult { get; set; }
 
     public ImdbContext(
@@ -438,6 +441,48 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Type>()
             .Property(at => at.TypeName)
             .HasColumnName("typename");
+
+        // Director
+        modelBuilder.Entity<Director>()
+            .ToTable("directors");
+        modelBuilder.Entity<Director>()
+            .HasKey(d => new { d.TitleID, d.NameId });
+        modelBuilder.Entity<Director>()
+            .Property(d => d.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Director>()
+            .Property(d => d.NameId)
+            .HasColumnName("nameid");
+
+        // Writer
+        modelBuilder.Entity<Writer>()
+            .ToTable("writers");
+        modelBuilder.Entity<Writer>()
+            .HasKey(w => new { w.TitleID, w.NameId });
+        modelBuilder.Entity<Writer>()
+            .Property(w => w.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Writer>()
+            .Property(w => w.NameId)
+            .HasColumnName("nameid");
+
+        // Episode
+        modelBuilder.Entity<Episode>()
+            .ToTable("episode");
+        modelBuilder.Entity<Episode>()
+            .HasKey(e => new { e.TitleID, e.ParentTitleID });
+        modelBuilder.Entity<Episode>()
+            .Property(e => e.TitleID)
+            .HasColumnName("titleid");
+        modelBuilder.Entity<Episode>()
+            .Property(e => e.ParentTitleID)
+            .HasColumnName("parenttitleid");
+        modelBuilder.Entity<Episode>()
+            .Property(e => e.EpisodeNumber)
+            .HasColumnName("episodenumber");
+        modelBuilder.Entity<Episode>()
+            .Property(e => e.SeasonNumber)
+            .HasColumnName("seasonnumber");
 
         // PopularActorsResult
         modelBuilder.Entity<PopularActorsResult>()

@@ -5,6 +5,7 @@ using System.Security.Claims;
 using System.Text;
 using System.Threading.Tasks;
 using Application.Context;
+using Application.Enums;
 using Application.Models;
 using AutoMapper;
 using Domain.Models;
@@ -49,7 +50,12 @@ public class SearchService : ISearchService
         return (_mapper.Map<IList<NameSearchResultDTO>>(paged), names.Count());
     }
 
-    public (IList<TitleSearchResultDTO>, int) TitleSearch(string username, string query, int page, int pageSize)
+    public (IList<TitleSearchResultDTO>, int) TitleSearch(
+        string username, 
+        string query,
+        TitleType? titleType, 
+        int page, 
+        int pageSize)
     {
         var search = new Search()
         {
@@ -73,10 +79,25 @@ public class SearchService : ISearchService
             sqlQuery.Append($"'{word}',");
         }
         sqlQuery.Remove(sqlQuery.Length - 1, 1);
-        sqlQuery.Append(");");
+        sqlQuery.Append(")");
 
-        var titles = _imdbContext.TitleSearchResults
-            .FromSqlRaw(sqlQuery.ToString());
+        IEnumerable<TitleSearchResult> titles;
+
+        if (titleType is null)
+        {
+            sqlQuery.Append(";");
+            titles = _imdbContext.TitleSearchResults
+                .FromSqlRaw(sqlQuery.ToString());
+        }
+        else
+        {
+            titles = _imdbContext.TitleSearchResults
+                .FromSqlRaw(sqlQuery.ToString())
+                .Include(t => t.Title)
+                .Where(t => t.Title.TitleType == 
+                    GetDatabaseFriendlyTitleType((TitleType)titleType));
+        }
+
         var paged = titles
             .Skip(page * pageSize)
             .Take(pageSize)
@@ -117,5 +138,17 @@ public class SearchService : ISearchService
             .Take(pageSize)
             .ToList();
         return (_mapper.Map<IList<CoPlayersDTO>>(paged), coPlayers.Count());
+    }
+
+    string GetDatabaseFriendlyTitleType(TitleType titleType)
+    {
+        if (titleType == TitleType._short)
+        {
+            return "short";
+        }
+        else
+        {
+            return titleType.ToString();
+        }
     }
 }

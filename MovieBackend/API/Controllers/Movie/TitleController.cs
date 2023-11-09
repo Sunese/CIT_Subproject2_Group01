@@ -112,6 +112,32 @@ public class TitleController : MovieBaseController
         return Ok(Paging(items, total, page, pageSize, nameof(GetSimiliarMovies), new RouteValueDictionary { { "id", id } }));
     }
 
+    [HttpGet("{id}/directors", Name = nameof(GetDirectors))]
+    public IActionResult GetDirectors(string id)
+    {
+        var directors = _titleService.GetDirectors(id);
+        if (directors == null)
+        {
+            return NotFound();
+        }
+        return Ok(directors.Select(d => new { 
+            Url = Url.Link("GetName", new { id = d.NameId }),
+            d.Name.PrimaryName }));
+    }
+
+    [HttpGet("{id}/writers", Name = nameof(GetWriters))]
+    public IActionResult GetWriters(string id)
+    {
+        var writers = _titleService.GetWriters(id);
+        if (writers == null)
+        {
+            return NotFound();
+        }
+        return Ok(writers.Select(w => new {
+            Url = Url.Link("GetName", new { id = w.NameId }),
+            w.Name.PrimaryName }));
+    }
+
     private object CreateTitlePageItem(TitleDTO title)
     {
         return new
