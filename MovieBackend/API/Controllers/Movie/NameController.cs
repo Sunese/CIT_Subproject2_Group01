@@ -94,6 +94,7 @@ public class NameController : MovieBaseController
     {
         return new
         {
+            NameID = nameDTO.NameId,
             Url = GetUrl(nameof(GetName), new { id = nameDTO.NameId }),
             Name = nameDTO.PrimaryName,
             BirthYear = nameDTO.BirthYear,
@@ -105,6 +106,7 @@ public class NameController : MovieBaseController
     {
         return new
         {
+            TitleID = knownForTitles.TitleID,
             Url = GetUrl("GetTitle", new { id = knownForTitles.TitleID }),
             PrimaryTitle = knownForTitles.PrimaryTitle,
             TitleType = knownForTitles.TitleType,
@@ -116,6 +118,7 @@ public class NameController : MovieBaseController
     {
         return new
         {
+            TitleID = principal.Title.TitleID,
             Url = GetUrl("GetTitle", new { id = principal.Title.TitleID }),
             Category = principal.Category,
             Job = principal.Job,

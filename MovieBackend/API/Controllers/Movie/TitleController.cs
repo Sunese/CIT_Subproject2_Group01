@@ -1,5 +1,6 @@
 ﻿using Application.Models;
 using Application.Services;
+using Domain.Models;
 using Microsoft.AspNetCore.Mvc;
 
 namespace API.Controllers.Movie;
@@ -142,6 +143,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
+            TitleID = title.TitleID,
             Url = GetUrl(nameof(GetTitle), new { id = title.TitleID }),
             Name = title.PrimaryTitle,
             Released = title.Released,
@@ -153,6 +155,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
+            TitleID = titleRatingDTO.TitleID,
             Url = GetUrl(nameof(GetTitleRating), new { id = titleRatingDTO.TitleID }),
             PrimaryTitle = titleRatingDTO.PrimaryTitle,
             AverageRating = titleRatingDTO.AverageRating,
@@ -164,6 +167,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
+            NameId = popularActorsDTO.NameId,
             Url = GetUrl("GetName", new { id = popularActorsDTO.NameId }),
             Name = popularActorsDTO.PrimaryName,
             Rating = popularActorsDTO.Rating,
@@ -174,6 +178,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
+            TitleID = akaDTO.TitleId,
             Url = GetUrl(nameof(GetTitleAkas), new { id = akaDTO.TitleId }),
             TitleName = akaDTO.TitleName,
             Language = akaDTO.Language,
@@ -185,6 +190,7 @@ public class TitleController : MovieBaseController
     {
         return new
         {
+            TitleID = similiarMovieDTO.TitleId,
             Url = GetUrl(nameof(GetTitle), new { id = similiarMovieDTO.TitleId }),
             Title = similiarMovieDTO.PrimaryTitle
         };

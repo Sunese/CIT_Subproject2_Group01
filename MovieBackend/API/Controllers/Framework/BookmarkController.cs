@@ -202,6 +202,7 @@ public class BookmarkController : MovieBaseController
     {
         return new 
         {
+            TitleID = titleBookmarkDTO.TitleId,
             Url = GetUrl("GetTitle", new { id = titleBookmarkDTO.TitleId }),
             PrimaryTitle = titleBookmarkDTO.Title.PrimaryTitle,
             Notes = titleBookmarkDTO.Notes,
@@ -212,6 +213,7 @@ public class BookmarkController : MovieBaseController
     {
         return new
         {
+            NameID = nameBookmarkDTO.NameId,
             Url = GetUrl("GetName", new { id = nameBookmarkDTO.NameId }),
             PrimaryName = nameBookmarkDTO.Name.PrimaryName,
             Notes = nameBookmarkDTO.Notes,

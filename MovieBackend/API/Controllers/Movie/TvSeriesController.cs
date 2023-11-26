@@ -49,6 +49,7 @@ public class TvSeriesController : MovieBaseController
     {
         return new
         {
+            TitleID = episode.TitleID,
             Url = GetUrl("GetTitle", new { id = episode.TitleID }),
             Name = episode.Title.PrimaryTitle,
             Released = episode.Title.Released,
@@ -62,6 +63,7 @@ public class TvSeriesController : MovieBaseController
     {
         return new
         {
+            TitleID = title.TitleID,
             Url = GetUrl("GetTitle", new { id = title.TitleID }),
             Episodes = GetUrl(nameof(GetTvSeries), new { id = title.TitleID }),
             Name = title.PrimaryTitle,

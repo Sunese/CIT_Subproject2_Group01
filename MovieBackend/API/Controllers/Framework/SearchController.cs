@@ -37,6 +37,7 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.TitleSearch(username, query, titleType, page, pageSize);
         var items = searchResult.Select(result => new
         {
+            TitleID = result.TitleID,
             Url = GetUrl("GetTitle", new { id = result.TitleID }),
             PrimaryTitle = result.PrimaryTitle
         });
@@ -51,6 +52,7 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.NameSearch(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
+            NameID = result.NameId,
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
@@ -66,6 +68,7 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindActors(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
+            NameID = result.NameId,
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
@@ -81,6 +84,7 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindWriters(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
+            NameID = result.NameId,
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
@@ -96,6 +100,7 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindCoPlayers(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
+            NameID = result.NameId,
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
