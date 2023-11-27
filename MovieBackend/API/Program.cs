@@ -17,8 +17,6 @@ var builder = WebApplication.CreateBuilder(args);
 
 builder.Configuration.AddJsonFile("config.json", false);
 
-builder.Services.AddCors();
-
 builder.Services.Configure<ImdbContextOptions>(
     builder.Configuration.GetSection(ImdbContextOptions.ImdbContext));
 builder.Services.Configure<JwtAuthOptions>(
@@ -70,10 +68,9 @@ app.UseHttpsRedirection();
 app.UseAuthentication();
 app.UseAuthorization();
 
-app.UseCors(builder => builder
-     .AllowAnyOrigin()
-     .AllowAnyMethod()
-     .AllowAnyHeader());
+app.UseCors(
+    options => options.WithOrigins("*").AllowAnyMethod().AllowAnyHeader()
+  );
 
 app.MapControllers();
 
