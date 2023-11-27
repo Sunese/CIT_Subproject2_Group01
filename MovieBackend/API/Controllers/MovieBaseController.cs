@@ -29,6 +29,8 @@ public class MovieBaseController : ControllerBase
         {
             Total = total,
             NumberOfPages = numPages,
+            CurrentPageNumber = page,
+            PageSize = pageSize,
             Next = next,
             Prev = prev,
             Current = cur,
