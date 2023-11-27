@@ -14,7 +14,7 @@ public class KnownForTitlesDTO
     // public bool IsAdult { get; set; }
     // public DateOnly? Released { get; set; }
     public int? RuntimeMinutes { get; set; }
-    // public string? Poster { get; set; }
+    public string? Poster { get; set; }
     // public string? Plot { get; set; }
     // public int? StartYear { get; set; }
     // public int? EndYear { get; set;}

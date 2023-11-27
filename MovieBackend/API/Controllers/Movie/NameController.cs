@@ -74,7 +74,7 @@ public class NameController : MovieBaseController
             return NotFound();
         }
         var items = knownForTitles.Select(CreateKnownForTitlePageItem);
-        return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), new RouteValueDictionary { { "id", id } }));
+            return Ok(Paging(items, total, page, pageSize, nameof(GetKnownForTitles), new RouteValueDictionary { { "id", id } }));
     }
 
     // Get principals by name id
@@ -107,6 +107,7 @@ public class NameController : MovieBaseController
         return new
         {
             TitleID = knownForTitles.TitleID,
+            Poster = knownForTitles.Poster,
             Url = GetUrl("GetTitle", new { id = knownForTitles.TitleID }),
             PrimaryTitle = knownForTitles.PrimaryTitle,
             TitleType = knownForTitles.TitleType,
