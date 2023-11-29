@@ -11,6 +11,7 @@ using Microsoft.IdentityModel.Tokens;
 namespace API.Controllers.Framework;
 
 [ApiController]
+[Authorize]
 [Route("api/v1/search")]
 public class SearchController : MovieBaseController
 {
@@ -30,7 +31,6 @@ public class SearchController : MovieBaseController
     }
 
     [HttpGet("title", Name = nameof(TitleSearch))]
-    [Authorize]
     public IActionResult TitleSearch(string query, TitleType? titleType, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
@@ -41,11 +41,10 @@ public class SearchController : MovieBaseController
             Url = GetUrl("GetTitle", new { id = result.TitleID }),
             PrimaryTitle = result.PrimaryTitle
         });
-        return Ok(Paging(items, total, page, pageSize, nameof(TitleSearch)));
+        return Ok(SearchPaging(items, total, page, pageSize, nameof(TitleSearch), query));
     }
 
     [HttpGet("name", Name = nameof(NameSearch))]
-    [Authorize]
     public IActionResult NameSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
@@ -56,12 +55,11 @@ public class SearchController : MovieBaseController
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
-        return Ok(Paging(items, total, page, pageSize, nameof(NameSearch)));
+        return Ok(SearchPaging(items, total, page, pageSize, nameof(NameSearch), query));
     }
 
     // Find actors by name
     [HttpGet("actor", Name = nameof(ActorSearch))]
-    [Authorize]
     public IActionResult ActorSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
@@ -72,12 +70,11 @@ public class SearchController : MovieBaseController
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
-        return Ok(Paging(items, total, page, pageSize, nameof(ActorSearch)));
+        return Ok(SearchPaging(items, total, page, pageSize, nameof(ActorSearch), query));
     }
 
     // Find writers by name
     [HttpGet("writer", Name = nameof(WriterSearch))]
-    [Authorize]
     public IActionResult WriterSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
@@ -88,12 +85,11 @@ public class SearchController : MovieBaseController
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
-        return Ok(Paging(items, total, page, pageSize, nameof(WriterSearch)));
+        return Ok(SearchPaging(items, total, page, pageSize, nameof(WriterSearch), query));
     }
 
     // Find co-players by name
     [HttpGet("coplayer", Name = nameof(CoPlayerSearch))]
-    [Authorize]
     public IActionResult CoPlayerSearch(string query, int page = 0, int pageSize = 10)
     {
         var username = HttpContext.User.Identity.Name;
@@ -104,6 +100,6 @@ public class SearchController : MovieBaseController
             Url = GetUrl("GetName", new { id = result.NameId }),
             PrimaryName = result.PrimaryName
         });
-        return Ok(Paging(items, total, page, pageSize, nameof(CoPlayerSearch)));
+        return Ok(SearchPaging(items, total, page, pageSize, nameof(CoPlayerSearch), query));
     }
 }
