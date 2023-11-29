@@ -13,6 +13,6 @@ public interface IAccountService
     bool UserExists(string username, out UserDTO user);
     void CreateUser(UserDTO user);
     void DeleteUser(string username);
-    void UpdatePassword(string username, string newPassword);
+    void UpdatePassword(string username, string newPassword, string newSalt);
     void UpdateEmail(string username, string newEmail);
 }

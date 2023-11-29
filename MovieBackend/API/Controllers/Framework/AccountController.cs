@@ -5,6 +5,7 @@ using Application.Models;
 using Application.Services;
 using Domain.Models;
 using Microsoft.AspNetCore.Authorization;
+using Microsoft.AspNetCore.Cors;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
@@ -34,7 +35,7 @@ public class AccountController : MovieBaseController
     {
         if (!_accountService.UserExists(loginModel.UserName, out var storedUser))
         {
-            return NotFound();
+            return Unauthorized();
         }
         if (!_hashingService.Verify(loginModel.Password, storedUser.Password, storedUser.Salt))
         {
@@ -68,13 +69,34 @@ public class AccountController : MovieBaseController
         return Ok();
     }
 
+    [HttpGet("{username}")]
+    [Authorize]
+    public IActionResult GetAccountInfo(string username)
+    {
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        if (!_accountService.UserExists(username, out var storedUser))
+        {
+            return Unauthorized();
+        }
+        return Ok(new
+        {
+            username = storedUser.UserName,
+            email = storedUser.Email,
+            role = storedUser.Role,
+        });
+
+    }
+
     [HttpDelete("{username}")]
     [Authorize]
-    public IActionResult Delete(string? username)
+    public IActionResult Delete(string username)
     {
         if (!_accountService.UserExists(username, out _))
         {
-            return BadRequest("User does not exist");
+            return Unauthorized();
         }
         if (!OwnsResource(username))
         {
@@ -101,7 +123,8 @@ public class AccountController : MovieBaseController
         {
             return Unauthorized();
         }
-        _accountService.UpdatePassword(username, model.NewPassword);
+        var (hash, salt) = _hashingService.Hash(model.NewPassword);
+        _accountService.UpdatePassword(username, hash, salt);
         return Ok();
     }
 

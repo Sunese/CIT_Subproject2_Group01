@@ -51,9 +51,9 @@ public class AccountService : IAccountService
         _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 
-    public void UpdatePassword(string username, string newPassword)
+    public void UpdatePassword(string username, string newPassword, string newSalt)
     {
-        FormattableString query = $"call updateuserpassword({username}, {newPassword})";
+        FormattableString query = $"call updateuserpassword({username}, {newPassword}, {newSalt})";
         _imdbContext.Database.ExecuteSqlInterpolated(query);
     }
 
