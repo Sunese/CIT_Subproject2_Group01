@@ -31,7 +31,8 @@ public class TitleService : ITitleService
         }
         // remove tracking
         _imdbContext.Entry(title).State = EntityState.Detached;
-        titleDTO = _mapper.Map<TitleDTO>(title);
+
+        titleDTO = GetTitle(id);
         return true;
     }
 
@@ -129,7 +130,8 @@ public class TitleService : ITitleService
                     .Where(t => t.TitleRating != null)
                     .Where(t => t.Released >= limit)
                     .Where(t => t.Released <= today)
-                    .OrderByDescending(t => t.TitleRating.AverageRating);
+                    .OrderByDescending(t => t.TitleRating.AverageRating)
+                    .ThenByDescending(t => t.TitleRating.NumVotes);
         }
         else
         {
@@ -137,7 +139,9 @@ public class TitleService : ITitleService
                     .Include(t => t.TitleRating)
                     .Where(t => t.TitleRating != null)
                     .Where(t => t.Released >= limit)
-                    .Where(t => t.Released <= today);
+                    .Where(t => t.Released <= today)
+                    .OrderByDescending(t => t.TitleRating.AverageRating)
+                    .ThenByDescending(t => t.TitleRating.NumVotes);
         }
         var paged = filtered
                 .Skip(page * pageSize)
