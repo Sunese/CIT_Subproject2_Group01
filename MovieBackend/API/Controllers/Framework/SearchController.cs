@@ -39,7 +39,9 @@ public class SearchController : MovieBaseController
         {
             TitleID = result.TitleID,
             Url = GetUrl("GetTitle", new { id = result.TitleID }),
-            PrimaryTitle = result.PrimaryTitle
+            PrimaryTitle = result.PrimaryTitle,
+            Poster = result.Title.Poster,
+            Plot = result.Title.Plot
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(TitleSearch), query));
     }

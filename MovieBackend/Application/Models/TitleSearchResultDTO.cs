@@ -9,4 +9,5 @@ public class TitleSearchResultDTO
 {
     public string TitleID { get; set; }
     public string PrimaryTitle { get; set; }
+    public TitleDTO Title { get; set; }
 }
