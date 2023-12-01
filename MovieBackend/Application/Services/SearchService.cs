@@ -35,7 +35,8 @@ public class SearchService : ISearchService
         {
             Username = username,
             Query = query,
-            Timestamp = DateTime.Now
+            Timestamp = DateTime.Now,
+            SearchType = "name"
         };
         _imdbContext.Searches.Add(search);
 
@@ -61,7 +62,8 @@ public class SearchService : ISearchService
         {
             Username = username,
             Query = query,
-            Timestamp = DateTime.Now
+            Timestamp = DateTime.Now,
+            SearchType = "title"
         };
 
         _imdbContext.Searches.Add(search);
@@ -85,9 +87,9 @@ public class SearchService : ISearchService
 
         if (titleType is null)
         {
-            sqlQuery.Append(";");
             titles = _imdbContext.TitleSearchResults
-                .FromSqlRaw(sqlQuery.ToString());
+                .FromSqlRaw(sqlQuery.ToString())
+                .Include(t => t.Title);
         }
         else
         {

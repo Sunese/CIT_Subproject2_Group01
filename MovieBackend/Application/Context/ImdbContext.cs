@@ -305,6 +305,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Search>()
             .Property(s => s.Timestamp)
             .HasColumnName("timestamp");
+        modelBuilder.Entity<Search>()
+            .Property(s => s.SearchType)
+            .HasColumnName("querytype");
 
         // UserTitleRating
         modelBuilder.Entity<UserTitleRating>()
