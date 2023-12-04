@@ -13,4 +13,5 @@ public interface IUserRatingService
     bool CreateUserTitleRating(UserTitleRatingDTO userTitleRatingDTO);
     bool UserTitleRatingExists(string username, string titleId, out UserTitleRatingDTO? userTitleRating);
     bool DeleteUserTitleRating(UserTitleRatingDTO userTitleRatingDTO);
+    bool ReplaceUserTitleRating(UserTitleRatingDTO oldRating, UserTitleRatingDTO newRating);
 }

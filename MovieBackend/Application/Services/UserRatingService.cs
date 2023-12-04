@@ -57,7 +57,8 @@ public class UserRatingService : IUserRatingService
                 ur.Username == username
                 &&
                 ur.TitleId == titleId);
-        _imdbContext.Entry(userTitleRating).State = EntityState.Detached;
+        // Remove tracking
+        _imdbContext.UserTitleRatings.Entry(userTitleRating).State = EntityState.Detached;
         userTitleRatingDTO = _mapper.Map<UserTitleRatingDTO>(userTitleRating);
         return userTitleRating != null;
     }
@@ -67,5 +68,10 @@ public class UserRatingService : IUserRatingService
         var userTitleRating = _mapper.Map<UserTitleRating>(userTitleRatingDTO);
         _imdbContext.UserTitleRatings.Remove(userTitleRating);
         return _imdbContext.SaveChanges() > 0;
+    }
+
+    public bool ReplaceUserTitleRating(UserTitleRatingDTO old, UserTitleRatingDTO newDTO)
+    {
+        return DeleteUserTitleRating(old) && CreateUserTitleRating(newDTO);
     }
 }

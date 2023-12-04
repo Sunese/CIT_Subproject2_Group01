@@ -14,5 +14,6 @@ public class TitleRatingProfile : Profile
     public TitleRatingProfile()
     {
         CreateMap<TitleRating, TitleRatingDTO>();
+        CreateMap<TitleRatingDTO, TitleRating>();
     }
 }

@@ -29,10 +29,9 @@ public class TitleService : ITitleService
             titleDTO = null;
             return false;
         }
-        // remove tracking
-        _imdbContext.Entry(title).State = EntityState.Detached;
-
         titleDTO = GetTitle(id);
+        // remove tracking
+        _imdbContext.Titles.Entry(title).State = EntityState.Detached;
         return true;
     }
 

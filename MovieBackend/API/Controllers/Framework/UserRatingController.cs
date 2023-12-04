@@ -144,6 +144,42 @@ public class UserRatingController : MovieBaseController
         return Ok();
     }
 
+    [HttpPut("{username}/titlerating/{titleId}")]
+    [Authorize]
+    public IActionResult Update(string username, string titleId, [FromBody] CreateTitleRatingModel newRatingModel)
+    {
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+
+        if (!_titleService.TitleExists(titleId, out _))
+        {
+            return BadRequest("TitleName does not exist");
+        }
+
+        if (!_userRatingService.UserTitleRatingExists(username, titleId, out var foundRating))
+        {
+            return BadRequest();
+        }
+
+        var newRating = ToUserTitleRatingDTO(username, newRatingModel);
+
+        if (!_userRatingService.ReplaceUserTitleRating(foundRating, newRating))
+        {
+            return StatusCode(500);
+        }
+
+        return Ok();
+    }
+
+
+
     private UserTitleRatingDTO ToUserTitleRatingDTO(
         string username,
         CreateTitleRatingModel form)
