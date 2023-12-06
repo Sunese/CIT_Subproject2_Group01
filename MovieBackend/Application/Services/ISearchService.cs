@@ -16,4 +16,5 @@ public interface ISearchService
     (IList<NameSearchResultDTO>, int) FindActors(string username, string query, int page, int pageSize);
     (IList<NameSearchResultDTO>, int) FindWriters(string username, string query, int page, int pageSize);
     (IList<CoPlayersDTO>, int) FindCoPlayers(string username, string query, int page, int pageSize);
+    (IList<UserSearchHistoryDTO>, int) GetUserSearchHistory(string username, int page, int pageSize);
 }

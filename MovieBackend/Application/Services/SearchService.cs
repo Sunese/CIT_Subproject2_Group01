@@ -142,6 +142,18 @@ public class SearchService : ISearchService
         return (_mapper.Map<IList<CoPlayersDTO>>(paged), coPlayers.Count());
     }
 
+    public (IList<UserSearchHistoryDTO>, int) GetUserSearchHistory(string username, int page, int pageSize)
+    {
+        var searches = _imdbContext.Searches
+            .Where(s => s.Username == username)
+            .OrderByDescending(s => s.Timestamp);
+        var paged = searches
+            .Skip(page * pageSize)
+            .Take(pageSize)
+            .ToList();
+        return (_mapper.Map<IList<UserSearchHistoryDTO>>(paged), searches.Count());
+    }
+
     string GetDatabaseFriendlyTitleType(TitleType titleType)
     {
         if (titleType == TitleType._short)
