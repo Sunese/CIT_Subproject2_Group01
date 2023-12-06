@@ -104,4 +104,17 @@ public class SearchController : MovieBaseController
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(CoPlayerSearch), query));
     }
+
+    [HttpGet("history", Name = nameof(GetUserSearchHistory))]
+    public IActionResult GetUserSearchHistory(int page = 0, int pageSize = 10)
+    {
+        var username = HttpContext.User.Identity.Name;
+        var (searchResult, total) = _searchService.GetUserSearchHistory(username, page, pageSize);
+        var items = searchResult.Select(result => new
+        {
+            Query = result.Query,
+            Timestamp = result.Timestamp
+        });
+        return Ok(Paging(items, total, page, pageSize, nameof(GetUserSearchHistory)));
+    }
 }
