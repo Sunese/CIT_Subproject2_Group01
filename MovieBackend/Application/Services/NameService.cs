@@ -84,4 +84,18 @@ public class NameService : INameService
             .ToList();
         return (_mapper.Map<List<PrincipalDTO>>(paged), principals.Count());
     }
+
+    public bool NameExists(string nameId, out NameDTO foundName)
+    {
+        var name = _imdbContext.Names
+            .Where(n => n.NameId == nameId)
+            .FirstOrDefault();
+        if (name == null)
+        {
+            foundName = null!;
+            return false;
+        }
+        foundName = _mapper.Map<NameDTO>(name);
+        return true;
+    }
 }

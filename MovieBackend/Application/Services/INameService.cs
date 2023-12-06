@@ -8,6 +8,7 @@ namespace Application.Services;
 
 public interface INameService
 {
+    bool NameExists(string nameId, out NameDTO foundName);
     (IList<NameDTO>, int) GetNames(int page, int pageSize);
     NameDTO GetName(string nameId);
     NameRatingDTO GetRating(string nameId);

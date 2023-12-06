@@ -17,6 +17,7 @@ public class BookmarkController : MovieBaseController
 {
     private readonly IAccountService _userService;
     private readonly ITitleService _titleService;
+    private readonly INameService _nameService;
     private readonly IMapper _mapper;
     private readonly IBookmarkService _bookmarkService;
 
@@ -24,6 +25,7 @@ public class BookmarkController : MovieBaseController
         IAccountService userService,
         IBookmarkService bookmarkService,
         ITitleService titleService,
+        INameService nameService,
         IMapper mapper,
         LinkGenerator linkGenerator) : base(linkGenerator)
     {
@@ -31,6 +33,31 @@ public class BookmarkController : MovieBaseController
         _titleService = titleService;
         _userService = userService;
         _bookmarkService = bookmarkService;
+        _nameService = nameService;
+    }
+
+    [HttpGet("{username}/titlebookmark/{titleId}", Name = nameof(GetTitleBookmark))]
+    [Authorize]
+    // NOTE: only the user can access their own bookmarks
+    public IActionResult GetTitleBookmark(string username, string titleId)
+    {
+        if (!_userService.UserExists(username, out _))
+        {
+            return BadRequest("User does not exist");
+        }
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        if (!_titleService.TitleExists(titleId, out var foundTitle))
+        {
+            return BadRequest("Title does not exist");
+        }
+        if (!_bookmarkService.TryGetTitleBookmark(username, titleId, out var foundBookmark))
+        {
+            return NotFound();
+        }
+        return Ok(CreateTitleBookmarkPageItem(foundBookmark));
     }
 
     [HttpGet("{username}/titlebookmark", Name = nameof(GetTitleBookmarks))]
@@ -119,6 +146,26 @@ public class BookmarkController : MovieBaseController
         }
         _bookmarkService.DeleteTitleBookmark(username, model);
         return Ok();
+    }
+
+    [HttpGet("{username}/bookmark/{nameId}", Name = nameof(GetNameBookmark))]
+    [Authorize]
+    // NOTE: only the user can access their own bookmarks
+    public IActionResult GetNameBookmark(string username, string nameId)
+    {
+        if (!OwnsResource(username))
+        {
+            return Unauthorized();
+        }
+        if (!_nameService.NameExists(nameId, out var foundName))
+        {
+            return BadRequest("Name does not exist");
+        }
+        if (!_bookmarkService.TryGetNameBookmark(username, nameId, out var foundBookmark))
+        {
+            return NotFound();
+        }
+        return Ok(CreateNameBookmarkPageItem(foundBookmark));
     }
 
     [HttpGet("{username}/namebookmark", Name = nameof(GetNameBookmarks))]
