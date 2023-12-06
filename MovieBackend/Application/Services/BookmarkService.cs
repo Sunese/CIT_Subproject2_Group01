@@ -86,6 +86,18 @@ public class BookmarkService : IBookmarkService
         return _context.TitleBookmarks.Any(tb => tb.Username == username && tb.TitleId == titleId);
     }
 
+    public bool TryGetTitleBookmark(string username, string titleId, out TitleBookmarkDTO? foundBookmark)
+    {
+        var bookmark = _context.TitleBookmarks.FirstOrDefault(tb => tb.Username == username && tb.TitleId == titleId);
+        if (bookmark == null)
+        {
+            foundBookmark = null;
+            return false;
+        }
+        foundBookmark = _mapper.Map<TitleBookmarkDTO>(bookmark);
+        return true;
+    }
+
     public void CreateNameBookmark(string username, NameBookmarkDTO model)
     {
         FormattableString query = $"CALL AddNameBookmark({username}, {model.NameId}, {model.Notes})";
@@ -130,4 +142,17 @@ public class BookmarkService : IBookmarkService
     {
         return _context.NameBookmarks.Any(nb => nb.Username == username && nb.NameId == nameId);
     }
+
+    public bool TryGetNameBookmark(string username, string nameId, out NameBookmarkDTO? foundBookmark)
+    {
+        var bookmark = _context.NameBookmarks.FirstOrDefault(nb => nb.Username == username && nb.NameId == nameId);
+        if (bookmark == null)
+        {
+            foundBookmark = null;
+            return false;
+        }
+        foundBookmark = _mapper.Map<NameBookmarkDTO>(bookmark);
+        return true;
+    }
+
 }
