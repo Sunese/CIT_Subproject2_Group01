@@ -41,10 +41,6 @@ public class BookmarkController : MovieBaseController
     // NOTE: only the user can access their own bookmarks
     public IActionResult GetTitleBookmark(string username, string titleId)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
