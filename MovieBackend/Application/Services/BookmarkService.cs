@@ -88,7 +88,10 @@ public class BookmarkService : IBookmarkService
 
     public bool TryGetTitleBookmark(string username, string titleId, out TitleBookmarkDTO? foundBookmark)
     {
-        var bookmark = _context.TitleBookmarks.FirstOrDefault(tb => tb.Username == username && tb.TitleId == titleId);
+        var bookmark = _context
+            .TitleBookmarks
+            .Include(tb => tb.Title)
+            .FirstOrDefault(tb => tb.Username == username && tb.TitleId == titleId);
         if (bookmark == null)
         {
             foundBookmark = null;
@@ -145,7 +148,10 @@ public class BookmarkService : IBookmarkService
 
     public bool TryGetNameBookmark(string username, string nameId, out NameBookmarkDTO? foundBookmark)
     {
-        var bookmark = _context.NameBookmarks.FirstOrDefault(nb => nb.Username == username && nb.NameId == nameId);
+        var bookmark = _context
+            .NameBookmarks
+            .Include(nb => nb.Name)
+            .FirstOrDefault(nb => nb.Username == username && nb.NameId == nameId);
         if (bookmark == null)
         {
             foundBookmark = null;
