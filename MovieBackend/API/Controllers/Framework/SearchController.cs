@@ -1,4 +1,5 @@
 using System.Security.Claims;
+using System.Text.RegularExpressions;
 using API.Security;
 using Application.Enums;
 using Application.Models;
@@ -33,6 +34,10 @@ public class SearchController : MovieBaseController
     [HttpGet("title", Name = nameof(TitleSearch))]
     public IActionResult TitleSearch(string query, TitleType? titleType, int page = 0, int pageSize = 10)
     {
+        if (isInValidSearchInput(query))
+        {
+            return BadRequest();
+        }
         var username = HttpContext.User.Identity.Name;
         var (searchResult, total) = _searchService.TitleSearch(username, query, titleType, page, pageSize);
         var items = searchResult.Select(result => new
@@ -49,6 +54,10 @@ public class SearchController : MovieBaseController
     [HttpGet("name", Name = nameof(NameSearch))]
     public IActionResult NameSearch(string query, int page = 0, int pageSize = 10)
     {
+        if (isInValidSearchInput(query))
+        {
+            return BadRequest();
+        }
         var username = HttpContext.User.Identity.Name;
         var (searchResult, total) = _searchService.NameSearch(username, query, page, pageSize);
         var items = searchResult.Select(result => new
@@ -64,6 +73,10 @@ public class SearchController : MovieBaseController
     [HttpGet("actor", Name = nameof(ActorSearch))]
     public IActionResult ActorSearch(string query, int page = 0, int pageSize = 10)
     {
+        if (isInValidSearchInput(query)) 
+        {  
+            return BadRequest();
+        }
         var username = HttpContext.User.Identity.Name;
         var (searchResult, total) = _searchService.FindActors(username, query, page, pageSize);
         var items = searchResult.Select(result => new
@@ -79,6 +92,10 @@ public class SearchController : MovieBaseController
     [HttpGet("writer", Name = nameof(WriterSearch))]
     public IActionResult WriterSearch(string query, int page = 0, int pageSize = 10)
     {
+        if (isInValidSearchInput(query))
+        {
+            return BadRequest();
+        }
         var username = HttpContext.User.Identity.Name;
         var (searchResult, total) = _searchService.FindWriters(username, query, page, pageSize);
         var items = searchResult.Select(result => new
@@ -94,6 +111,10 @@ public class SearchController : MovieBaseController
     [HttpGet("coplayer", Name = nameof(CoPlayerSearch))]
     public IActionResult CoPlayerSearch(string query, int page = 0, int pageSize = 10)
     {
+        if (isInValidSearchInput(query))
+        {
+            return BadRequest();
+        }
         var username = HttpContext.User.Identity.Name;
         var (searchResult, total) = _searchService.FindCoPlayers(username, query, page, pageSize);
         var items = searchResult.Select(result => new
@@ -116,5 +137,19 @@ public class SearchController : MovieBaseController
             Timestamp = result.Timestamp
         });
         return Ok(Paging(items, total, page, pageSize, nameof(GetUserSearchHistory)));
+    }
+
+    private bool isInValidSearchInput(string searchInput)
+    {
+
+        if(string.IsNullOrEmpty(searchInput))
+        {
+            return true;
+        }
+        if (!Regex.IsMatch(searchInput, "^[a-zA-Z0-9 ']*$"))
+        {
+            return true;
+        }
+        return false;
     }
 }

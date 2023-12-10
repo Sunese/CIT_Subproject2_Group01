@@ -8,6 +8,7 @@ using Microsoft.AspNetCore.Authorization;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 using AutoMapper;
+using System.Text.RegularExpressions;
 
 namespace API.Controllers.Framework;
 
@@ -113,6 +114,11 @@ public class BookmarkController : MovieBaseController
         string titleId,
         [FromBody] TitleBookmarkDTO model)
     {
+        if(isInValidNoteInput(model.Notes))
+        {
+            return BadRequest();
+        }
+
         model.TitleId = titleId;
         if (!_userService.UserExists(username, out _))
         {
@@ -269,5 +275,18 @@ public class BookmarkController : MovieBaseController
             Name = nameBookmarkDTO.Name,
             Notes = nameBookmarkDTO.Notes,
         };
+    }
+
+    private bool isInValidNoteInput(string noteInput)
+    {
+        if (string.IsNullOrEmpty(noteInput))
+        {
+           return true;
+        }
+        if (!Regex.IsMatch(noteInput, "^[A-Za-z0-9.,' ]*$"))
+        {
+            return true;
+        }
+        return false;
     }
 }
