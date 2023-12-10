@@ -130,21 +130,25 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpDelete("{username}/titlebookmark", Name = nameof(DeleteTitleBookmark))]
+    [HttpDelete("{username}/titlebookmark/{titleId}", Name = nameof(DeleteTitleBookmark))]
     [Authorize]
     public IActionResult DeleteTitleBookmark(
         string username,
-        [FromBody] TitleBookmarkDTO model)
+        string titleId)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        _bookmarkService.DeleteTitleBookmark(username, model);
+        if (!_titleService.TitleExists(titleId, out var foundTitle))
+        {
+            return BadRequest("Title does not exist");
+        }
+        if (!_bookmarkService.TryGetTitleBookmark(username, titleId, out var foundBookmark))
+        {
+            return BadRequest();
+        }
+        _bookmarkService.DeleteTitleBookmark(username, foundBookmark);
         return Ok();
     }
 
@@ -227,21 +231,25 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpDelete("{username}/namebookmark", Name = nameof(DeleteNameBookmark))]
+    [HttpDelete("{username}/namebookmark/{nameid}", Name = nameof(DeleteNameBookmark))]
     [Authorize]
     public IActionResult DeleteNameBookmark(
         string username,
-        [FromBody] NameBookmarkDTO model)
+        string nameid)
     {
-        if (!_userService.UserExists(username, out _))
-        {
-            return BadRequest("User does not exist");
-        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        _bookmarkService.DeleteNameBookmark(username, model);
+        if (!_nameService.NameExists(nameid, out var foundName))
+        {
+            return BadRequest("Title does not exist");
+        }
+        if (!_bookmarkService.TryGetNameBookmark(username, nameid, out var foundBookmark))
+        {
+            return BadRequest();
+        }
+        _bookmarkService.DeleteNameBookmark(username, foundBookmark);
         return Ok();
     }
 
