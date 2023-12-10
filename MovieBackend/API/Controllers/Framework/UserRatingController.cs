@@ -43,7 +43,8 @@ public class UserRatingController : MovieBaseController
         var items = ratings.Select(rating => new
         {
             Url = GetUrl("GetTitle", new { id = rating.TitleId }),
-            PrimaryTitle = rating.Title.PrimaryTitle,
+            Title = rating.Title,
+            TitleID = rating.TitleId,
             Rating = rating.Rating,
             TimeStamp = rating.TimeStamp
         });
