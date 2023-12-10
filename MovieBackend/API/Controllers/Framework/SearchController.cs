@@ -134,7 +134,8 @@ public class SearchController : MovieBaseController
         var items = searchResult.Select(result => new
         {
             Query = result.Query,
-            Timestamp = result.Timestamp
+            Timestamp = result.Timestamp,
+            SearchType = result.SearchType
         });
         return Ok(Paging(items, total, page, pageSize, nameof(GetUserSearchHistory)));
     }
