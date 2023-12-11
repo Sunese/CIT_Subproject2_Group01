@@ -42,9 +42,9 @@ public class UserRatingController : MovieBaseController
         var (ratings, total) = _userRatingService.GetUserTitleRatings(username, page, pageSize);
         var items = ratings.Select(rating => new
         {
-            Url = GetUrl("GetTitle", new { id = rating.TitleId }),
+            Url = GetUrl("GetTitle", new { id = rating.TitleID }),
             Title = rating.Title,
-            TitleID = rating.TitleId,
+            TitleID = rating.TitleID,
             Rating = rating.Rating,
             TimeStamp = rating.TimeStamp
         });
@@ -52,29 +52,25 @@ public class UserRatingController : MovieBaseController
     }
 
     // Get rating for specific title from user
-    [HttpGet("{username}/titlerating/{titleId}")]
-    public IActionResult GetUserTitleRatingById(string username, string titleId, int page = 0, int pageSize = 10)
+    [HttpGet("{username}/titlerating/{titleID}")]
+    public IActionResult GetUserTitleRatingById(string username, string titleID, int page = 0, int pageSize = 10)
     {
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
         }
 
-        if (!_titleService.TitleExists(titleId, out _))
+        if (!_titleService.TitleExists(titleID, out _))
         {
             return BadRequest("TitleName does not exist");
         }
 
-        var userRating = _userRatingService.GetUserTitleRatings(username, page, pageSize)
-            .Ratings
-            .FirstOrDefault(ur => ur.TitleId == titleId.ToLower());
-
-        if (userRating == null)
+        if (!_userRatingService.TryGetUserTitleRating(username, titleID, out var foundRating))
         {
             return NotFound();
         }
 
-        return Ok(userRating);
+        return Ok(foundRating);
     }
 
 
@@ -99,7 +95,7 @@ public class UserRatingController : MovieBaseController
             return BadRequest("User does not exist");
         }
 
-        if (!_titleService.TitleExists(userRating.TitleId, out _))
+        if (!_titleService.TitleExists(userRating.TitleID, out _))
         {
             return BadRequest("TitleName does not exist");
         }
@@ -110,12 +106,12 @@ public class UserRatingController : MovieBaseController
         {
             return StatusCode(500);
         }
-        return CreatedAtAction(nameof(GetUserTitleRatingById), new { username, titleId = userRating.TitleId }, userRating);
+        return CreatedAtAction(nameof(GetUserTitleRatingById), new { username, titleID = userRating.TitleID }, userRating);
     }
 
-    [HttpDelete("{username}/titlerating/{titleId}")]
+    [HttpDelete("{username}/titlerating/{titleID}")]
     [Authorize]
-    public IActionResult Delete(string username, string titleId)
+    public IActionResult Delete(string username, string titleID)
     {
         if (!OwnsResource(username))
         {
@@ -127,12 +123,12 @@ public class UserRatingController : MovieBaseController
             return BadRequest("User does not exist");
         }
 
-        if (!_titleService.TitleExists(titleId, out _))
+        if (!_titleService.TitleExists(titleID, out _))
         {
             return BadRequest("TitleName does not exist");
         }
 
-        if (!_userRatingService.UserTitleRatingExists(username, titleId, out var foundRating))
+        if (!_userRatingService.UserTitleRatingExists(username, titleID, out var foundRating))
         {
             return NotFound();
         }
@@ -145,9 +141,9 @@ public class UserRatingController : MovieBaseController
         return Ok();
     }
 
-    [HttpPut("{username}/titlerating/{titleId}")]
+    [HttpPut("{username}/titlerating/{titleID}")]
     [Authorize]
-    public IActionResult Update(string username, string titleId, [FromBody] CreateTitleRatingModel newRatingModel)
+    public IActionResult Update(string username, string titleID, [FromBody] CreateTitleRatingModel newRatingModel)
     {
         if (!OwnsResource(username))
         {
@@ -159,12 +155,12 @@ public class UserRatingController : MovieBaseController
             return BadRequest("User does not exist");
         }
 
-        if (!_titleService.TitleExists(titleId, out _))
+        if (!_titleService.TitleExists(titleID, out _))
         {
             return BadRequest("TitleName does not exist");
         }
 
-        if (!_userRatingService.UserTitleRatingExists(username, titleId, out var foundRating))
+        if (!_userRatingService.UserTitleRatingExists(username, titleID, out var foundRating))
         {
             return BadRequest();
         }
@@ -188,7 +184,7 @@ public class UserRatingController : MovieBaseController
         return new UserTitleRatingDTO
         {
             Username = username,
-            TitleId = form.TitleId,
+            TitleID = form.TitleID,
             Rating = form.Rating,
             TimeStamp = DateTime.Now
         };

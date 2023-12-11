@@ -7,6 +7,6 @@ namespace API.Models;
 
 public class CreateNameBookmarkModel
 {
-    public string NameId { get; set; }
+    public string NameID { get; set; }
     public string Notes { get; set; }
 }

@@ -37,20 +37,20 @@ public class BookmarkController : MovieBaseController
         _nameService = nameService;
     }
 
-    [HttpGet("{username}/titlebookmark/{titleId}", Name = nameof(GetTitleBookmark))]
+    [HttpGet("{username}/titlebookmark/{titleID}", Name = nameof(GetTitleBookmark))]
     [Authorize]
     // NOTE: only the user can access their own bookmarks
-    public IActionResult GetTitleBookmark(string username, string titleId)
+    public IActionResult GetTitleBookmark(string username, string titleID)
     {
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        if (!_titleService.TitleExists(titleId, out var foundTitle))
+        if (!_titleService.TitleExists(titleID, out var foundTitle))
         {
             return BadRequest("Title does not exist");
         }
-        if (!_bookmarkService.TryGetTitleBookmark(username, titleId, out var foundBookmark))
+        if (!_bookmarkService.TryGetTitleBookmark(username, titleID, out var foundBookmark))
         {
             return NotFound();
         }
@@ -94,11 +94,11 @@ public class BookmarkController : MovieBaseController
         {
             return Unauthorized();
         }
-        if (!_titleService.TitleExists(model.TitleId, out var foundTitle))
+        if (!_titleService.TitleExists(model.TitleID, out var foundTitle))
         {
             return BadRequest("Title does not exist");
         }
-        if (_bookmarkService.TitleBookmarkExists(username, model.TitleId))
+        if (_bookmarkService.TitleBookmarkExists(username, model.TitleID))
         {
             return BadRequest("Title bookmark already exists");
         }
@@ -107,11 +107,11 @@ public class BookmarkController : MovieBaseController
         return CreatedAtAction(nameof(GetTitleBookmarks), new { username }, bookmarkDTO);
     }
 
-    [HttpPatch("{username}/titlebookmark/{titleId}", Name = nameof(UpdateTitleBookmarkNote))]
+    [HttpPatch("{username}/titlebookmark/{titleID}", Name = nameof(UpdateTitleBookmarkNote))]
     [Authorize]
     public IActionResult UpdateTitleBookmarkNote(
         string username,
-        string titleId,
+        string titleID,
         [FromBody] UpdateBookmarkNote model)
     {
         if (isInValidNoteInput(model.Notes))
@@ -127,25 +127,25 @@ public class BookmarkController : MovieBaseController
         {
             return Unauthorized();
         }
-        _bookmarkService.UpdateTitleBookmarkNote(username, titleId, model.Notes);
+        _bookmarkService.UpdateTitleBookmarkNote(username, titleID, model.Notes);
         return Ok();
     }
 
-    [HttpDelete("{username}/titlebookmark/{titleId}", Name = nameof(DeleteTitleBookmark))]
+    [HttpDelete("{username}/titlebookmark/{titleID}", Name = nameof(DeleteTitleBookmark))]
     [Authorize]
     public IActionResult DeleteTitleBookmark(
         string username,
-        string titleId)
+        string titleID)
     {
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        if (!_titleService.TitleExists(titleId, out var foundTitle))
+        if (!_titleService.TitleExists(titleID, out var foundTitle))
         {
             return BadRequest("Title does not exist");
         }
-        if (!_bookmarkService.TryGetTitleBookmark(username, titleId, out var foundBookmark))
+        if (!_bookmarkService.TryGetTitleBookmark(username, titleID, out var foundBookmark))
         {
             return BadRequest();
         }
@@ -153,20 +153,20 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpGet("{username}/namebookmark/{nameId}", Name = nameof(GetNameBookmark))]
+    [HttpGet("{username}/namebookmark/{nameID}", Name = nameof(GetNameBookmark))]
     [Authorize]
     // NOTE: only the user can access their own bookmarks
-    public IActionResult GetNameBookmark(string username, string nameId)
+    public IActionResult GetNameBookmark(string username, string nameID)
     {
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        if (!_nameService.NameExists(nameId, out var foundName))
+        if (!_nameService.NameExists(nameID, out var foundName))
         {
             return BadRequest("Name does not exist");
         }
-        if (!_bookmarkService.TryGetNameBookmark(username, nameId, out var foundBookmark))
+        if (!_bookmarkService.TryGetNameBookmark(username, nameID, out var foundBookmark))
         {
             return NotFound();
         }
@@ -206,7 +206,7 @@ public class BookmarkController : MovieBaseController
         {
             return Unauthorized();
         }
-        if (_bookmarkService.NameBookmarkExists(username, model.NameId))
+        if (_bookmarkService.NameBookmarkExists(username, model.NameID))
         {
             return BadRequest("Name bookmark already exists");
         }
@@ -215,11 +215,11 @@ public class BookmarkController : MovieBaseController
         return CreatedAtAction(nameof(GetNameBookmarks), new { username }, bookmarkDTO);
     }
 
-    [HttpPatch("{username}/namebookmark/{nameId}", Name = nameof(UpdateNameBookmarkNote))]
+    [HttpPatch("{username}/namebookmark/{nameID}", Name = nameof(UpdateNameBookmarkNote))]
     [Authorize]
     public IActionResult UpdateNameBookmarkNote(
         string username,
-        string nameId,
+        string nameID,
         [FromBody] UpdateBookmarkNote model)
     {
         if (!OwnsResource(username))
@@ -227,7 +227,7 @@ public class BookmarkController : MovieBaseController
             return Unauthorized();
         }
 
-        _bookmarkService.UpdateNameBookmarkNote(username, nameId, model.Notes);
+        _bookmarkService.UpdateNameBookmarkNote(username, nameID, model.Notes);
         return Ok();
     }
 
@@ -257,8 +257,8 @@ public class BookmarkController : MovieBaseController
     {
         return new 
         {
-            TitleID = titleBookmarkDTO.TitleId,
-            Url = GetUrl("GetTitle", new { id = titleBookmarkDTO.TitleId }),
+            TitleID = titleBookmarkDTO.TitleID,
+            Url = GetUrl("GetTitle", new { id = titleBookmarkDTO.TitleID }),
             Title = titleBookmarkDTO.Title,
             Notes = titleBookmarkDTO.Notes,
         };
@@ -268,8 +268,8 @@ public class BookmarkController : MovieBaseController
     {
         return new
         {
-            NameID = nameBookmarkDTO.NameId,
-            Url = GetUrl("GetName", new { id = nameBookmarkDTO.NameId }),
+            NameID = nameBookmarkDTO.NameID,
+            Url = GetUrl("GetName", new { id = nameBookmarkDTO.NameID }),
             Name = nameBookmarkDTO.Name,
             Notes = nameBookmarkDTO.Notes,
         };
@@ -277,10 +277,6 @@ public class BookmarkController : MovieBaseController
 
     private bool isInValidNoteInput(string noteInput)
     {
-        if (string.IsNullOrEmpty(noteInput))
-        {
-           return true;
-        }
         if (!Regex.IsMatch(noteInput, "^[A-Za-z0-9.,' ]*$"))
         {
             return true;

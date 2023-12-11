@@ -22,7 +22,7 @@ public interface ITitleService
     (IList<TitleDTO>, int count) GetPopular(int page, int pageSize);
     TitleRatingDTO? GetRating(string id);
     (IList<TitleRatingDTO>, int count) GetRatings(int page, int pageSize, bool orderByHighestRating, int? days);
-    (IList<PopularActorsDTO>, int count) GetPopularActors(string titleId, int page, int pageSize);
+    (IList<PopularActorsDTO>, int count) GetPopularActors(string titleID, int page, int pageSize);
     (IList<AkaDTO>, int count) GetAkas(string id, int page, int pageSize);
     (IList<SimiliarMoviesResultDTO>, int count) GetSimiliarMovies(string id, int page, int pageSize);
 }

@@ -33,7 +33,7 @@ public class BookmarkService : IBookmarkService
 
     public void CreateTitleBookmark(string username, TitleBookmarkDTO model)
     {
-        FormattableString query = $"CALL AddTitleBookmark({username}, {model.TitleId}, {model.Notes})";
+        FormattableString query = $"CALL AddTitleBookmark({username}, {model.TitleID}, {model.Notes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
@@ -69,29 +69,29 @@ public class BookmarkService : IBookmarkService
         return (_mapper.Map<IList<TitleBookmarkDTO>>(paged), bookmarks.Count());
     }
 
-    public void UpdateTitleBookmarkNote(string username, string titleId, string newNotes)
+    public void UpdateTitleBookmarkNote(string username, string titleID, string newNotes)
     {
-        FormattableString query = $"CALL UpdateNoteTitleBookmark({username}, {titleId}, {newNotes})";
+        FormattableString query = $"CALL UpdateNoteTitleBookmark({username}, {titleID}, {newNotes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
     public void DeleteTitleBookmark(string username, TitleBookmarkDTO model)
     {
-        FormattableString query = $"CALL DeleteTitleBookmark({username}, {model.TitleId})";
+        FormattableString query = $"CALL DeleteTitleBookmark({username}, {model.TitleID})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public bool TitleBookmarkExists(string username, string titleId)
+    public bool TitleBookmarkExists(string username, string titleID)
     {
-        return _context.TitleBookmarks.Any(tb => tb.Username == username && tb.TitleId == titleId);
+        return _context.TitleBookmarks.Any(tb => tb.Username == username && tb.TitleID == titleID);
     }
 
-    public bool TryGetTitleBookmark(string username, string titleId, out TitleBookmarkDTO? foundBookmark)
+    public bool TryGetTitleBookmark(string username, string titleID, out TitleBookmarkDTO? foundBookmark)
     {
         var bookmark = _context
             .TitleBookmarks
             .Include(tb => tb.Title)
-            .FirstOrDefault(tb => tb.Username == username && tb.TitleId == titleId);
+            .FirstOrDefault(tb => tb.Username == username && tb.TitleID == titleID);
         if (bookmark == null)
         {
             foundBookmark = null;
@@ -103,7 +103,7 @@ public class BookmarkService : IBookmarkService
 
     public void CreateNameBookmark(string username, NameBookmarkDTO model)
     {
-        FormattableString query = $"CALL AddNameBookmark({username}, {model.NameId}, {model.Notes})";
+        FormattableString query = $"CALL AddNameBookmark({username}, {model.NameID}, {model.Notes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
@@ -129,29 +129,29 @@ public class BookmarkService : IBookmarkService
         return (_mapper.Map<IList<NameBookmarkDTO>>(paged), bookmarks.Count());
     }
 
-    public void UpdateNameBookmarkNote(string username, string nameId, string newNotes)
+    public void UpdateNameBookmarkNote(string username, string nameID, string newNotes)
     {
-        FormattableString query = $"CALL UpdateNoteNameBookmark({username}, {nameId}, {newNotes})";
+        FormattableString query = $"CALL UpdateNoteNameBookmark({username}, {nameID}, {newNotes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
     public void DeleteNameBookmark(string username, NameBookmarkDTO model)
     {
-        FormattableString query = $"CALL DeleteNameBookmark({username}, {model.NameId})";
+        FormattableString query = $"CALL DeleteNameBookmark({username}, {model.NameID})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
-    public bool NameBookmarkExists(string username, string nameId)
+    public bool NameBookmarkExists(string username, string nameID)
     {
-        return _context.NameBookmarks.Any(nb => nb.Username == username && nb.NameId == nameId);
+        return _context.NameBookmarks.Any(nb => nb.Username == username && nb.NameID == nameID);
     }
 
-    public bool TryGetNameBookmark(string username, string nameId, out NameBookmarkDTO? foundBookmark)
+    public bool TryGetNameBookmark(string username, string nameID, out NameBookmarkDTO? foundBookmark)
     {
         var bookmark = _context
             .NameBookmarks
             .Include(nb => nb.Name)
-            .FirstOrDefault(nb => nb.Username == username && nb.NameId == nameId);
+            .FirstOrDefault(nb => nb.Username == username && nb.NameID == nameID);
         if (bookmark == null)
         {
             foundBookmark = null;

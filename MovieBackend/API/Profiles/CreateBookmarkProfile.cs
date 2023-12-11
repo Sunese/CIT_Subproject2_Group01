@@ -13,11 +13,11 @@ public class CreateBookmarkProfile : Profile
     public CreateBookmarkProfile()
     {
         CreateMap<CreateTitleBookmarkModel, TitleBookmarkDTO>()
-            .ForMember(dest => dest.TitleId, opt => opt.MapFrom(src => src.TitleId))
+            .ForMember(dest => dest.TitleID, opt => opt.MapFrom(src => src.TitleID))
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
             .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => DateTime.Now));
         CreateMap<CreateNameBookmarkModel, NameBookmarkDTO>()
-            .ForMember(dest => dest.NameId, opt => opt.MapFrom(src => src.NameId))
+            .ForMember(dest => dest.NameID, opt => opt.MapFrom(src => src.NameID))
             .ForMember(dest => dest.Notes, opt => opt.MapFrom(src => src.Notes))
             .ForMember(dest => dest.Timestamp, opt => opt.MapFrom(src => DateTime.Now));
     }

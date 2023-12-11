@@ -54,7 +54,7 @@ public class MovieApiTests
         var (json, status) = await GetObject(url);
         Assert.Equal(HttpStatusCode.OK, status);
         Assert.NotNull(json);
-        Assert.Equal("nm0000001", json["nameId"].GetValue<string>());
+        Assert.Equal("nm0000001", json["nameID"].GetValue<string>());
     }
 
     [Theory]

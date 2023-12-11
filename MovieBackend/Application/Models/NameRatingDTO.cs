@@ -7,6 +7,6 @@ namespace Application.Models;
 
 public class NameRatingDTO
 {
-	public string NameId { get; set; }
+	public string NameID { get; set; }
 	public int Rating { get; set; }
 }

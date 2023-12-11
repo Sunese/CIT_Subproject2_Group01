@@ -7,6 +7,6 @@ namespace Domain.Models;
 
 public class NameSearchResult
 {
-    public string NameId { get; set; }
+    public string NameID { get; set; }
     public string PrimaryName { get; set; }
 }

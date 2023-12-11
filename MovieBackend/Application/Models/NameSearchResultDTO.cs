@@ -7,6 +7,6 @@ namespace Application.Models;
 
 public class NameSearchResultDTO
 {
-    public string NameId { get; set; }
+    public string NameID { get; set; }
     public string PrimaryName { get; set; }
 }

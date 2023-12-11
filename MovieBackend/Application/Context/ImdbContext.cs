@@ -95,7 +95,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Title>()
             .HasMany(t => t.Akas)
             .WithOne(a => a.Title)
-            .HasForeignKey(t =>  t.TitleId)
+            .HasForeignKey(t =>  t.TitleID)
             .IsRequired();
 
         modelBuilder.Entity<User>()
@@ -124,7 +124,7 @@ public class ImdbContext : DbContext
             .Property(tb => tb.Username)
             .HasColumnName("username");
         modelBuilder.Entity<TitleBookmark>()
-            .Property(tb => tb.TitleId)
+            .Property(tb => tb.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<TitleBookmark>()
             .Property(tb => tb.Timestamp)
@@ -133,7 +133,7 @@ public class ImdbContext : DbContext
             .Property(tb => tb.Notes)
             .HasColumnName("notes");
         modelBuilder.Entity<TitleBookmark>()
-            .HasKey(tb => new { tb.Username, tb.TitleId });
+            .HasKey(tb => new { tb.Username, tb.TitleID });
 
         modelBuilder.Entity<NameBookmark>()
             .ToTable("namebookmark");
@@ -141,7 +141,7 @@ public class ImdbContext : DbContext
             .Property(nb => nb.Username)
             .HasColumnName("username");
         modelBuilder.Entity<NameBookmark>()
-            .Property(nb => nb.NameId)
+            .Property(nb => nb.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<NameBookmark>()
             .Property(nb => nb.Timestamp)
@@ -150,7 +150,7 @@ public class ImdbContext : DbContext
             .Property(nb => nb.Notes)
             .HasColumnName("notes");
         modelBuilder.Entity<NameBookmark>()
-            .HasKey(nb => new { nb.Username, nb.NameId });
+            .HasKey(nb => new { nb.Username, nb.NameID });
 
         modelBuilder.Entity<Genre>()
             .ToTable("genre");
@@ -163,9 +163,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<TitleGenre>()
             .ToTable("titlegenre");
         modelBuilder.Entity<TitleGenre>()
-            .HasKey(tg => new { tg.TitleId, tg.GenreName });
+            .HasKey(tg => new { tg.TitleID, tg.GenreName });
         modelBuilder.Entity<TitleGenre>()
-            .Property(tg => tg.TitleId)
+            .Property(tg => tg.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<TitleGenre>()
             .Property(tg => tg.GenreName)
@@ -190,9 +190,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Name>()
             .ToTable("name");
         modelBuilder.Entity<Name>()
-            .HasKey(n => n.NameId);
+            .HasKey(n => n.NameID);
         modelBuilder.Entity<Name>()
-            .Property(n => n.NameId)
+            .Property(n => n.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<Name>()
             .Property(n => n.PrimaryName)
@@ -313,12 +313,12 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<UserTitleRating>()
             .ToTable("userrating");
         modelBuilder.Entity<UserTitleRating>()
-            .HasKey(ur => new { ur.Username, ur.TitleId });
+            .HasKey(ur => new { ur.Username, ur.TitleID });
         modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.Username)
             .HasColumnName("username");
         modelBuilder.Entity<UserTitleRating>()
-            .Property(n => n.TitleId)
+            .Property(n => n.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<UserTitleRating>()
             .Property(n => n.Rating)
@@ -344,9 +344,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<NameRating>()
             .ToTable("namerating");
         modelBuilder.Entity<NameRating>()
-            .HasKey(nr => nr.NameId);
+            .HasKey(nr => nr.NameID);
         modelBuilder.Entity<NameRating>()
-            .Property(nr => nr.NameId)
+            .Property(nr => nr.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<NameRating>()
             .Property(nr => nr.Rating)
@@ -357,7 +357,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<PopularActorsResult>()
             .HasNoKey();
         modelBuilder.Entity<PopularActorsResult>()
-            .Property(par => par.NameId)
+            .Property(par => par.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<PopularActorsResult>()
             .Property(par => par.PrimaryName)
@@ -370,7 +370,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<NameSearchResult>()
             .HasNoKey();
         modelBuilder.Entity<NameSearchResult>()
-            .Property(nsr => nsr.NameId)
+            .Property(nsr => nsr.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<NameSearchResult>()
             .Property(nsr => nsr.PrimaryName)
@@ -380,7 +380,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<CoPlayers>()
             .HasNoKey();
         modelBuilder.Entity<CoPlayers>()
-            .Property(cp => cp.NameId)
+            .Property(cp => cp.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<CoPlayers>()
             .Property(cp => cp.PrimaryName)
@@ -393,9 +393,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Aka>()
             .ToTable("akas"); 
         modelBuilder.Entity<Aka>()
-            .HasKey(a => new { a.TitleId, a.Ordering });
+            .HasKey(a => new { a.TitleID, a.Ordering });
         modelBuilder.Entity<Aka>()
-            .Property(a => a.TitleId)
+            .Property(a => a.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<Aka>()
             .Property(a => a.Ordering)
@@ -425,9 +425,9 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<AkaType>()
             .ToTable("akastypes");
         modelBuilder.Entity<AkaType>()
-            .HasKey(at => new { at.TitleId, at.Ordering, at.TypeName });
+            .HasKey(at => new { at.TitleID, at.Ordering, at.TypeName });
         modelBuilder.Entity<AkaType>()
-            .Property(at => at.TitleId)
+            .Property(at => at.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<AkaType>()
             .Property(at => at.Ordering)
@@ -449,24 +449,24 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<Director>()
             .ToTable("directors");
         modelBuilder.Entity<Director>()
-            .HasKey(d => new { d.TitleID, d.NameId });
+            .HasKey(d => new { d.TitleID, d.NameID });
         modelBuilder.Entity<Director>()
             .Property(d => d.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<Director>()
-            .Property(d => d.NameId)
+            .Property(d => d.NameID)
             .HasColumnName("nameid");
 
         // Writer
         modelBuilder.Entity<Writer>()
             .ToTable("writers");
         modelBuilder.Entity<Writer>()
-            .HasKey(w => new { w.TitleID, w.NameId });
+            .HasKey(w => new { w.TitleID, w.NameID });
         modelBuilder.Entity<Writer>()
             .Property(w => w.TitleID)
             .HasColumnName("titleid");
         modelBuilder.Entity<Writer>()
-            .Property(w => w.NameId)
+            .Property(w => w.NameID)
             .HasColumnName("nameid");
 
         // Episode
@@ -491,7 +491,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<PopularActorsResult>()
             .HasNoKey();
         modelBuilder.Entity<PopularActorsResult>()
-            .Property(par => par.NameId)
+            .Property(par => par.NameID)
             .HasColumnName("nameid");
         modelBuilder.Entity<PopularActorsResult>()
             .Property(par => par.PrimaryName)
@@ -504,7 +504,7 @@ public class ImdbContext : DbContext
         modelBuilder.Entity<SimiliarMoviesResult>()
             .HasNoKey();
         modelBuilder.Entity<SimiliarMoviesResult>()
-            .Property(smr => smr.TitleId)
+            .Property(smr => smr.TitleID)
             .HasColumnName("_titleid");
         modelBuilder.Entity<SimiliarMoviesResult>()
             .Property(smr => smr.PrimaryTitle)

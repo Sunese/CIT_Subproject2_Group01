@@ -3,7 +3,7 @@ namespace Domain.Models;
 
 public class TitleGenre
 {
-    public string TitleId { get; set; }
+    public string TitleID { get; set; }
     public string GenreName { get; set; }
 }
 

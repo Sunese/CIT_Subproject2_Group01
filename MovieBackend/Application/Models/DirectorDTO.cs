@@ -9,7 +9,7 @@ namespace Application.Models
     {
         public string TitleID { get; set; }
         public TitleDTO Title { get; set; }
-        public string NameId { get; set; }
+        public string NameID { get; set; }
         public NameDTO Name { get; set; }
     }
 }

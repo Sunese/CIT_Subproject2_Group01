@@ -22,11 +22,26 @@ public class UserRatingService : IUserRatingService
         _mapper = mapper;
     }
 
+    public bool TryGetUserTitleRating(string username, string titleID, out UserTitleRatingDTO? foundTitleRating)
+    {
+        var rating = _imdbContext.UserTitleRatings.FirstOrDefault(rating => 
+            (rating.Username.ToLower() == username.ToLower())
+            &&
+            rating.TitleID.ToLower() == titleID.ToLower());
+        if (rating == null)
+        {
+            foundTitleRating = null;
+            return false;
+        }
+        foundTitleRating = _mapper.Map<UserTitleRatingDTO>(rating);
+        return true;
+    }
+
     public bool CreateUserTitleRating(UserTitleRatingDTO userTitleRatingDTO)
     {
         var userTitleRating = _mapper.Map<UserTitleRating>(userTitleRatingDTO);
         var rowsAffected = _imdbContext.Database.ExecuteSqlInterpolated(
-            $"CALL rate({userTitleRating.Username}, {userTitleRating.TitleId}, {userTitleRating.Rating})");
+            $"CALL rate({userTitleRating.Username}, {userTitleRating.TitleID}, {userTitleRating.Rating})");
         // TODO: rowsAffected returns -1 even though the rating was created
         // for now we just return true and rely on an exception being thrown
         // if something went wrong
@@ -50,17 +65,22 @@ public class UserRatingService : IUserRatingService
         return (_mapper.Map<IList<UserTitleRatingDTO>>(paged), userRatings.Count());
     }
 
-    public bool UserTitleRatingExists(string username, string titleId, out UserTitleRatingDTO? userTitleRatingDTO)
+    public bool UserTitleRatingExists(string username, string titleID, out UserTitleRatingDTO? userTitleRatingDTO)
     {
         var userTitleRating = _imdbContext.UserTitleRatings
             .FirstOrDefault(ur =>
-                ur.Username == username
+                ur.Username.ToLower() == username.ToLower()
                 &&
-                ur.TitleId == titleId);
+                ur.TitleID == titleID);
+        if (userTitleRating is null)
+        {
+            userTitleRatingDTO = null;
+            return false;
+        }
         // Remove tracking
         _imdbContext.UserTitleRatings.Entry(userTitleRating).State = EntityState.Detached;
         userTitleRatingDTO = _mapper.Map<UserTitleRatingDTO>(userTitleRating);
-        return userTitleRating != null;
+        return true;
     }
 
     public bool DeleteUserTitleRating(UserTitleRatingDTO userTitleRatingDTO)

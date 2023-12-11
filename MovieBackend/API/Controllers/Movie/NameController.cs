@@ -94,8 +94,8 @@ public class NameController : MovieBaseController
     {
         return new
         {
-            NameID = nameDTO.NameId,
-            Url = GetUrl(nameof(GetName), new { id = nameDTO.NameId }),
+            NameID = nameDTO.NameID,
+            Url = GetUrl(nameof(GetName), new { id = nameDTO.NameID }),
             Name = nameDTO.PrimaryName,
             BirthYear = nameDTO.BirthYear,
             DeathYear = nameDTO.DeathYear

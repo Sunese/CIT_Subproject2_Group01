@@ -10,17 +10,17 @@ namespace Application.Services;
 public interface IBookmarkService
 {
     
-    bool TryGetNameBookmark(string username, string nameId, out NameBookmarkDTO? foundBookmark);
+    bool TryGetNameBookmark(string username, string nameID, out NameBookmarkDTO? foundBookmark);
     (IList<NameBookmarkDTO>, int) GetNameBookmarks(string username, OrderBy orderBy, int page, int pageSize);
     void CreateNameBookmark(string username, NameBookmarkDTO model);
-    void UpdateNameBookmarkNote(string username, string nameId, string newNotes);
+    void UpdateNameBookmarkNote(string username, string nameID, string newNotes);
     void DeleteNameBookmark(string username, NameBookmarkDTO model);
-    bool NameBookmarkExists(string username, string nameId);
+    bool NameBookmarkExists(string username, string nameID);
 
-    bool TryGetTitleBookmark(string username, string titleId, out TitleBookmarkDTO? foundBookmark);
+    bool TryGetTitleBookmark(string username, string titleID, out TitleBookmarkDTO? foundBookmark);
     (IList<TitleBookmarkDTO>, int) GetTitleBookmarks(string username, OrderBy orderBy, int page, int pageSize);
     void CreateTitleBookmark(string username, TitleBookmarkDTO model);
-    void UpdateTitleBookmarkNote(string username, string titleId, string newNote);
+    void UpdateTitleBookmarkNote(string username, string titleID, string newNote);
     void DeleteTitleBookmark(string username, TitleBookmarkDTO model);
-    bool TitleBookmarkExists(string username, string titleId);
+    bool TitleBookmarkExists(string username, string titleID);
 }

@@ -62,8 +62,8 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.NameSearch(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
-            NameID = result.NameId,
-            Url = GetUrl("GetName", new { id = result.NameId }),
+            NameID = result.NameID,
+            Url = GetUrl("GetName", new { id = result.NameID }),
             PrimaryName = result.PrimaryName
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(NameSearch), query));
@@ -81,8 +81,8 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindActors(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
-            NameID = result.NameId,
-            Url = GetUrl("GetName", new { id = result.NameId }),
+            NameID = result.NameID,
+            Url = GetUrl("GetName", new { id = result.NameID }),
             PrimaryName = result.PrimaryName
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(ActorSearch), query));
@@ -100,8 +100,8 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindWriters(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
-            NameID = result.NameId,
-            Url = GetUrl("GetName", new { id = result.NameId }),
+            NameID = result.NameID,
+            Url = GetUrl("GetName", new { id = result.NameID }),
             PrimaryName = result.PrimaryName
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(WriterSearch), query));
@@ -119,8 +119,8 @@ public class SearchController : MovieBaseController
         var (searchResult, total) = _searchService.FindCoPlayers(username, query, page, pageSize);
         var items = searchResult.Select(result => new
         {
-            NameID = result.NameId,
-            Url = GetUrl("GetName", new { id = result.NameId }),
+            NameID = result.NameID,
+            Url = GetUrl("GetName", new { id = result.NameID }),
             PrimaryName = result.PrimaryName
         });
         return Ok(SearchPaging(items, total, page, pageSize, nameof(CoPlayerSearch), query));

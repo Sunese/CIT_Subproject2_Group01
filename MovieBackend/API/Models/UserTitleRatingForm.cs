@@ -7,7 +7,7 @@ namespace API.Models
 {
     public class CreateTitleRatingModel
     {
-        public string TitleId { get; set; }
+        public string TitleID { get; set; }
         public int Rating { get; set; }
     }
 }

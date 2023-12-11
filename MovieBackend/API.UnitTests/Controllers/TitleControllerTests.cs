@@ -26,7 +26,7 @@ public class TitleControllerTests
         new() {TitleID = "tt0000006", PrimaryTitle = "TestTitle6"}
     };
 
-    public static string LinkGeneratorUri = "http://localhost:5000/api/v1/title/testTitleId";
+    public static string LinkGeneratorUri = "http://localhost:5000/api/v1/title/testTitleID";
     public static LinkGenerator MockLinkGenerator = new MockLinkGenerator(LinkGeneratorUri);
 
     // Naming convention: MethodName_StateUnderTest_ExpectedBehavior

@@ -149,10 +149,10 @@ public class TitleService : ITitleService
         return (_mapper.Map<IList<TitleRatingDTO>>(paged), filtered.Count());
     }
 
-    public (IList<PopularActorsDTO>, int) GetPopularActors(string titleId, int page, int pageSize)
+    public (IList<PopularActorsDTO>, int) GetPopularActors(string titleID, int page, int pageSize)
     {
         var actors = _imdbContext.PopularActorsResults
-            .FromSqlInterpolated($"SELECT * FROM popular_actors({titleId})");
+            .FromSqlInterpolated($"SELECT * FROM popular_actors({titleID})");
         var paged = actors
             .Skip(page * pageSize)
             .Take(pageSize)
@@ -163,7 +163,7 @@ public class TitleService : ITitleService
     public (IList<AkaDTO>, int) GetAkas(string id, int page, int pageSize)
     {
         var filtered = _imdbContext.Aka
-            .Where(ta => ta.TitleId == id)
+            .Where(ta => ta.TitleID == id)
             .Include(ty => ty.Types);
         var paged = filtered
             .Skip(page * pageSize)
@@ -173,10 +173,10 @@ public class TitleService : ITitleService
         return (_mapper.Map<IList<AkaDTO>>(paged), filtered.Count());
     }
 
-    public (IList<SimiliarMoviesResultDTO>, int) GetSimiliarMovies(string titleId, int page, int pageSize)
+    public (IList<SimiliarMoviesResultDTO>, int) GetSimiliarMovies(string titleID, int page, int pageSize)
     {
         var similiarMovies = _imdbContext.SimiliarMoviesResult
-            .FromSqlInterpolated($"SELECT * FROM similar_movies({titleId})");
+            .FromSqlInterpolated($"SELECT * FROM similar_movies({titleID})");
         var paged = similiarMovies
             .Skip(page * pageSize)
             .Take(pageSize)

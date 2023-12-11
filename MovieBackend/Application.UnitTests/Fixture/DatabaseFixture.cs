@@ -61,7 +61,7 @@ public class DatabaseFixture : IDisposable
             context.SaveChanges();
             context.Names.Add(new Name
             {
-                NameId = "nm0000001",
+                NameID = "nm0000001",
                 PrimaryName = "TestName1",
                 BirthYear = "2000",
                 DeathYear = "2025"
@@ -69,7 +69,7 @@ public class DatabaseFixture : IDisposable
             context.SaveChanges();
             context.Names.Add(new Name
             {
-                NameId = "nm0000002",
+                NameID = "nm0000002",
                 PrimaryName = "TestName2",
                 BirthYear = "2000",
                 DeathYear = "2025"
@@ -79,16 +79,16 @@ public class DatabaseFixture : IDisposable
                 new User { UserName = "testUser", Password = "x", Email = "x", Role = "User", Salt = "x" });
             context.SaveChanges();
             context.TitleBookmarks.Add(new TitleBookmark
-                { Username = "testUser", TitleId = "tt0000001", Timestamp = DateTime.Now });
+                { Username = "testUser", TitleID = "tt0000001", Timestamp = DateTime.Now });
             context.SaveChanges();
             context.TitleBookmarks.Add(new TitleBookmark
-                { Username = "testUser", TitleId = "tt0000002", Timestamp = DateTime.Now });
+                { Username = "testUser", TitleID = "tt0000002", Timestamp = DateTime.Now });
             context.SaveChanges();
             context.NameBookmarks.Add(new NameBookmark
-                { Username = "testUser", NameId = "nm0000001", Timestamp = DateTime.Now });
+                { Username = "testUser", NameID = "nm0000001", Timestamp = DateTime.Now });
             context.SaveChanges();
             context.NameBookmarks.Add(new NameBookmark
-                { Username = "testUser", NameId = "nm0000002", Timestamp = DateTime.Now });
+                { Username = "testUser", NameID = "nm0000002", Timestamp = DateTime.Now });
             context.SaveChanges();
         }
     }

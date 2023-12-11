@@ -8,7 +8,7 @@ namespace Application.Models;
 public class UserNameRatingDTO
 {
     public string Username { get; set; }
-    public string NameId { get; set; }
+    public string NameID { get; set; }
     public int Rating { get; set; }
     
 }

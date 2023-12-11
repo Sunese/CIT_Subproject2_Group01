@@ -3,7 +3,7 @@ namespace Domain.Models;
 
 public class AkaType
 {
-    public string TitleId { get; set; }
+    public string TitleID { get; set; }
     public int Ordering { get; set; }
     public string TypeName { get; set; }
 }

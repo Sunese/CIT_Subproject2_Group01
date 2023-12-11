@@ -122,7 +122,7 @@ public class TitleController : MovieBaseController
             return NotFound();
         }
         return Ok(directors.Select(d => new { 
-            Url = Url.Link("GetName", new { id = d.NameId }),
+            Url = Url.Link("GetName", new { id = d.NameID }),
             d.Name.PrimaryName }));
     }
 
@@ -135,7 +135,7 @@ public class TitleController : MovieBaseController
             return NotFound();
         }
         return Ok(writers.Select(w => new {
-            Url = Url.Link("GetName", new { id = w.NameId }),
+            Url = Url.Link("GetName", new { id = w.NameID }),
             w.Name.PrimaryName }));
     }
 
@@ -167,8 +167,8 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            NameId = popularActorsDTO.NameId,
-            Url = GetUrl("GetName", new { id = popularActorsDTO.NameId }),
+            NameID = popularActorsDTO.NameID,
+            Url = GetUrl("GetName", new { id = popularActorsDTO.NameID }),
             Name = popularActorsDTO.PrimaryName,
             Rating = popularActorsDTO.Rating,
         };
@@ -178,8 +178,8 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            TitleID = akaDTO.TitleId,
-            Url = GetUrl(nameof(GetTitleAkas), new { id = akaDTO.TitleId }),
+            TitleID = akaDTO.TitleID,
+            Url = GetUrl(nameof(GetTitleAkas), new { id = akaDTO.TitleID }),
             TitleName = akaDTO.TitleName,
             Language = akaDTO.Language,
             Region = akaDTO.Region
@@ -190,8 +190,8 @@ public class TitleController : MovieBaseController
     {
         return new
         {
-            TitleID = similiarMovieDTO.TitleId,
-            Url = GetUrl(nameof(GetTitle), new { id = similiarMovieDTO.TitleId }),
+            TitleID = similiarMovieDTO.TitleID,
+            Url = GetUrl(nameof(GetTitle), new { id = similiarMovieDTO.TitleID }),
             Title = similiarMovieDTO.PrimaryTitle
         };
     }
