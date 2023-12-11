@@ -1,4 +1,5 @@
-﻿using System.Security.Cryptography;
+﻿using System.Diagnostics;
+using System.Security.Cryptography;
 using System.Text;
 
 namespace API.Security;
@@ -23,7 +24,7 @@ public class HashingService : IHashingService
         byte[] salt = new byte[saltBytesize];
         rand.GetBytes(salt);
         string saltString = Convert.ToHexString(salt);
-        string hash = HashSHA256(password, saltString);
+        string hash = HashSHA256(password, saltString, 2000000);
         return (hash, saltString);
     }
 
@@ -32,17 +33,27 @@ public class HashingService : IHashingService
 
     public bool Verify(string loginPassword, string hashedRegisteredPassword, string saltString)
     {
-        string hashedLoginPassword = HashSHA256(loginPassword, saltString);
+        string hashedLoginPassword = HashSHA256(loginPassword, saltString, 2000000);
         if (hashedRegisteredPassword == hashedLoginPassword) return true;
         else return false;
     }
 
     // hashSHA256 is the "workhorse" --- the actual hashing
 
-    private string HashSHA256(string password, string saltString)
+    private string HashSHA256(string password, string saltString, int iterations)
     {
-        byte[] hashInput = Encoding.UTF8.GetBytes(saltString + password); // perhaps encode only the password part?
-        byte[] hashOutput = sha256.ComputeHash(hashInput);
+        Console.WriteLine("Starting iterated hash");
+        var timer = new Stopwatch();
+        timer.Start();
+        byte[] hashInput = Encoding.UTF8.GetBytes(saltString + password);
+        byte[] hashOutput = new byte[] {};
+        for (int i = 0; i < iterations; i++)
+        {
+            hashOutput = sha256.ComputeHash(hashInput);
+            hashInput = hashOutput;
+        }
+        timer.Stop();
+        Console.WriteLine($"It took {timer.Elapsed} to compute iterated hash with 2.000.000 iterations");
         return Convert.ToHexString(hashOutput);
     }
 }
