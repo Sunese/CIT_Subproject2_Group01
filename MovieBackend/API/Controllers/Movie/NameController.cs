@@ -45,7 +45,7 @@ public class NameController : MovieBaseController
         var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
         {
-            return NotFound();
+            return NoContent();
         }
         return Ok(nameRating);
     }
@@ -59,7 +59,7 @@ public class NameController : MovieBaseController
         var primaryProfessions = _nameService.GetPrimaryProfessions(id);
         if (primaryProfessions == null)
         {
-            return NotFound();
+            return NoContent();
         }
         return Ok(primaryProfessions);
     }
