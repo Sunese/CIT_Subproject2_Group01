@@ -112,14 +112,13 @@ public class BookmarkController : MovieBaseController
     public IActionResult UpdateTitleBookmarkNote(
         string username,
         string titleId,
-        [FromBody] TitleBookmarkDTO model)
+        [FromBody] UpdateBookmarkNote model)
     {
-        if(isInValidNoteInput(model.Notes))
+        if (isInValidNoteInput(model.Notes))
         {
             return BadRequest();
         }
 
-        model.TitleId = titleId;
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -128,7 +127,7 @@ public class BookmarkController : MovieBaseController
         {
             return Unauthorized();
         }
-        _bookmarkService.UpdateTitleBookmarkNote(username, model);
+        _bookmarkService.UpdateTitleBookmarkNote(username, titleId, model.Notes);
         return Ok();
     }
 
@@ -154,7 +153,7 @@ public class BookmarkController : MovieBaseController
         return Ok();
     }
 
-    [HttpGet("{username}/bookmark/{nameId}", Name = nameof(GetNameBookmark))]
+    [HttpGet("{username}/namebookmark/{nameId}", Name = nameof(GetNameBookmark))]
     [Authorize]
     // NOTE: only the user can access their own bookmarks
     public IActionResult GetNameBookmark(string username, string nameId)
@@ -221,15 +220,14 @@ public class BookmarkController : MovieBaseController
     public IActionResult UpdateNameBookmarkNote(
         string username,
         string nameId,
-        [FromBody] NameBookmarkDTO model)
+        [FromBody] UpdateBookmarkNote model)
     {
-        // TODO: fix PATCH
-        model.NameId = nameId;
         if (!OwnsResource(username))
         {
             return Unauthorized();
         }
-        _bookmarkService.UpdateNameBookmarkNote(username, model);
+
+        _bookmarkService.UpdateNameBookmarkNote(username, nameId, model.Notes);
         return Ok();
     }
 

@@ -69,9 +69,9 @@ public class BookmarkService : IBookmarkService
         return (_mapper.Map<IList<TitleBookmarkDTO>>(paged), bookmarks.Count());
     }
 
-    public void UpdateTitleBookmarkNote(string username, TitleBookmarkDTO model)
+    public void UpdateTitleBookmarkNote(string username, string titleId, string newNotes)
     {
-        FormattableString query = $"CALL UpdateNoteTitleBookmark({username}, {model.TitleId}, {model.Notes})";
+        FormattableString query = $"CALL UpdateNoteTitleBookmark({username}, {titleId}, {newNotes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
@@ -129,9 +129,9 @@ public class BookmarkService : IBookmarkService
         return (_mapper.Map<IList<NameBookmarkDTO>>(paged), bookmarks.Count());
     }
 
-    public void UpdateNameBookmarkNote(string username, NameBookmarkDTO model)
+    public void UpdateNameBookmarkNote(string username, string nameId, string newNotes)
     {
-        FormattableString query = $"CALL UpdateNoteNameBookmark({username}, {model.NameId}, {model.Notes})";
+        FormattableString query = $"CALL UpdateNoteNameBookmark({username}, {nameId}, {newNotes})";
         _context.Database.ExecuteSqlInterpolated(query);
     }
 
