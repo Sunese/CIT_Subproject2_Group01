@@ -13,5 +13,6 @@ public class NameSearchResultProfile : Profile
     public NameSearchResultProfile()
     {
         CreateMap<Name, NameSearchResultDTO>();
+        CreateMap<NameSearchResult, NameSearchResultDTO>();
     }
 }
