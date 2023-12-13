@@ -45,7 +45,7 @@ public class NameController : MovieBaseController
         var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
         {
-            return NoContent();
+            return NotFound();
         }
         return Ok(nameRating);
     }
