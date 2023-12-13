@@ -121,9 +121,12 @@ public class TitleController : MovieBaseController
         {
             return NotFound();
         }
-        return Ok(directors.Select(d => new { 
+        return Ok(directors.Select(d => new
+        {
             Url = Url.Link("GetName", new { id = d.NameID }),
-            d.Name.PrimaryName }));
+            PrimaryName = d.Name.PrimaryName,
+            NameID = d.Name.NameID
+        }));
     }
 
     [HttpGet("{id}/writers", Name = nameof(GetWriters))]
@@ -136,7 +139,8 @@ public class TitleController : MovieBaseController
         }
         return Ok(writers.Select(w => new {
             Url = Url.Link("GetName", new { id = w.NameID }),
-            w.Name.PrimaryName }));
+            PrimaryName = w.Name.PrimaryName,
+            NameID = w.Name.NameID}));
     }
 
     private object CreateTitlePageItem(TitleDTO title)
