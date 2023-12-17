@@ -34,6 +34,10 @@ public class AccountController : MovieBaseController
     [HttpPost("login")]
     public IActionResult Login(LoginModel loginModel)
     {
+        if (!IsValidUsername(loginModel.UserName))
+        {
+            return BadRequest();
+        }
         if (!_accountService.UserExists(loginModel.UserName, out var storedUser))
         {
             return Unauthorized();
@@ -49,15 +53,15 @@ public class AccountController : MovieBaseController
     [HttpPost("register")]
     public IActionResult RegisterUser(RegisterModel registerModel)
     {
-        if (isInvalidUsername(registerModel.UserName))
+        if (!IsValidUsername(registerModel.UserName))
         {
             return BadRequest();
         }
-        if (isInvalidPassword(registerModel.Password))
+        if (IsValidPassword(registerModel.Password))
         {
             return BadRequest();
         }
-        if (isInvalidEmail(registerModel.Email))
+        if (IsValidEmail(registerModel.Email))
         {
             return BadRequest();
         } 
@@ -100,6 +104,10 @@ public class AccountController : MovieBaseController
     [Authorize]
     public IActionResult Delete(string username)
     {
+        if (!IsValidUsername(username))
+        {
+            return BadRequest();
+        }
         if (!_accountService.UserExists(username, out _))
         {
             return Unauthorized();
@@ -121,6 +129,10 @@ public class AccountController : MovieBaseController
     // password in the URL and when using HTTPS the body is encrypted
     public IActionResult UpdatePassword(string username, [FromBody] UpdatePasswordDTO model)
     {
+        if (!IsValidPassword(model.NewPassword))
+        {
+            return BadRequest();
+        }
         if (!_accountService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -129,11 +141,6 @@ public class AccountController : MovieBaseController
         {
             return Unauthorized();
         }
-        if (isInvalidPassword(model.NewPassword))
-        {
-            return BadRequest();
-        }
-
         var (hash, salt) = _hashingService.Hash(model.NewPassword);
         _accountService.UpdatePassword(username, hash, salt);
         return Ok();
@@ -143,6 +150,10 @@ public class AccountController : MovieBaseController
     [Authorize]
     public IActionResult UpdateEmail(string username, [FromBody] UpdateEmailDTO model)
     {
+        if (!IsValidEmail(model.NewEmail))
+        {
+            return BadRequest();
+        }
         if (!_accountService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -151,54 +162,8 @@ public class AccountController : MovieBaseController
         {
             return Unauthorized();
         }
-        if (isInvalidEmail(model.NewEmail))
-        {
-            return BadRequest();
-        }
         _accountService.UpdateEmail(username, model.NewEmail);
         return Ok();
     }
 
-    private bool isInvalidUsername(string username) 
-    {
-        if (_accountService.UserExists(username, out _))
-        {
-            return true;
-        }
-        if (username.Length < 3)
-        {
-            return true;
-        }
-        if (!Regex.IsMatch(username, "^[a-z0-9._]*$"))
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private bool isInvalidPassword(string password)
-    {
-        if (string.IsNullOrEmpty(password))
-        {
-            return true;
-        }
-        if (password.Length < 8)
-        {
-            return true;
-        }
-        return false;
-    }
-
-    private bool isInvalidEmail(string email)
-    {
-        if (string.IsNullOrEmpty(email))
-        {
-            return true;
-        }
-        if (!Regex.IsMatch(email, "^[a-z0-9][-a-z0-9._]+@([-a-z0-9]+\\.)+[a-z]{2,5}$"))
-        {
-            return true;
-        }
-        return false;
-    }
 }

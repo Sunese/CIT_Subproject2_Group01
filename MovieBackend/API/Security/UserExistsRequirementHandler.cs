@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,9 +24,12 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
         AuthorizationHandlerContext context,
         UserExistsRequirement requirement)
     {
-        if (_accountService.UserExists(context.User.Identity!.Name!, out var foundUser))
+        if (!IsValidusername(context.User.Identity!.Name!))
         {
-            _logger.LogInformation($"User '{foundUser.UserName}' exists!");
+            _logger.LogError("Authenticated user's username is not valid");
+        }
+        else if (_accountService.UserExists(context.User.Identity!.Name!, out var foundUser))
+        {
             context.Succeed(requirement);
         }
         else 
@@ -33,5 +37,10 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
             _logger.LogError($"Authenticated user: '{context.User.Identity.Name}' does not exist!");
         }
         return Task.CompletedTask;
+    }
+
+    private bool IsValidusername(string username)
+    {
+        return username.Length > 3 && Regex.IsMatch(username, "^[a-z0-9._]*$");
     }
 }

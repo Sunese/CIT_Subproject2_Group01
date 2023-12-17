@@ -34,7 +34,7 @@ public class SearchController : MovieBaseController
     [HttpGet("title", Name = nameof(TitleSearch))]
     public IActionResult TitleSearch(string query, TitleType? titleType, int page = 0, int pageSize = 10)
     {
-        if (isInValidSearchInput(query))
+        if (!IsValidSearchQuery(query))
         {
             return BadRequest();
         }
@@ -54,7 +54,7 @@ public class SearchController : MovieBaseController
     [HttpGet("name", Name = nameof(NameSearch))]
     public IActionResult NameSearch(string query, int page = 0, int pageSize = 10)
     {
-        if (isInValidSearchInput(query))
+        if (!IsValidSearchQuery(query))
         {
             return BadRequest();
         }
@@ -73,7 +73,7 @@ public class SearchController : MovieBaseController
     [HttpGet("actor", Name = nameof(ActorSearch))]
     public IActionResult ActorSearch(string query, int page = 0, int pageSize = 10)
     {
-        if (isInValidSearchInput(query)) 
+        if (!IsValidSearchQuery(query)) 
         {  
             return BadRequest();
         }
@@ -92,7 +92,7 @@ public class SearchController : MovieBaseController
     [HttpGet("writer", Name = nameof(WriterSearch))]
     public IActionResult WriterSearch(string query, int page = 0, int pageSize = 10)
     {
-        if (isInValidSearchInput(query))
+        if (!IsValidSearchQuery(query))
         {
             return BadRequest();
         }
@@ -111,7 +111,7 @@ public class SearchController : MovieBaseController
     [HttpGet("coplayer", Name = nameof(CoPlayerSearch))]
     public IActionResult CoPlayerSearch(string query, int page = 0, int pageSize = 10)
     {
-        if (isInValidSearchInput(query))
+        if (!IsValidSearchQuery(query))
         {
             return BadRequest();
         }
@@ -140,17 +140,8 @@ public class SearchController : MovieBaseController
         return Ok(Paging(items, total, page, pageSize, nameof(GetUserSearchHistory)));
     }
 
-    private bool isInValidSearchInput(string searchInput)
+    private bool IsValidSearchQuery(string searchInput)
     {
-
-        if(string.IsNullOrEmpty(searchInput))
-        {
-            return true;
-        }
-        if (!Regex.IsMatch(searchInput, "^[a-zA-Z0-9 ']*$"))
-        {
-            return true;
-        }
-        return false;
+        return string.IsNullOrEmpty(searchInput) && Regex.IsMatch(searchInput, "^[a-zA-Z0-9 ']*$");
     }
 }

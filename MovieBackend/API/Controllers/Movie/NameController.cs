@@ -30,6 +30,10 @@ public class NameController : MovieBaseController
     [HttpGet("{id}", Name = nameof(GetName))]
     public IActionResult GetName(string id)
     {
+        if (!IsValidNameID(id))
+        {
+            return BadRequest();
+        }
         var name = _nameService.GetName(id);
         if (name == null)
         {
@@ -42,6 +46,10 @@ public class NameController : MovieBaseController
     [HttpGet("{id}/rating", Name = nameof(GetNameRating))]
     public IActionResult GetNameRating(string id)
     {
+        if (!IsValidNameID(id))
+        {
+            return BadRequest();
+        }
         var nameRating = _nameService.GetRating(id);
         if (nameRating == null)
         {
@@ -54,6 +62,10 @@ public class NameController : MovieBaseController
     [HttpGet("{id}/primaryProfessions", Name = nameof(GetPrimaryProfessions))]
     public IActionResult GetPrimaryProfessions(string id)
     {
+        if (!IsValidNameID(id))
+        {
+            return BadRequest();
+        }
         // names can have at most 3 professions, hence no need for paging
         // on another note, professions don't have any references to any pther entities either
         var primaryProfessions = _nameService.GetPrimaryProfessions(id);
@@ -68,6 +80,10 @@ public class NameController : MovieBaseController
     [HttpGet("{id}/knownForTitles", Name = nameof(GetKnownForTitles))]
     public IActionResult GetKnownForTitles(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidNameID(id))
+        {
+            return BadRequest();
+        }
         var (knownForTitles, total) = _nameService.GetKnownForTitles(id, page, pageSize);
         if (knownForTitles == null)
         {
@@ -81,6 +97,10 @@ public class NameController : MovieBaseController
     [HttpGet("{id}/principals", Name = nameof(GetPrincipals))]
     public IActionResult GetPrincipals(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidNameID(id))
+        {
+            return BadRequest();
+        }
         var (principals, total) = _nameService.GetPrincipals(id, page, pageSize);
         if (principals == null)
         {
