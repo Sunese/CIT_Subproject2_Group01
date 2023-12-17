@@ -142,6 +142,6 @@ public class SearchController : MovieBaseController
 
     private bool IsValidSearchQuery(string searchInput)
     {
-        return string.IsNullOrEmpty(searchInput) && Regex.IsMatch(searchInput, "^[a-zA-Z0-9 ']*$");
+        return !string.IsNullOrEmpty(searchInput) && Regex.IsMatch(searchInput, "^[a-zA-Z0-9 ']*$");
     }
 }
