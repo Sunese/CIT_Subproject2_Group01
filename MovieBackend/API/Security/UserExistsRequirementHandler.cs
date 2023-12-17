@@ -24,7 +24,11 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
         AuthorizationHandlerContext context,
         UserExistsRequirement requirement)
     {
-        if (!IsValidusername(context.User.Identity!.Name!))
+        if (context.User.Identity is null || context.User.Identity.Name is null)
+        {
+            _logger.LogError("User identity for authorization context is null");
+        }
+        else if (!IsValidusername(context.User.Identity!.Name!))
         {
             _logger.LogError("Authenticated user's username is not valid");
         }
