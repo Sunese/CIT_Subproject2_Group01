@@ -34,6 +34,10 @@ public class AccountController : MovieBaseController
     [HttpPost("login")]
     public IActionResult Login(LoginModel loginModel)
     {
+        if (isInvalidUsername(loginModel.UserName))
+        {
+            return BadRequest();
+        }
         if (!_accountService.UserExists(loginModel.UserName, out var storedUser))
         {
             return Unauthorized();

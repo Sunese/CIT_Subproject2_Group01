@@ -1,6 +1,7 @@
 using System;
 using System.Collections.Generic;
 using System.Linq;
+using System.Text.RegularExpressions;
 using System.Threading.Tasks;
 using Application.Services;
 using Microsoft.AspNetCore.Authorization;
@@ -23,7 +24,11 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
         AuthorizationHandlerContext context,
         UserExistsRequirement requirement)
     {
-        if (_accountService.UserExists(context.User.Identity!.Name!, out var foundUser))
+        if (isInvalidUsername(context.User.Identity!.Name!))
+        {
+            _logger.LogError("Authenticated user's username contains illegal characters");
+        }
+        else if (_accountService.UserExists(context.User.Identity!.Name!, out var foundUser))
         {
             _logger.LogInformation($"User '{foundUser.UserName}' exists!");
             context.Succeed(requirement);
@@ -33,5 +38,22 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
             _logger.LogError($"Authenticated user: '{context.User.Identity.Name}' does not exist!");
         }
         return Task.CompletedTask;
+    }
+
+    private bool isInvalidUsername(string username)
+    {
+        if (_accountService.UserExists(username, out _))
+        {
+            return true;
+        }
+        if (username.Length < 3)
+        {
+            return true;
+        }
+        if (!Regex.IsMatch(username, "^[a-z0-9._]*$"))
+        {
+            return true;
+        }
+        return false;
     }
 }
