@@ -24,13 +24,12 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
         AuthorizationHandlerContext context,
         UserExistsRequirement requirement)
     {
-        if (isInvalidUsername(context.User.Identity!.Name!))
+        if (!IsValidusername(context.User.Identity!.Name!))
         {
-            _logger.LogError("Authenticated user's username contains illegal characters");
+            _logger.LogError("Authenticated user's username is not valid");
         }
         else if (_accountService.UserExists(context.User.Identity!.Name!, out var foundUser))
         {
-            _logger.LogInformation($"User '{foundUser.UserName}' exists!");
             context.Succeed(requirement);
         }
         else 
@@ -40,20 +39,8 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
         return Task.CompletedTask;
     }
 
-    private bool isInvalidUsername(string username)
+    private bool IsValidusername(string username)
     {
-        if (_accountService.UserExists(username, out _))
-        {
-            return true;
-        }
-        if (username.Length < 3)
-        {
-            return true;
-        }
-        if (!Regex.IsMatch(username, "^[a-z0-9._]*$"))
-        {
-            return true;
-        }
-        return false;
+        return username.Length > 3 && Regex.IsMatch(username, "^[a-z0-9._]*$");
     }
 }

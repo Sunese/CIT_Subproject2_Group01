@@ -55,6 +55,10 @@ public class UserRatingController : MovieBaseController
     [HttpGet("{username}/titlerating/{titleID}")]
     public IActionResult GetUserTitleRatingById(string username, string titleID, int page = 0, int pageSize = 10)
     {
+        if (!IsValidTitleID(titleID))
+        {
+            return BadRequest();
+        }
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -80,6 +84,10 @@ public class UserRatingController : MovieBaseController
         string username,
         [FromBody] CreateTitleRatingModel userRating)
     {
+        if (!IsValidTitleID(userRating.TitleID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -113,6 +121,10 @@ public class UserRatingController : MovieBaseController
     [Authorize]
     public IActionResult Delete(string username, string titleID)
     {
+        if (!IsValidTitleID(titleID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -145,6 +157,10 @@ public class UserRatingController : MovieBaseController
     [Authorize]
     public IActionResult Update(string username, string titleID, [FromBody] CreateTitleRatingModel newRatingModel)
     {
+        if (!IsValidTitleID(titleID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
