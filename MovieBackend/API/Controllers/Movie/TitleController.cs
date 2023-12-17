@@ -41,6 +41,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}", Name = nameof(GetTitle))]
     public IActionResult GetTitle(string id)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         if (!_titleService.TitleExists(id, out var titleDTO))
         {
             return NotFound();
@@ -67,6 +71,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/rating", Name = nameof(GetTitleRating))]
     public IActionResult GetTitleRating(string id)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var rating = _titleService.GetRating(id);
         if (rating == null)
         {
@@ -91,6 +99,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/popularActors", Name = nameof(GetPopularActorsFromTitle))]
     public IActionResult GetPopularActorsFromTitle(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var (popularActors, total) = _titleService.GetPopularActors(id, page, pageSize);
         var items = popularActors.Select(CreatePopularActorPageItem);
         return Ok(Paging(items, total, page, pageSize, nameof(GetPopularActorsFromTitle), new RouteValueDictionary { { "id", id } }));
@@ -100,6 +112,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/aka", Name = nameof(GetTitleAkas))]
     public IActionResult GetTitleAkas(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var (akas, total) = _titleService.GetAkas(id, page, pageSize);
         var items = akas.Select(CreateAkaPageItem);
         return Ok(Paging(items, total, page, pageSize, nameof(GetTitleAkas), new RouteValueDictionary { { "id", id } }));
@@ -108,6 +124,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/similarmovies", Name = nameof(GetSimiliarMovies))]
     public IActionResult GetSimiliarMovies(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var (similiarMovies, total) = _titleService.GetSimiliarMovies(id, page, pageSize);
         var items = similiarMovies.Select(CreateSimiliarMoviePageItem);
         return Ok(Paging(items, total, page, pageSize, nameof(GetSimiliarMovies), new RouteValueDictionary { { "id", id } }));
@@ -116,6 +136,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/directors", Name = nameof(GetDirectors))]
     public IActionResult GetDirectors(string id)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var directors = _titleService.GetDirectors(id);
         if (directors == null)
         {
@@ -132,6 +156,10 @@ public class TitleController : MovieBaseController
     [HttpGet("{id}/writers", Name = nameof(GetWriters))]
     public IActionResult GetWriters(string id)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         var writers = _titleService.GetWriters(id);
         if (writers == null)
         {

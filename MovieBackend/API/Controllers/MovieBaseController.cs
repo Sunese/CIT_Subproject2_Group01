@@ -1,4 +1,5 @@
-﻿using Microsoft.AspNetCore.Mvc;
+﻿using System.Text.RegularExpressions;
+using Microsoft.AspNetCore.Mvc;
 using Microsoft.IdentityModel.Tokens;
 
 namespace API.Controllers;
@@ -130,6 +131,37 @@ public class MovieBaseController : ControllerBase
         }
 
         return true;
+    }
+
+    protected bool IsValidTitleID(string titleID)
+    {
+        var regexPattern = @"^tt\d{6,8}$";
+        var regex = new Regex(regexPattern);
+        return regex.IsMatch(titleID);
+    }
+
+    protected bool IsValidNameID(string nameID)
+    {
+        var regexPattern = @"^nm\d{6,8}$";
+        var regex = new Regex(regexPattern);
+        return regex.IsMatch(nameID);
+    }
+
+    protected bool IsValidUsername(string username)
+    {
+        return username.Length >= 3 &&
+               Regex.IsMatch(username, "^[a-z0-9._]*$");
+    }
+
+    protected bool IsValidPassword(string password)
+    {
+        return !string.IsNullOrEmpty(password) && password.Length >= 8;
+    }
+
+    protected bool IsValidEmail(string email)
+    {
+        return !string.IsNullOrEmpty(email) &&
+               Regex.IsMatch(email, "^[a-z0-9][-a-z0-9._]+@([-a-z0-9]+\\.)+[a-z]{2,5}$");
     }
 
     protected bool IsSignedIn()

@@ -31,6 +31,10 @@ public class TvSeriesController : MovieBaseController
     [HttpGet("{id}", Name = nameof(GetTvSeries))]
     public IActionResult GetTvSeries(string id, int page = 0, int pageSize = 10)
     {
+        if (!IsValidTitleID(id))
+        {
+            return BadRequest();
+        }
         if (!_titleService.TitleExists(id, out var titleDTO))
         {
             return NotFound();

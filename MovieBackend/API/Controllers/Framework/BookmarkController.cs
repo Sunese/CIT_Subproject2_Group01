@@ -42,6 +42,10 @@ public class BookmarkController : MovieBaseController
     // NOTE: only the user can access their own bookmarks
     public IActionResult GetTitleBookmark(string username, string titleID)
     {
+        if (!IsValidTitleID(titleID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -90,6 +94,10 @@ public class BookmarkController : MovieBaseController
         string username,
         CreateTitleBookmarkModel model)
     {
+        if (!IsValidTitleID(model.TitleID) || !IsValidNoteInput(model.Notes))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -114,11 +122,10 @@ public class BookmarkController : MovieBaseController
         string titleID,
         [FromBody] UpdateBookmarkNote model)
     {
-        if (isInValidNoteInput(model.Notes))
+        if (!IsValidTitleID(titleID) || !IsValidNoteInput(model.Notes))
         {
             return BadRequest();
         }
-
         if (!_userService.UserExists(username, out _))
         {
             return BadRequest("User does not exist");
@@ -137,6 +144,10 @@ public class BookmarkController : MovieBaseController
         string username,
         string titleID)
     {
+        if (!IsValidTitleID(titleID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -158,6 +169,10 @@ public class BookmarkController : MovieBaseController
     // NOTE: only the user can access their own bookmarks
     public IActionResult GetNameBookmark(string username, string nameID)
     {
+        if (!IsValidNameID(nameID))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -202,6 +217,10 @@ public class BookmarkController : MovieBaseController
         string username,
         CreateNameBookmarkModel model)
     {
+        if (!IsValidNameID(model.NameID) || !IsValidNoteInput(model.Notes))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -222,6 +241,10 @@ public class BookmarkController : MovieBaseController
         string nameID,
         [FromBody] UpdateBookmarkNote model)
     {
+        if (!IsValidNameID(nameID) || !IsValidNoteInput(model.Notes))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -237,6 +260,10 @@ public class BookmarkController : MovieBaseController
         string username,
         string nameid)
     {
+        if (!IsValidNameID(nameid))
+        {
+            return BadRequest();
+        }
         if (!OwnsResource(username))
         {
             return Unauthorized();
@@ -275,12 +302,8 @@ public class BookmarkController : MovieBaseController
         };
     }
 
-    private bool isInValidNoteInput(string noteInput)
+    private bool IsValidNoteInput(string noteInput)
     {
-        if (!Regex.IsMatch(noteInput, "^[A-Za-z0-9.,' ]*$"))
-        {
-            return true;
-        }
-        return false;
+        return Regex.IsMatch(noteInput, "^[A-Za-z0-9.,' ]*$");
     }
 }
