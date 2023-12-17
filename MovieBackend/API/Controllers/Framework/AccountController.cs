@@ -57,11 +57,11 @@ public class AccountController : MovieBaseController
         {
             return BadRequest();
         }
-        if (IsValidPassword(registerModel.Password))
+        if (!IsValidPassword(registerModel.Password))
         {
             return BadRequest();
         }
-        if (IsValidEmail(registerModel.Email))
+        if (!IsValidEmail(registerModel.Email))
         {
             return BadRequest();
         } 
