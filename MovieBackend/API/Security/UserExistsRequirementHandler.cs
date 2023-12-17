@@ -41,6 +41,6 @@ public class UserExistsRequirementHandler : AuthorizationHandler<UserExistsRequi
 
     private bool IsValidusername(string username)
     {
-        return username.Length > 3 && Regex.IsMatch(username, "^[a-z0-9._]*$");
+        return username.Length >= 3 && Regex.IsMatch(username, "^[a-z0-9._]*$");
     }
 }
